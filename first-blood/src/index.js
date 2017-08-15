@@ -5,75 +5,77 @@ import './main.css';
 
 window.onload = function() {
 
-	// var camera, scene, renderer;
-	// var mesh;
+	var camera, scene, renderer;
+	var mesh;
 
-	// init();
+	init();
 
-	// animate();
+	animate();
 
-	// function init() {
+	function init() {
 
-	// 	var conW = window.innerWidth,
-	// 		conH = window.innerHeight;
+		var conW = window.innerWidth,
+			conH = window.innerHeight;
 
-	// 	camera = new THREE.PerspectiveCamera(70, conW / conH, 1, 1000);
-	// 	camera.position.set(0, 0, 400);
+		camera = new THREE.PerspectiveCamera(70, conW / conH, 1, 1000);
+		camera.position.set(0, 0, 400);
 
-	// 	scene = new THREE.Scene();
+		scene = new THREE.Scene();
 
-	// 	var texture = new THREE.TextureLoader().load('src/images/bg.jpg'),
-	// 		geometry = new THREE.BoxBufferGeometry(200, 200, 200),
-	// 		material = new THREE.MeshBasicMaterial({map: texture});
-	// 	mesh = new THREE.Mesh(geometry, material);
-	// 	scene.add(mesh);
+		var texture = new THREE.TextureLoader().load('src/images/bg.jpg'),
+			geometry = new THREE.BoxBufferGeometry(200, 200, 200),
+			material = new THREE.MeshBasicMaterial({map: texture});
+		mesh = new THREE.Mesh(geometry, material);
+		scene.add(mesh);
 
-	// 	renderer = new THREE.WebGLRenderer({antialias: true});
-	// 	renderer.setPixelRatio(window.devicePixelRatio);
-	// 	renderer.setSize(conW, conH);
-	// 	document.body.appendChild(renderer.domElement);
-	// }
+		renderer = new THREE.WebGLRenderer({antialias: true});
+		renderer.setPixelRatio(window.devicePixelRatio);
+		renderer.setSize(conW, conH);
+		document.body.appendChild(renderer.domElement);
+	}
 
-	// function animate() {
-	// 	requestAnimationFrame( animate );
-	// 	mesh.rotation.x += 0.005;
-	// 	mesh.rotation.y += 0.01;
-	// 	renderer.render( scene, camera );
-	// }
+	function animate() {
+		requestAnimationFrame( animate );
+		mesh.rotation.x += 0.005;
+		mesh.rotation.y += 0.01;
+		renderer.render( scene, camera );
+	}
 
-
+	//-------------------------------------------------------------------------------------
 
 	// var container = document.querySelector('.container'),
-	var	conW = window.innerWidth,
-		conH = window.innerHeight;
+	// var	conW = window.innerWidth,
+	// 	conH = window.innerHeight;
 
-	var renderer = new THREE.WebGLRenderer();
-	renderer.setSize(conW, conH);
-	document.body.appendChild(renderer.domElement);
+	// var renderer = new THREE.WebGLRenderer();
+	// renderer.setSize(conW, conH);
+	// document.body.appendChild(renderer.domElement);
 
-	var scene = new THREE.Scene();
+	// var scene = new THREE.Scene();
 
-	var camera = new THREE.PerspectiveCamera(70, conW/conH, 1, 1000);
-	camera.position.set(0, 0, 400);
-	scene.add(camera);
+	// var camera = new THREE.PerspectiveCamera(70, conW/conH, 1, 1000);
+	// camera.position.set(0, 0, 400);
+	// scene.add(camera);
 
-	// var light = new THREE.DirectionalLight(0xffffff, 1.5);
-	// light.position.set(0, 0, 2);
-	// scene.add(light);
+	// // var light = new THREE.DirectionalLight(0xffffff, 1.5);
+	// // light.position.set(0, 0, 2);
+	// // scene.add(light);
 
-	var map = new THREE.TextureLoader().load('src/images/bg.jpg');
+	// var map = new THREE.TextureLoader().load('src/images/bg.jpg');
 
-	var material = new THREE.MeshBasicMaterial({map: map});
+	// var material = new THREE.MeshBasicMaterial({map: map});
 
-	// var geometry = new THREE.CubeGeometry(1, 1, 1);
-	var geometry = new THREE.BoxBufferGeometry( 200, 200, 200 );
+	// // var geometry = new THREE.CubeGeometry(1, 1, 1);
+	// var geometry = new THREE.BoxBufferGeometry( 200, 200, 200 );
 
-	var mesh = new THREE.Mesh(geometry, material);
-	mesh.rotation.x = Math.PI / 5;
-	mesh.rotation.y = Math.PI / 5;
-	scene.add(mesh);
+	// var mesh = new THREE.Mesh(geometry, material);
+	// mesh.rotation.x = Math.PI / 5;
+	// mesh.rotation.y = Math.PI / 5;
+	// scene.add(mesh);
 
-	renderer.render(scene, camera);
+	// renderer.render(scene, camera);
+
+	//-------------------------------------------------------------------------------------
 
 	// 创建渲染器
 	// var renderer = new THREE.WebGLRenderer();
