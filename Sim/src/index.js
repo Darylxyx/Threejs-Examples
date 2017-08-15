@@ -12,7 +12,7 @@ window.onload = function() {
 	document.body.appendChild(renderer.domElement);
 	
 	var camera = new THREE.PerspectiveCamera(45, conW/conH, 1, 1000);
-	camera.position.set(0, 0, 3.333);
+	camera.position.set(0, 0, 5);
 
 	var scene = new THREE.Scene();
 
@@ -24,13 +24,16 @@ window.onload = function() {
 		material = new THREE.MeshPhongMaterial({map: texture}),
 		geometry = new THREE.SphereGeometry(1, 32, 32),
 		mesh = new THREE.Mesh(geometry, material);
+	mesh.rotation.x = - Math.PI / 9;
 	scene.add(mesh);
 
 	run();
 
 	function run() {
+		requestAnimationFrame(run);
 		mesh.rotation.y -= 0.01;
 		renderer.render(scene, camera);
+
 	}
 };
 
