@@ -10,8 +10,8 @@ html, body {
 
 .container {
 	width: 800px;
-	height: 400px;
-	background-color: #f7f7f7;
+	height: 500px;
+	background-color: #000;
 	position: relative;
 	margin: 40px auto;
 }
