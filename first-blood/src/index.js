@@ -45,7 +45,8 @@ window.onload = function() {
 
 	// var container = document.querySelector('.container'),
 	var	conW = window.innerWidth,
-		conH = window.innerHeight;
+		conH = window.innerHeight,
+		animating = true;
 
 	var renderer = new THREE.WebGLRenderer({antialias: true});
 	renderer.setSize(conW, conH);
@@ -57,30 +58,39 @@ window.onload = function() {
 	camera.position.set(0, 0, 3);
 	scene.add(camera);
 
-	var light = new THREE.DirectionalLight(0xffffff, 1.5);
-	light.position.set(0, 0, 2);
+	var light = new THREE.DirectionalLight('red', 1.5);
+	light.position.set(0, 0, 1);
 	scene.add(light);
 
 	var map = new THREE.TextureLoader().load('src/images/bg.jpg');
 
-	var material = new THREE.MeshBasicMaterial({map: map});
+	var material = new THREE.MeshPhongMaterial({map: map});
 
 	var geometry = new THREE.CubeGeometry(1, 1, 1);
 	// var geometry = new THREE.BoxBufferGeometry( 200, 200, 200 );
 
 	var mesh = new THREE.Mesh(geometry, material);
 	mesh.rotation.x = Math.PI / 5;
-	mesh.rotation.y = Math.PI / 5;
+	// mesh.rotation.y = Math.PI / 5;
 	scene.add(mesh);
+
+	renderer.domElement.addEventListener('click', handleClick, false);
 
 	run();
 
 	function run() {
-		renderer.render(scene, camera);
+		requestAnimationFrame(run);
+
+		if (!animating) return;
 
 		mesh.rotation.y -= 0.01;
 
-		requestAnimationFrame(run);
+		renderer.render(scene, camera);
+	}
+
+	function handleClick(e) {
+		e.preventDefault();
+		animating =! animating;
 	}
 
 	//-------------------------------------------------------------------------------------
