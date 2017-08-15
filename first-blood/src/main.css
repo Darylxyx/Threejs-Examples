@@ -11,7 +11,7 @@ html, body {
 .container {
 	width: 800px;
 	height: 500px;
-	background-color: #000;
+	background-color: #fff;
 	position: relative;
 	margin: 40px auto;
 }
