@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="pragma" content="no-cache"> 
+    <meta http-equiv="Cache-Control " content="no-cache,must-revalidate"> 
+    <meta name="description" content="">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+	<title>House</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+	</style>
+</head>
+<body>
+<script src='./three.js'></script>
+<script src="./OrbitControls.js"></script>
+<script>
+		var camera, scene, renderer;
+			var cube, sphere, torus, material;
+			var count = 0, cubeCamera1, cubeCamera2;
+			var lon = 0, lat = 0;
+			var phi = 0, theta = 0;
+			var textureLoader = new THREE.TextureLoader();
+			var controls;
+			init();
+			animate();
+			function init( texture ) {
+
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
+				camera.position.set(0, 0, 1);
+				scene = new THREE.Scene();
+
+				controls = new THREE.OrbitControls( camera );
+				controls.minDistance = 300;
+				controls.maxDistance = 500;
+
+				var texture = textureLoader.load('./src/2294472375_24a3b8ef46_o.jpg');
+
+				var mesh = new THREE.Mesh( new THREE.SphereBufferGeometry(500, 32, 32), 
+					new THREE.MeshBasicMaterial( { map: texture } ) );
+				mesh.scale.x = -1;
+				scene.add( mesh );
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				document.body.appendChild( renderer.domElement );
+				window.addEventListener( 'resize', onWindowResized, false );
+			}
+			function onWindowResized( event ) {
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+			}
+			function animate() {
+				requestAnimationFrame( animate );
+				render();
+				controls.update();
+			}
+			function render() {
+				renderer.render( scene, camera );
+			}
+</script>
+</body>
+</html>
