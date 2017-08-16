@@ -13,6 +13,7 @@ window.onload = function() {
 		this.conH = window.innerHeight;
 		this.camera = new THREE.PerspectiveCamera(45, this.conW/this.conH, 1, 1000);
 		this.scene = new THREE.Scene();
+		this.loader = new THREE.TextureLoader().load;
 		this.light = new THREE.PointLight('#fff', 2, 100);
 		this.ROTATION_SPEED = 0.002;
 	}
@@ -31,19 +32,42 @@ window.onload = function() {
 		},
 
 		createGlobal() {
-			var surfaceMap = new THREE.TextureLoader().load(require('./images/earth_surface_2048.jpg')),
-				normalMap = new THREE.TextureLoader().load(require('./images/earth_normal_2048.jpg')),
-				specularMap = new THREE.TextureLoader().load(require('./images/earth_specular_2048.jpg'));
+			// var surfaceMap = new THREE.TextureLoader().load(require('./images/earth_surface_2048.jpg')),
+			// 	normalMap = new THREE.TextureLoader().load(require('./images/earth_normal_2048.jpg')),
+			// 	specularMap = new THREE.TextureLoader().load(require('./images/earth_specular_2048.jpg'));
 
-			var shader = THREE.ShaderUtils.lib['normal'],
-				uniforms = THREE.UniformsUtils.clone(shader.uniforms);
+			// var shader = THREE.ShaderLib['normal'],
+			// 	uniforms = THREE.UniformsUtils.clone(shader.uniforms);
+			// console.log(uniforms);
+			// uniforms.normalMap.value = normalMap;
+			// uniforms["specularMap"].value = specularMap;
+			// // uniforms["tSurface"] = {texture: surfaceMap};
+			// // uniforms["tSpecular"] = {texture: specularMap};
+			// // console.log(shader);
 
-			// var texture = new THREE.TextureLoader().load(require('./images/earth_surface_2048.jpg')),
-			// 	material = new THREE.MeshPhongMaterial({map: texture}),
-			// 	geometry = new THREE.SphereGeometry(1, 32, 32);
-			// this.mesh = new THREE.Mesh(geometry, material);
-			// this.mesh.rotation.z = 0.41;
+			// var shaderMaterial = new THREE.ShaderMaterial({
+			// 	fragmentShader: shader.fragmentShader,
+			// 	vertexShader: shader.vertexShader,
+			// 	uniforms: uniforms
+			// });
+
+			// var geometry = new THREE.SphereGeometry(1, 32, 32);
+			// // geometry.getTangent();
+
+			// this.mesh = new THREE.Mesh(geometry, shaderMaterial);
 			// this.scene.add(this.mesh);
+			
+
+			var texture = this.loader(require('./images/earth_surface_2048.jpg')),
+				material = new THREE.MeshPhongMaterial({map: texture}),
+				geometry = new THREE.SphereGeometry(1, 32, 32);
+			this.mesh = new THREE.Mesh(geometry, material);
+			this.mesh.rotation.z = 0.41;
+			this.scene.add(this.mesh);
+		},
+
+		createCloud() {
+			var cloudMap = this.loader(require('./images/earth_clouds_1024.png'));
 		},
 
 		run() {
