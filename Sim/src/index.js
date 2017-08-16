@@ -16,6 +16,8 @@ window.onload = function() {
 		this.loader = new THREE.TextureLoader().load;
 		this.light = new THREE.PointLight('#fff', 2, 100);
 		this.ROTATION_SPEED = 0.002;
+		this.CLOUD_SPEED = this.ROTATION_SPEED * 0.7;
+		this.TILT = 0.41;
 	}
 
 	App.prototype = {
@@ -29,6 +31,7 @@ window.onload = function() {
 			this.scene.add(this.light);
 
 			this.createGlobal();
+			this.createCloud();
 		},
 
 		createGlobal() {
@@ -62,12 +65,21 @@ window.onload = function() {
 				material = new THREE.MeshPhongMaterial({map: texture}),
 				geometry = new THREE.SphereGeometry(1, 32, 32);
 			this.mesh = new THREE.Mesh(geometry, material);
-			this.mesh.rotation.z = 0.41;
+			this.mesh.rotation.z = this.TILT;
 			this.scene.add(this.mesh);
 		},
 
 		createCloud() {
-			var cloudMap = this.loader(require('./images/earth_clouds_1024.png'));
+			var cloudMap = this.loader(require('./images/earth_clouds_1024.png')),
+				cloudMaterial = new THREE.MeshLambertMaterial({
+					color: '#fff',
+					map: cloudMap,
+					transparent: true
+				}),
+				cloudGeometry = new THREE.SphereGeometry(1.005, 32, 32);
+			this.cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
+			this.cloudMesh.rotation.z = this.TILT;
+			this.scene.add(this.cloudMesh);
 		},
 
 		run() {
@@ -75,6 +87,7 @@ window.onload = function() {
 				this.run();
 			});
 			this.mesh.rotation.y += this.ROTATION_SPEED;
+			this.cloudMesh.rotation.y += this.CLOUD_SPEED;
 			this.renderer.render(this.scene, this.camera);
 		}
 	};
