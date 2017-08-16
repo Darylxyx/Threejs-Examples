@@ -190,11 +190,15 @@ Sim.App.prototype.initMouse = function()
 	dom.addEventListener( 'mouseup', 
 			function(e) { that.onDocumentMouseUp(e); }, false );
 	
-	$(dom).mousewheel(
-	        function(e, delta) {
-	            that.onDocumentMouseScroll(e, delta);
-	        }
-	    );
+	// document.querySelector(dom).mousewheel(
+	//         function(e, delta) {
+	//             that.onDocumentMouseScroll(e, delta);
+	//         }
+	//     );
+	
+	dom.onmousewheel = function(e, delta) {
+		that.onDocumentMouseScroll(e, delta);
+	};
 	
 	this.overObject = null;
 	this.clickedObject = null;
@@ -341,9 +345,9 @@ Sim.App.prototype.onDocumentMouseScroll = function(event, delta)
 Sim.App.prototype.objectFromMouse = function(pagex, pagey)
 {
 	// Translate page coords to element coords
-	var offset = $(this.renderer.domElement).offset();	
-	var eltx = pagex - offset.left;
-	var elty = pagey - offset.top;
+	// var offset = document.querySelector(this.renderer.domElement).offset();	
+	var eltx = pagex - this.renderer.domElement.offsetLeft;
+	var elty = pagey - this.renderer.domElement.offsetTop;
 	
 	// Translate client coords into viewport x,y
     var vpx = ( eltx / this.container.offsetWidth ) * 2 - 1;
