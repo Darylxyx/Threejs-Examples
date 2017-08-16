@@ -35,9 +35,9 @@ window.onload = function() {
 		},
 
 		createGlobal() {
-			// var surfaceMap = new THREE.TextureLoader().load(require('./images/earth_surface_2048.jpg')),
-			// 	normalMap = new THREE.TextureLoader().load(require('./images/earth_normal_2048.jpg')),
-			// 	specularMap = new THREE.TextureLoader().load(require('./images/earth_specular_2048.jpg'));
+			// var surfaceMap = this.loader(require('./images/earth_surface_2048.jpg')),
+			// 	normalMap = this.loader(require('./images/earth_normal_2048.jpg')),
+			// 	specularMap = this.loader(require('./images/earth_specular_2048.jpg'));
 
 			// var shader = THREE.ShaderLib['normal'],
 			// 	uniforms = THREE.UniformsUtils.clone(shader.uniforms);
