@@ -1,8 +1,9 @@
 import './base.css';
 import './main.css';
 
-// import './sim.js';
-// console.log(Sim);
+// import test from 'three/build/three.min.js';
+
+// console.log(test);
 
 window.onload = function() {
 
@@ -25,13 +26,14 @@ window.onload = function() {
 			this.renderer.setSize(this.conW, this.conH);
 			document.body.appendChild(this.renderer.domElement);
 
-			this.camera.position.set(0, 0, 4);
+			this.camera.position.set(0, 0, 3);
 
 			this.light.position.set(-10, 0, 20);
 			this.scene.add(this.light);
 
 			this.createGlobal();
 			this.createCloud();
+			window.addEventListener( 'resize', this.onWindowResize.bind(this), false );
 		},
 
 		createGlobal() {
@@ -89,6 +91,12 @@ window.onload = function() {
 			this.mesh.rotation.y += this.ROTATION_SPEED;
 			this.cloudMesh.rotation.y += this.CLOUD_SPEED;
 			this.renderer.render(this.scene, this.camera);
+		},
+
+		onWindowResize() {
+			this.camera.aspect = window.innerWidth / window.innerHeight;
+			this.camera.updateProjectionMatrix();
+			this.renderer.setSize(window.innerWidth, window.innerHeight);
 		}
 	};
 
@@ -97,6 +105,16 @@ window.onload = function() {
 	app.init();
 
 	app.run();
+
+	function Moon() {
+
+	}
+
+	Moon.prototype = {
+		init() {
+			
+		}
+	};
 };
 
 
