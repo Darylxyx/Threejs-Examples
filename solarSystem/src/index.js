@@ -1,5 +1,6 @@
 import './base.css';
 import './main.css';
+import moon from './moon.js';
 
 // import test from 'three/build/three.min.js';
 
@@ -31,8 +32,14 @@ window.onload = function() {
 			this.light.position.set(-10, 0, 20);
 			this.scene.add(this.light);
 
+			// this.scene.add(moon.mesh);
+
 			this.createGlobal();
 			this.createCloud();
+
+			// moon.init();
+			// this.earthGroup.add(moon.moonGroup);
+
 			window.addEventListener( 'resize', this.onWindowResize.bind(this), false );
 		},
 
@@ -68,7 +75,10 @@ window.onload = function() {
 				geometry = new THREE.SphereGeometry(1, 32, 32);
 			this.mesh = new THREE.Mesh(geometry, material);
 			this.mesh.rotation.z = this.TILT;
-			this.scene.add(this.mesh);
+
+			this.earthGroup.add(this.mesh);
+			// this.scene.add(this.mesh);
+
 		},
 
 		createCloud() {
@@ -81,7 +91,8 @@ window.onload = function() {
 				cloudGeometry = new THREE.SphereGeometry(1.005, 32, 32);
 			this.cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
 			this.cloudMesh.rotation.z = this.TILT;
-			this.scene.add(this.cloudMesh);
+			// this.scene.add(this.cloudMesh);
+			this.earthGroup.add(this.cloudMesh);
 		},
 
 		run() {
@@ -90,6 +101,7 @@ window.onload = function() {
 			});
 			this.mesh.rotation.y += this.ROTATION_SPEED;
 			this.cloudMesh.rotation.y += this.CLOUD_SPEED;
+			// moon.run();
 			this.renderer.render(this.scene, this.camera);
 		},
 
@@ -105,16 +117,6 @@ window.onload = function() {
 	app.init();
 
 	app.run();
-
-	function Moon() {
-
-	}
-
-	Moon.prototype = {
-		init() {
-			
-		}
-	};
 };
 
 
