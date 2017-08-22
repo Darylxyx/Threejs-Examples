@@ -105,7 +105,7 @@ window.onload = function() {
 			});
 			this.mesh.rotation.y += this.ROTATION_SPEED;
 			this.cloudMesh.rotation.y += this.CLOUD_SPEED;
-			// moon.run();
+			moon.run();
 			this.renderer.render(this.scene, this.camera);
 		},
 

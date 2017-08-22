@@ -6,14 +6,14 @@ function Moon() {
 
 Moon.prototype = {
 	init() {
-		var geometry = new THREE.SphereGeometry(1, 32, 32),
+		var geometry = new THREE.SphereGeometry(this.SIZE_IN_EARTHS, 32, 32),
 			texture = new THREE.TextureLoader().load(require('./images/moon_1024.jpg')),
 			material = new THREE.MeshPhongMaterial({map: texture}),
 			mesh = new THREE.Mesh(geometry, material);
 
 		var distance = this.DISTANCE_FROM_EARTH / 6371;
 		console.log(distance);
-		mesh.position.set(1, 1, 1);
+		mesh.position.set(Math.sqrt(distance/2), 0, -Math.sqrt(distance/2));
 		mesh.rotation.y = Math.PI;
 
 		var moonGroup = new THREE.Object3D();
