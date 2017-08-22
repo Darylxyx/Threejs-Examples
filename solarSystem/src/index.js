@@ -10,7 +10,8 @@ window.onload = function() {
 
 	function App() {
 		this.renderer = new THREE.WebGLRenderer({antialias: true});
-		this.earthGroup = new THREE.Object3D;
+		this.earthGroup = new THREE.Object3D();
+		this.earthGroup.data = this;
 		this.conW = window.innerWidth;
 		this.conH = window.innerHeight;
 		this.camera = new THREE.PerspectiveCamera(45, this.conW/this.conH, 1, 1000);
@@ -30,6 +31,7 @@ window.onload = function() {
 			this.camera.position.set(0, 0, 3);
 
 			this.light.position.set(-10, 0, 20);
+			// this.earthGroup.add(this.light);
 			this.scene.add(this.light);
 
 			// this.scene.add(moon.mesh);
@@ -37,8 +39,10 @@ window.onload = function() {
 			this.createGlobal();
 			this.createCloud();
 
-			// moon.init();
-			// this.earthGroup.add(moon.moonGroup);
+			moon.init();
+			this.earthGroup.add(moon.moonGroup);
+			// console.log(this.earthGroup);
+			this.scene.add(this.earthGroup);
 
 			window.addEventListener( 'resize', this.onWindowResize.bind(this), false );
 		},
@@ -77,8 +81,7 @@ window.onload = function() {
 			this.mesh.rotation.z = this.TILT;
 
 			this.earthGroup.add(this.mesh);
-			// this.scene.add(this.mesh);
-
+			this.scene.add(this.mesh);
 		},
 
 		createCloud() {
@@ -93,6 +96,7 @@ window.onload = function() {
 			this.cloudMesh.rotation.z = this.TILT;
 			// this.scene.add(this.cloudMesh);
 			this.earthGroup.add(this.cloudMesh);
+			// console.log(this.earthGroup.data = );
 		},
 
 		run() {
