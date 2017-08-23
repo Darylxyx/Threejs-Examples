@@ -1,13 +1,18 @@
+import Orbit from './orbit';
+
 function Earth() {
 	this.group = new THREE.Object3D();
 	this.TILT = 0.41;
 	this.GLOBAL_SPEED = 0.002;
 	this.CLOUD_SPEED = 0.8 * this.GLOBAL_SPEED;
+	this.orbit = new Orbit();
 }
 
 Earth.prototype.init = function() {
 	this.createGlobal();
 	this.createCloud();
+	this.orbit.init(356400/6371);
+	this.group.add(this.orbit.mesh);
 };
 
 Earth.prototype.createGlobal = function() {

@@ -35,8 +35,6 @@ Star.prototype.init = function(minDistance) {
 		);
 	}
 
-	// var materials = new THREE.PointsMaterial({size: 1, sizeAttenuation: false, alphaTest: 0.5, transparent: true})
-
 	for (let i = 0; i < this.NPARTCLESYSTEMS; i ++) {
 		var star = new THREE.Points(geometry, starsMaterials[i % this.NMATERIALS]);
 		star.rotation.y = i / (Math.PI * 2);

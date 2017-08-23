@@ -1,10 +1,10 @@
 import './base.css';
 import './main.css';
 
-import Earth from './earth.js';
-import Moon from './moon.js';
-import Star from './star.js';
-
+import Earth from './earth';
+import Moon from './moon';
+import Star from './star';
+// import Orbit from './orbit';
 // import test from 'three/build/three.min.js';
 
 // console.log(test);
@@ -20,6 +20,7 @@ function App() {
 	this.earth = new Earth();
 	this.moon = new Moon();
 	this.star = new Star();
+	// this.orbit = new Orbit();
 }
 
 App.prototype.init = function() {
