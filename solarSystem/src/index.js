@@ -3,6 +3,7 @@ import './main.css';
 
 import Earth from './earth.js';
 import Moon from './moon.js';
+import Star from './star.js';
 
 // import test from 'three/build/three.min.js';
 
@@ -18,6 +19,7 @@ function App() {
 
 	this.earth = new Earth();
 	this.moon = new Moon();
+	this.star = new Star();
 }
 
 App.prototype.init = function() {
@@ -30,6 +32,8 @@ App.prototype.init = function() {
 	this.group.add(this.earth.group);
 	this.moon.init();
 	this.group.add(this.moon.group);
+	this.star.init();
+	this.group.add(this.star.group);
 
 	this.scene.add(this.group);
 

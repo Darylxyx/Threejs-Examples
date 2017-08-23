@@ -19,7 +19,7 @@ Star.prototype.init = function(minDistance) {
 			vector = vector.setLength(minDistance);
 		}
 
-		geometry.vertices.push(new THREE.Vertex(vector));
+		geometry.vertices.push(vector);
 	}
 
 	var starsMaterials = [];
@@ -27,8 +27,14 @@ Star.prototype.init = function(minDistance) {
 		starsMaterials.push(
 			{color: 0x101010 * (i + 1),
 			size: i % 2 + 1,
-			sizeAttenuation: false
+			sizeAttenuation: false}
 		);
+	}
+
+	for (let i = 0; i < this.NPARTCLESYSTEMS; i ++) {
+		var star = new THREE.Points(geometry, starsMaterials[i % this.NMATERIALS]);
+		star.rotation.y = i / (Math.PI * 2);
+		this.group.add(star);
 	}
 };
 
