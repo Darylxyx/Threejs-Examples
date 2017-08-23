@@ -7,7 +7,7 @@ Orbit.prototype.init = function(distance) {
 	var geometry = new THREE.Geometry();
 
 	let twopi = 2 * Math.PI;
-	for (let i = 0; i < this.N_SEGMENTS; i ++) {
+	for (let i = 0; i <= this.N_SEGMENTS; i ++) {
 		let x = distance * Math.cos(i / this.N_SEGMENTS * twopi),
 			z = distance * Math.sin(i / this.N_SEGMENTS * twopi),
 			vertex = new THREE.Vector3(x, 0, z);

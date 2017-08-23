@@ -11,7 +11,7 @@ function Earth() {
 Earth.prototype.init = function() {
 	this.createGlobal();
 	this.createCloud();
-	this.orbit.init(356400/6371);
+	this.orbit.init(4.4);
 	this.group.add(this.orbit.mesh);
 };
 

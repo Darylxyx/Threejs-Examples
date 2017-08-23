@@ -24,7 +24,8 @@ function App() {
 }
 
 App.prototype.init = function() {
-	this.camera.position.set(0, 0, 3);
+	this.camera.position.set(0, 1, 6);
+	this.camera.rotation.x = - Math.PI / 12;
 
 	this.light.position.set(-10, 0, 20);
 	this.scene.add(this.light);

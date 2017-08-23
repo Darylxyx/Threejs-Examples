@@ -11,14 +11,14 @@ Moon.prototype.init = function() {
 		material = new THREE.MeshPhongMaterial({map: texture}),
 		mesh = new THREE.Mesh(geometry, material);
 
-	var distance = this.DISTANCE_FROM_EARTH / 6371;
+	var distance = 20;
 	// console.log(distance);
 	mesh.position.set(Math.sqrt(distance/2), 0, -Math.sqrt(distance/2));
 	mesh.rotation.y = Math.PI;
 
 	this.group.add(mesh);
 
-	this.group.rotation.x = this.INCLINATION;
+	// this.group.rotation.x = this.INCLINATION;
 
 	this.mesh = mesh;
 };
