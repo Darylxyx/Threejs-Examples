@@ -81,7 +81,7 @@ window.onload = function() {
 			this.mesh.rotation.z = this.TILT;
 
 			this.earthGroup.add(this.mesh);
-			this.scene.add(this.mesh);
+			// this.scene.add(this.mesh);
 		},
 
 		createCloud() {
