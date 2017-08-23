@@ -12,7 +12,7 @@ function App() {
 	this.conW = window.innerWidth;
 	this.conH = window.innerHeight;
 	this.group = new THREE.Object3D();
-	this.camera = new THREE.PerspectiveCamera(45, this.conW/this.conH, 1, 1000);
+	this.camera = new THREE.PerspectiveCamera(70, this.conW/this.conH, 1, 1000);
 	this.scene = new THREE.Scene();
 	this.light = new THREE.PointLight('#fff', 2, 100);
 

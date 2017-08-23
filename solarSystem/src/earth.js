@@ -2,7 +2,7 @@ function Earth() {
 	this.group = new THREE.Object3D();
 	this.TILT = 0.41;
 	this.GLOBAL_SPEED = 0.002;
-	this.CLOUD_SPEED = 0.7 * this.GLOBAL_SPEED;
+	this.CLOUD_SPEED = 0.8 * this.GLOBAL_SPEED;
 }
 
 Earth.prototype.init = function() {
