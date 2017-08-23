@@ -32,7 +32,7 @@ App.prototype.init = function() {
 	this.group.add(this.earth.group);
 	this.moon.init();
 	this.group.add(this.moon.group);
-	this.star.init();
+	this.star.init(10);
 	this.group.add(this.star.group);
 
 	this.scene.add(this.group);

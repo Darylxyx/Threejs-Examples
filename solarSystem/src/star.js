@@ -22,14 +22,20 @@ Star.prototype.init = function(minDistance) {
 		geometry.vertices.push(vector);
 	}
 
+	console.log(geometry);
+
 	var starsMaterials = [];
 	for (let i = 0; i < this.NMATERIALS; i ++) {
 		starsMaterials.push(
-			{color: 0x101010 * (i + 1),
-			size: i % 2 + 1,
-			sizeAttenuation: false}
+			new THREE.PointsMaterial(
+				{color: 0x101010 * (i + 1),
+				size: i % 2 + 1,
+				sizeAttenuation: false}
+			)
 		);
 	}
+
+	// var materials = new THREE.PointsMaterial({size: 1, sizeAttenuation: false, alphaTest: 0.5, transparent: true})
 
 	for (let i = 0; i < this.NPARTCLESYSTEMS; i ++) {
 		var star = new THREE.Points(geometry, starsMaterials[i % this.NMATERIALS]);
