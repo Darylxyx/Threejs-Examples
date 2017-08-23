@@ -23,12 +23,12 @@ Earth.prototype.createGlobal = function() {
 
 Earth.prototype.createCloud = function() {
 	var geometry = new THREE.SphereGeometry(1.005, 32, 32),
-		texture = new THREE.TextureLoader.load(require('./images/earth_clouds_1024.png')),
+		texture = new THREE.TextureLoader().load(require('./images/earth_clouds_1024.png')),
 		material = new THREE.MeshLambertMaterial({map: texture, color: '#fff', transparent: true}),
 		mesh = new THREE.Mesh(geometry, material);
 
 	mesh.rotation.z = this.TILT;
-	this.group.ad(mesh);
+	this.group.add(mesh);
 	this.cloudMesh =  mesh;
 };
 
