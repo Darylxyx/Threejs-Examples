@@ -34,7 +34,7 @@ Earth.prototype.createCloud = function() {
 
 	mesh.rotation.z = this.TILT;
 	this.group.add(mesh);
-	this.cloudMesh =  mesh;
+	this.cloudMesh = mesh;
 };
 
 Earth.prototype.run = function() {
