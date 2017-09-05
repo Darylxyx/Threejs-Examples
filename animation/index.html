@@ -21,6 +21,7 @@
 <body>
 
 <script src="./src/three.js"></script>
+<script src="./src/Tween.js"></script>
 <script>
 
 	function App() {
@@ -33,7 +34,42 @@
 
 	App.prototype.init = function() {
 		var light = new THREE.PointLight(0xffffff, 1, 100);
+		light.position.set(0, 0, 20);
 		this.scene.add(light);
+		this.camera.position.z = 6.667;
+
+		var ball = new Ball();
+		ball.init();
+		this.scene.add(ball.group);
+		ball.animate();
+	};
+
+	App.prototype.update = function() {
+		TWEEN.update();
+	};
+
+	function Ball() {
+		this.group = new THREE.Object3D();
+	}
+
+	Ball.prototype.init = function() {
+		var texture = new THREE.TextureLoader().load(require('./src/images/ball_texture.jpg')),
+			geometry = new THREE.SphereGeometry(1, 32, 32),
+			material = new THREE.MeshPhongMaterial({map: texture}),
+			mesh = new THREE.Mesh(geometry, material);
+		mesh.position.x = -3.333;
+		this.group.add(mesh);
+	};
+
+	Ball.prototype.animate = function() {
+		var newpos;
+		if (this.group.position.x > 0) {
+			newpos = this.group.position.x - 6.667;
+		} else {
+			newpos = this.group.position.x + 6.667;
+		}
+
+		new TWEEN.Tween(this.group.position).to({y: newpos}, 2000).easing(easefn).start();
 	};
 
 
