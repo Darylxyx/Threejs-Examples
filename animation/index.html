@@ -22,6 +22,21 @@
 
 <script src="./src/three.js"></script>
 <script>
+
+	function App() {
+		this.conW = window.innerWidth;
+		this.conH = window.innerHeight;
+		this.camera = new THREE.PerspectiveCamera(70, this.conW/this.conH, 1, 1000);
+		this.scene = new THREE.Scene();
+		this.renderer = new THREE.WebGLRenderer({antialias: true});
+	}
+
+	App.prototype.init = function() {
+		var light = new THREE.PointLight(0xffffff, 1, 100);
+		this.scene.add(light);
+	};
+
+
 </script>
 </body>
 </html>
