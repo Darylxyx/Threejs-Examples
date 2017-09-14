@@ -34,12 +34,33 @@
 		this.renderer.setPixelRatio(window.devicePixelRatio);
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
 		this.container.appendChild(this.renderer.domElement);
+
+		this.imgArr = [
+			'./src/images/negx.jpg',
+			'./src/images/negy.jpg',
+			'./src/images/negz.jpg',
+			'./src/images/posx.jpg',
+			'./src/images/posy.jpg',
+			'./src/images/posz.jpg'
+		];
+
+		this.loader = new THREE.TextureLoader().load;
 	}
 
 	App.prototype.init = function() {
+		var _this = this;
+
 		var skyBox = new THREE.CubeGeometry(1, 1, 1);
 
-		
+		var materials = new THREE.MultiMaterial(
+			this.imgArr.map(function(item, index) {
+				return new THREE.MeshBasicMaterial({map: _this.loader(item)});
+			});
+		);
+
+		var mesh = new Mesh(skyBox, materials);
+
+		this.scene.add(skyBox);
 	};
 
 </script>
