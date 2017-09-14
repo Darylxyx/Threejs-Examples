@@ -16,20 +16,30 @@
 	<div id="container"></div>
 
 <script src="./src/three.js"></script>
+<script src="./src/OrbitControls.js"></script>
 <script>
 
 	function App() {
 		this.container = document.getElementById('container');
 		this.camera = new THREE.PerspectiveCamera(100, window.innerWidth/window.innerHeight, 1, 1100);
-		// this.camera.target = new THREE.Vector3(0, 0, 0);
+		this.camera.target = new THREE.Vector3(0, 0, 0);
+		this.camera.position.set(0, 0, 1);
+
 		this.scene = new THREE.Scene();
+		
+		this.controls = new THREE.OrbitControls(this.camera);
+		this.controls.enableZoom = false;
+		this.controls.enablePan = false;
+
 		this.renderer = new THREE.WebGLRenderer();
+		this.renderer.setPixelRatio(window.devicePixerRatio);
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
+		
 		this.container.appendChild(this.renderer.domElement);
 	}
 
 	App.prototype.init = function() {
-		var geometry = new THREE.SphereGeometry(500, 60, 40);
+		var geometry = new THREE.SphereBufferGeometry(500, 60, 40);
 		geometry.scale(-1, 1, 1);
 
 		var material = new THREE.MeshBasicMaterial({
@@ -52,8 +62,9 @@
 	var app = new App();
 
 	var update = function() {
-		requestAnimationFrame(update);
 		app.renderer.render(app.scene, app.camera);
+		app.controls.update();
+		requestAnimationFrame(update);
 	};
 
 	app.init();
