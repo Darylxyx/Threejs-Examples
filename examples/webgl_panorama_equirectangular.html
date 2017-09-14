@@ -10,14 +10,6 @@
 			margin: 0px;
 			overflow: hidden;
 		}
-
-/*		#container {
-			position: absolute;
-			left: 0;
-			top: 0;
-			right: 0;
-			bot]
-		}*/
 	</style>
 </head>
 <body>
@@ -46,7 +38,15 @@
 
 		var mesh = new THREE.Mesh(geometry, material);
 
-		this.scene.add(mesh);		
+		this.scene.add(mesh);
+
+		window.addEventListener('resize', this.onWindowResize.bind(this), false);	
+	};
+
+	App.prototype.onWindowResize = function() {
+		this.camera.aspect = window.innerWidth / window.innerHeight;
+		this.camera.updateProjectionMatrix();
+		this.renderer.setSize(window.innerWidth, window.innerHeight);
 	};
 
 	var app = new App();
