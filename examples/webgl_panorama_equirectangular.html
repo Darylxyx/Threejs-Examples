@@ -1,1 +1,50 @@
-webgl_panorama_equirectangular.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>equirectangular panorama</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<style>
+		body {
+			background-color: #000;
+			margin: 0px;
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body>
+	<div id="container"></div>
+
+<script src="./src/three.js"></script>
+<script>
+
+	function App() {
+		this.container = document.getElementById('container');
+		this.camera = new THREE.PerspectiveCamera(100, window.innerWidth/window.innerHeight, 1, 1100);
+		this.scene = new THREE.Scene();
+		this.renderer = new THREE.WebGLRenderer();
+	}
+
+	App.prototype.init = function() {
+		var geometry = new THREE.SphereGeometry(500, 60, 40);
+
+		var material = new THREE.MeshBasicMaterial({
+			map: new THREE.TextureLoader().load('./src/images/2294472375_24a3b8ef46_o.jpg')
+		});
+
+		var mesh = new THREE.Mesh(geometry, material);
+
+		this.scene.add(mesh);
+
+		this.container.appendChild(this.renderer.domElement);
+
+		this.renderer.render(this.scene, this.camera);
+	}
+
+	var app = new App();
+
+	app.init();
+
+</script>
+</body>
+</html>
