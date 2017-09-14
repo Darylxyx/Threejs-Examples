@@ -10,6 +10,14 @@
 			margin: 0px;
 			overflow: hidden;
 		}
+
+/*		#container {
+			position: absolute;
+			left: 0;
+			top: 0;
+			right: 0;
+			bot]
+		}*/
 	</style>
 </head>
 <body>
@@ -21,12 +29,16 @@
 	function App() {
 		this.container = document.getElementById('container');
 		this.camera = new THREE.PerspectiveCamera(100, window.innerWidth/window.innerHeight, 1, 1100);
+		// this.camera.target = new THREE.Vector3(0, 0, 0);
 		this.scene = new THREE.Scene();
 		this.renderer = new THREE.WebGLRenderer();
+		this.renderer.setSize(window.innerWidth, window.innerHeight);
+		this.container.appendChild(this.renderer.domElement);
 	}
 
 	App.prototype.init = function() {
 		var geometry = new THREE.SphereGeometry(500, 60, 40);
+		geometry.scale(-1, 1, 1);
 
 		var material = new THREE.MeshBasicMaterial({
 			map: new THREE.TextureLoader().load('./src/images/2294472375_24a3b8ef46_o.jpg')
@@ -34,16 +46,18 @@
 
 		var mesh = new THREE.Mesh(geometry, material);
 
-		this.scene.add(mesh);
-
-		this.container.appendChild(this.renderer.domElement);
-
-		this.renderer.render(this.scene, this.camera);
-	}
+		this.scene.add(mesh);		
+	};
 
 	var app = new App();
 
+	var update = function() {
+		requestAnimationFrame(update);
+		app.renderer.render(app.scene, app.camera);
+	};
+
 	app.init();
+	update();
 
 </script>
 </body>
