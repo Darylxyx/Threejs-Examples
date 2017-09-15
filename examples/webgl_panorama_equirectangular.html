@@ -61,7 +61,7 @@
 
 	var app = new App();
 
-	var update = function() {
+	function update() {
 		app.renderer.render(app.scene, app.camera);
 		app.controls.update();
 		requestAnimationFrame(update);
