@@ -41,8 +41,8 @@ export default {
             spotLight.castShadow = true;
             scene.add(spotLight);
 
-            const V3 = this.V3;
-            const F3 = this.F3;
+            const V3 = this.v3;
+            const F3 = this.f3;
 
             const vertices = [
                 V3(1, 3, 1),
