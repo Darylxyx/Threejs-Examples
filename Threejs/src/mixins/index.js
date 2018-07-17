@@ -1,22 +1,32 @@
 import * as THREE from 'three';
 import Stats from 'stats.js';
 
-function assignment(target, params = {}) { // 给对象赋值
-    for (const attr in params) {
-        const val = params[attr];
-        switch(attr) {
-            case 'position':
-            case 'rotation':
-                target[attr].set(val.x, val.y, val.z);
-                break;
-            case 'color':
-                target[attr] = new THREE.Color(val);
-                break;
-            default: 
-                target[attr] = val;
-                break;
+const setList = ['position', 'rotation', 'scale']; // 需要通过 set 方法来设置的属性列表
+function assignment(target, params = {}, prevKey) {
+    const keys = Object.keys(params);
+    keys.forEach((key) => {
+        const value = params[key];
+        if (setList.indexOf(key) > -1) {
+            target[key].set(value.x, value.y, value.z);
+            return;
         }
-    }
+        if (key === 'color') { // 颜色属性只能通过 THREE.Color 赋值
+            target[key] = new THREE.Color(value);
+            return;
+        }
+        let nextTarget;
+        if (!prevKey) { // 顶层
+            nextTarget = target;
+        } else {
+            if (!target[prevKey]) target[prevKey] = {};
+            nextTarget = target[prevKey];
+        }
+        if (typeof value === 'object') {
+            assignment(nextTarget, value, key);
+        } else {
+            nextTarget[key] = value;
+        }
+    });
 }
 
 export default {
@@ -47,6 +57,9 @@ export default {
             renderer.shadowMap.enabled = rp.shadowEnabled;
             canvasDom.appendChild(renderer.domElement);
             renderer.render(scene, camera);
+
+            this.listenResize(canvasDom, camera, renderer);
+
             return {
                 scene,
                 camera,
@@ -66,67 +79,25 @@ export default {
             this.$refs.stats.appendChild(sd);
             return stats;
         },
-        initLight(type, params = {}) { // 光源类型，颜色，其余参数
-            const lights = {};
-
-            lights.ambient = () => { // 环境光光源
-                const defaults = {color: '#fff'};
-                const al = Object.assign(defaults, params);
-                const ambientLight = new THREE.AmbientLight();
-                assignment(ambientLight, al);
-                return ambientLight;
-            };
-
-            lights.point = () => { // 点光源
-                const defaults = {
-                    position: {x: 0, y: 0, z: 0},
-                    color: '#fff',
-                };
-                const pl = Object.assign(defaults, params);
-                const pointLight = new THREE.PointLight();
-                assignment(pointLight, pl);
-                return pointLight;
-            };
-
-            lights.spot = () => { // 聚光灯光源
-                const defaults = {
-                    position: {x: 0, y: 0, z: 0},
-                    color: '#fff',
-                };
-                const sl = Object.assign(defaults, params);
-                const spotLight = new THREE.SpotLight();
-                assignment(spotLight, sl);
-                return spotLight;
-            };
-
-            lights.directional = () => { // 平行光光源
-                const dl = Object.assign(defaults, params);
-                const directionalLight = new THREE.DirectionalLight(color);
-                directionalLight.position.set(dl.x, dl.y, dl.z);
-                return directionalLight;
-            };
-
-            if (typeof lights[type] === 'function') return lights[type].call(this);
+        initLight(type, params = {}, debug) { // 光源类型，颜色，其余参数
+            let light;
+            const constructor = `${type}Light`;
+            if (typeof THREE[constructor] === 'function') {
+                light = new THREE[constructor]();
+                assignment(light, params);
+            }
+            return light;
         },
-        initCube(params = {}) { // 创建块对象
-            const defaults = {
-                length: 5, width: 5, height: 5,
-                positionX: 0, positionY: 0, positionZ: 0,
-                rotationX: 0, rotationY: 0, rotationZ: 0,
-                material: 'Lambert',
-                color: '#fff',
-                castShadow: false,
-            };
-            const p = Object.assign(defaults, params);
-            const cubeGeometry = new THREE.CubeGeometry(p.length, p.width, p.height);
-            const Material = THREE[`Mesh${p.material}Material`];
-            if (typeof Material !== 'function') return null;
-            const cubeMaterial = new Material({color: p.color});
-            const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-            cube.position.set(p.positionX, p.positionY, p.positionZ);
-            cube.rotation.set(p.rotationX, p.rotationY, p.rotationZ);
-            cube.castShadow = p.castShadow;
-            return cube;
+        initMaterial(type, params = {}) {
+            let material;
+            const constructor = `${type}Material`;
+            if (typeof THREE[constructor] === 'function') {
+                material = new THREE[constructor]();
+                assignment(material, params);
+            }
+            return material;
+        },
+        initGeometry(material, params) {
         },
         v3(x, y, z) { // 创建 Vector3 对象
             return new THREE.Vector3(x, y, z);
@@ -143,6 +114,13 @@ export default {
                 renderer.setSize(W, H);
             }
             window.addEventListener('resize', onResize, false);
+        },
+        createMultiMaterialObject( geometry, materials) {
+            var group = new THREE.Group();
+            for ( var i = 0, l = materials.length; i < l; i ++ ) {
+                group.add( new THREE.Mesh( geometry, materials[ i ] ) );
+            }
+            return group;
         },
     },
 };

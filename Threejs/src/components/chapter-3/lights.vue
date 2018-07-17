@@ -72,25 +72,50 @@ export default {
             scene.add(point);
 
             //创建光源
-            const spotLight = this.initLight('spot', {
+            const spotLight = this.initLight('Spot', {
                 position: {x: -40, y: 60, z: -10},
                 color: '#fff',
                 castShadow: true,
+                shadow: {
+                    mapSize: {
+                        width: 2048,
+                        height: 2048,
+                    }
+                }
             });
-            spotLight.shadow.mapSize.width = 2048;
-            spotLight.shadow.mapSize.height = 2048;
             scene.add(spotLight);
 
-            const pointLight = this.initLight('point', {
+            const pointLight = this.initLight('Point', {
                 position: {x: 10, y: 10, z: 10},
                 color: '#ccffcc',
                 distance: 20,
             });
-            scene.add(pointLight);
+            // scene.add(pointLight);
+
+            const directionalLight = this.initLight('Directional', {
+                position: {x: -40, y: 60, z: -10},
+                castShadow: true,
+                shadow: {
+                    camera: {
+                        near: 2,
+                        far: 200,
+                        left: 50,
+                        right: -50,
+                        top: 50,
+                        bottom: -50,
+                    },
+                    mapSize: {
+                        width: 2048,
+                        height: 2048,
+                    },
+                },
+            });
+            console.log(directionalLight);
+            // scene.add(directionalLight);
 
             const ambientColor = '#0c0c0c';
-            const ambientLight = this.initLight('ambient', {color: ambientColor});
-            scene.add(ambientLight);
+            const ambientLight = this.initLight('Ambient', {color: ambientColor});
+            // scene.add(ambientLight);
 
             //创建GUI
             const controls = new function() {
