@@ -6,6 +6,7 @@ import Geometry from '@/components/chapter-2/geometries';
 import Lights from '@/components/chapter-3/lights';
 import Material from '@/components/chapter-4/material';
 import SeniorMaterial from '@/components/chapter-4/seniorMaterial';
+import Geometries from '@/components/chapter-5/geometry';
 
 Vue.use(Router)
 
@@ -35,6 +36,10 @@ export default new Router({
             path: '/chapter-4/seniorMaterial',
             name: 'SeniorMaterial',
             component: SeniorMaterial,
+        }, {
+            path: '/chapter-5/geometry',
+            name: 'Geometries',
+            component: Geometries,
         }
     ]
 })

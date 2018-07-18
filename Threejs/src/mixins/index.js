@@ -79,31 +79,44 @@ export default {
             this.$refs.stats.appendChild(sd);
             return stats;
         },
-        initLight(type, params = {}, debug) { // 光源类型，颜色，其余参数
+        initLight(type, params = {}) { // 光源类型，颜色，其余参数
             let light;
             const constructor = `${type}Light`;
-            if (typeof THREE[constructor] === 'function') {
-                light = new THREE[constructor]();
-                assignment(light, params);
+            if (typeof THREE[constructor] !== 'function') {
+                return console.warn(`THREE.${constructor} is not a constructor.`);
             }
+            light = new THREE[constructor]();
+            assignment(light, params);
             return light;
         },
         initMaterial(type, params = {}) {
             let material;
             const constructor = `${type}Material`;
-            if (typeof THREE[constructor] === 'function') {
-                material = new THREE[constructor]();
-                assignment(material, params);
+            if (typeof THREE[constructor] !== 'function') {
+                return console.warn(`THREE.${constructor} is not a constructor.`);
             }
+            material = new THREE[constructor]();
+            assignment(material, params);
             return material;
         },
-        initGeometry(material, params) {
+        initGeometry(type, ...params) {
+            let geometry;
+            const constructor = `${type}Geometry`;
+            if (typeof THREE[constructor] !== 'function') {
+                return console.warn(`THREE.${constructor} is not a constructor.`);
+            }
+            // const params = [].slice.call(arguments).slice(1); // ESLint 不支持 arguments 对象
+            geometry = new THREE[constructor](...params);
+            return geometry;
         },
         v3(x, y, z) { // 创建 Vector3 对象
             return new THREE.Vector3(x, y, z);
         },
         f3(p1, p2, p3) { // 创建 Face3 对象
             return new THREE.Face3(p1, p2, p3);
+        },
+        tc(color) { // 创建 Color 对象
+            return new THREE.Color(color);
         },
         listenResize(canvasDom, camera, renderer) { // 窗口自适应
             function onResize() {

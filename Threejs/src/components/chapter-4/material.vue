@@ -18,7 +18,7 @@ export default {
                 scene,
                 camera,
                 renderer
-            } = this.initBasics(this.$refs.canvas, {fov: 45, near: 10, position: {x: -20, y: 30, z: 40}}, {clearColor: 0xeeeeee, shadowEnabled: true});
+            } = this.initBasics(this.$refs.canvas, {fov: 45, position: {x: -20, y: 30, z: 40}}, {clearColor: 0xeeeeee, shadowEnabled: true});
 
             const stats = this.initStats();
             const axes = this.initAxes();
@@ -90,7 +90,38 @@ export default {
                     }
                 }
             }
-            scene.add(group);
+            // scene.add(group);
+
+            const lines = new THREE.Geometry();
+            const p1 = v3(-10, 10, 10);
+            const p2 = v3(10, -10, 10);
+            const p3 = v3(-10, -10, -10);
+            const c1 = new THREE.Color(0x444444);
+            const c2 = new THREE.Color(0xff0000);
+            const c3 = new THREE.Color(0x3333ff);
+            lines.vertices.push(p1, p2, p3, p1);
+            lines.colors.push(c1, c2, c3, c1);
+            // const lineMaterial = this.initMaterial('LineBasic', {
+            //     vertexColors: true,
+            //     linewidth: 20,
+            // })
+            // const lineMaterial = new THREE.LineBasicMaterial({
+            //     linewidth: 5,
+            //     vertexColors: true,
+            //     linejoin: 'round',
+            // });
+            // lines.computeLineDistances();
+            // THREE.Line.computeLineDistances()
+            const lineMaterial =  new THREE.LineDashedMaterial({
+                vertexColors: true,
+                color: 0xffffff,
+                dashSize: 3,
+                gapSize: 2,
+                scale: 2
+            });
+            const line = new THREE.Line(lines, lineMaterial);
+            line.computeLineDistances();
+            scene.add(line);
 
             // 光源
             const ambientLight = this.initLight('Ambient', {
@@ -119,9 +150,9 @@ export default {
             // });
             function renderScene() {
                 stats.update();
-                // group.rotation.x += 0.01;
-                // group.rotation.y += 0.01;
-                // group.rotation.z += 0.01;
+                line.rotation.x += 0.01;
+                line.rotation.y += 0.01;
+                line.rotation.z += 0.01;
                 sphere.rotation.y += 0.01;
 
                 requestAnimationFrame(renderScene);
