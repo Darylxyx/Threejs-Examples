@@ -6,11 +6,10 @@
 </template>
 <script>
 import TWEEN from 'tween.js';
-import { GUI } from 'dat.gui';
+// import { GUI } from 'dat.gui';
 import mixin from '../mixins/index';
 
 const PI = Math.PI;
-
 export default {
     mixins: [mixin],
     data() {
@@ -18,43 +17,51 @@ export default {
             scene: null,
             camera: null,
             renderer: null,
-            isAnimating: false
+            isAnimating: true
         };
     },
     methods: {
-        initWebGL() {
+        async initWebGL() {
             const {
                 scene,
                 camera,
                 renderer
-            } = this.initBasics(this.$refs.canvas, {position: {x: 0, y: 0, z: 300}}, {clearColor: 0x000000});
+            } = this.initBasics(this.$refs.canvas, {far: 100000, position: {x: 0, y: 0, z: 400}}, {clearColor: 0x000000});
             this.scene = scene;
             this.camera = camera;
             this.render = renderer;
+
+            // scene.fog = new THREE.FogExp2(0xffffff, 100);
+            scene.fog = new THREE.Fog(0xffffff, 0.015, 1000)
+
             // this.addAxes(scene);
 
-            const stats = this.initStats();
+            // const stats = this.initStats();
 
-            this.geom = this.addGeom();
+            await this.addGeom();
+            // this.geom = this.addGeom();
 
             const circle = this.addCircle();
 
             this.points = this.addPoints();
-            // console.log(points);
+            // console.log(this.points);
 
-            this.listenClick(camera, [circle], (target) => {
+            this.listenEvent('click', camera, [circle], (target) => {
                 this.movePoints();
             });
 
             setTimeout(() => {
                 this.animateStart();
+                setTimeout(() => {
+                    this.isAnimating = false;
+                }, 1500);
             }, 2000);
 
             // 动画
             const controls = this.addControls(camera);
             const clock = new THREE.Clock();
             const renderScene = () => {
-                stats.update();
+                // stats.update();
                 TWEEN.update();
                 this.points.rotation.y += 0.001;
                 const delta = clock.getDelta();
@@ -77,8 +84,11 @@ export default {
             });
         },
         addGeom() {
-            const geom = this.initGeometry('Sphere', 100, 30, 30);
-            return geom;
+            return new Promise((resolve, reject) => {
+                const geom = this.initGeometry('Sphere', 110, 30, 30);
+                this.geom = geom;
+                resolve(geom);
+            });
         },
         addCircle() {
             const material = this.initMaterial('MeshNormal', {visible: false});
@@ -181,6 +191,7 @@ export default {
                 rotateSpeed: 1.0,
                 zoomSpeed: 1.0,
                 panSpeed: 1.0,
+                // noZoom: true,
             });
             return controls;
         },

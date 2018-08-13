@@ -49,7 +49,7 @@ export default {
             camera.position.set(cp.position.x, cp.position.y, cp.position.z);
             camera.lookAt(scene.position);
             // 渲染器
-            const renderer = new THREE.WebGLRenderer();
+            const renderer = new THREE.WebGLRenderer({antialias: true});
             const rpDefault = {clearColor: 0xeeeeee, shadowEnabled: false}; // shadowEnabled: 是否开启阴影
             const rp = Object.assign(rpDefault, rendererParams);
             renderer.setSize(W, H);
@@ -69,14 +69,14 @@ export default {
         initAxes(length = 30) { // 创建坐标轴
             return new THREE.AxesHelper(length);
         },
-        initStats() { // 创建性能检测器
+        initStats(dom) { // 创建性能检测器
             const stats = new Stats();
             const sd = stats.domElement;
             stats.setMode(0);
             sd.style.position = 'absolute';
             sd.style.left = '15px';
             sd.style.top = '0';
-            this.$refs.stats.appendChild(sd);
+            dom.appendChild(sd);
             return stats;
         },
         initLight(type, params = {}) { // 光源类型，颜色，其余参数
@@ -103,13 +103,30 @@ export default {
             geometry = new THREE[constructor](...params);
             return geometry;
         },
+        initLine(pointsList, params = {}) { // 创建线
+            const lines = new THREE.Geometry();
+            pointsList.forEach((p) => {
+                lines.vertices.push(p);
+            });
+            const mat = new THREE.LineBasicMaterial(params);
+            const line = new THREE.Line(lines, mat);
+            return line;
+        },
+        initTarget(x, y, z) { // 创建目标点
+            const target = new THREE.Object3D();
+            target.position.set(x, y, z);
+            return target;
+        },
+        v2(x, y) { // 创建 Vector2 对象
+            return new THREE.Vector2(x, y);
+        },
         v3(x, y, z) { // 创建 Vector3 对象
             return new THREE.Vector3(x, y, z);
         },
         f3(p1, p2, p3) { // 创建 Face3 对象
             return new THREE.Face3(p1, p2, p3);
         },
-        tc(color) { // 创建 Color 对象
+        color(color) { // 创建 Color 对象
             return new THREE.Color(color);
         },
         listenResize(canvasDom, camera, renderer) { // 窗口自适应
@@ -123,16 +140,14 @@ export default {
             window.addEventListener('resize', onResize, false);
         },
         constructorCheck(target) { // 验证THREE对象下是否有指定构造器
-            let result;
+            let result = true;
             if (typeof THREE[target] !== 'function') {
                 console.warn(`THREE.${target} is not a constructor.`);
                 result = false;
-            } else {
-                result = true;
             }
             return result;
         },
-        createMultiMaterialObject( geometry, materials) { 
+        createMultiMaterialObject(geometry, materials) { 
             var group = new THREE.Group();
             for ( var i = 0, l = materials.length; i < l; i ++ ) {
                 group.add( new THREE.Mesh( geometry, materials[ i ] ) );
@@ -147,24 +162,83 @@ export default {
             assignment(control, params);
             return control;
         },
-        changeCenter(target, x, y, z) { // 设置旋转中心
-            const wrapper = new THREE.Object3D();
-            wrapper.add(target);
-            wrapper.position.set(0, 0, 0);
-            target.position.set(x, y, z);
-            return wrapper;
-        },
-        listenClick(camera, objList, callback) { // 监听click行为
+        listenEvent(eventName, camera, objList, callback) { // 监听鼠标&键盘行为
             function handleEvent(event) {
                 let vector = new THREE.Vector3((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
                 vector = vector.unproject(camera);
                 const raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
                 const intersects = raycaster.intersectObjects(objList);
-                if (intersects.length > 0) {
-                    callback && callback(intersects);
-                }
+                callback && callback(intersects);
             }
-            document.addEventListener('click', handleEvent, false);
+            document.addEventListener(eventName, handleEvent, false);
         },
+        loadTexture(path) { // 材质loader
+            return new THREE.TextureLoader().load(path);
+        },
+        createPoints(geom, matParam = {}, mapParam = []) { // 创建粒子云
+            const defaults = {
+                color: 0xffffff,
+                size: 1,
+                transparent: true,
+                blending: THREE.AdditiveBlending,
+                map: this.generateSprite(mapParam),
+            };
+            matParam = Object.assign({}, defaults, matParam);
+            const material = new THREE.PointsMaterial(matParam);
+            const cloud = new THREE.Points(geom, material);
+            cloud.sortParticles = true;
+            return cloud;
+        },
+        generateSprite(params) { // 粒子云材质 map 函数
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 32;
+            const context = canvas.getContext('2d');
+            const gradient = context.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2);
+            
+            const defaults = [{
+                pro: 0,
+                color: '#fff',
+            }, {
+                pro: 0.9,
+                color: 'rgba(255, 255, 255, 1)',
+            }, {
+                pro: 1,
+                color: '#000',
+            }];
+            const colorList = params.length ? params : defaults;
+            colorList.forEach((item) => {
+                gradient.addColorStop(item.pro, item.color);
+            });
+
+            context.fillStyle = gradient;
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            const texture = new THREE.Texture(canvas);
+            texture.needsUpdate = true;
+            return texture;
+        },
+        // textSprite(message, params = {}) {
+        //     const defaults = {
+        //         fontface: 'Arial',
+        //         fontsize: 16,
+        //         borderThickness: 4,
+        //         textColor: this.tc(0x000000),
+        //     };
+        //     params = Object.assign({}, defaults, params);
+        //     const canvas = document.createElement('canvas');
+        //     const context = canvas.getContext('2d');
+        //     context.font = "Bold " + params.fontsize + "px " + params.fontface;
+        //     canvas.width = 256;
+        //     canvas.height = 128;
+        //     context.lineWidth = params.borderThickness;
+        //     context.fillStyle = "rgba("+params.textColor.r+", "+params.textColor.g+", "+params.textColor.b+", 1.0)";
+        //     context.fillText(message, params.borderThickness, params.fontsize + params.borderThickness);
+        //     const texture = new THREE.Texture(canvas)
+        //     texture.needsUpdate = true;
+        //     const spriteMaterial = new THREE.SpriteMaterial({map: texture});
+        //     const sprite = new THREE.Sprite(spriteMaterial);
+        //     sprite.scale.set(0.5 * params.fontsize, 0.25 * params.fontsize, 0.75 * params.fontsize);
+        //     return sprite;
+        // }
     },
 };
