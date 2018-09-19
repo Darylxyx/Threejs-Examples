@@ -10,7 +10,7 @@ export default {
             radian = Number(radian);
             return radian * 180 / PI;
         },
-        lglt2xyx(lng, lat, r) { //  经纬度转三维坐标
+        lglt2xyx(lng, lat, r) { // 经纬度转三维坐标
             lng = this.deg2rad(lng) + PI / 2;
             lat = this.deg2rad(lat);
             const x = r * cos(lat) * sin(lng);

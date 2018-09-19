@@ -1,8 +1,10 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Points from '@/components/Points';
-import Histogram from '@/components/Histogram';
-import Maps from '@/components/Map';
+import Points from '@/view/Points';
+import Histogram from '@/view/Histogram';
+import Maps from '@/view/Map';
+import Shader from '@/view/Shader';
+import PieChart from '@/view/PieChart';
 
 Vue.use(Router)
 
@@ -26,6 +28,16 @@ export default new Router({
             path: '/map',
             name: 'Map',
             component: Maps,
+        },
+        {
+            path: '/shader',
+            name: 'shader',
+            component: Shader,
+        },
+        {
+            path: '/pie',
+            name: 'pie',
+            component: PieChart,
         }
     ]
 })

@@ -7,11 +7,12 @@
 <script>
 import TWEEN from 'tween.js';
 // import { GUI } from 'dat.gui';
-import mixin from '../mixins/index';
+// import mixin from '../mixins/index';
+import threeMixin from '../mixins/threeMixin';
 
 const PI = Math.PI;
 export default {
-    mixins: [mixin],
+    mixins: [threeMixin],
     data() {
         return {
             scene: null,
@@ -26,13 +27,13 @@ export default {
                 scene,
                 camera,
                 renderer
-            } = this.initBasics(this.$refs.canvas, {far: 100000, position: {x: 0, y: 0, z: 400}}, {clearColor: 0x000000});
+            } = this.initBasics(this.$refs.canvas, {far: 1000, position: {x: 0, y: 0, z: 400}}, {clearColor: 0x000000});
             this.scene = scene;
             this.camera = camera;
             this.render = renderer;
 
             // scene.fog = new THREE.FogExp2(0xffffff, 100);
-            scene.fog = new THREE.Fog(0xffffff, 0.015, 1000)
+            scene.fog = new THREE.Fog(0xffffff, 0.015, 1000);
 
             // this.addAxes(scene);
 
@@ -115,7 +116,7 @@ export default {
                 points.vertices.push(particle);
                 points.vertices[i].tween = this.tweenInit(particle, target);
             }
-            const cloud = this.createPointCloud(points);
+            const cloud = this.createPoints(points);
             cloud.rotation.set(PI/6, 0, PI/6);
             this.scene.add(cloud);
             return cloud;
@@ -149,39 +150,38 @@ export default {
             tween.delay(delay);
             return tween;
         },
-        createPointCloud(geom) {
-            var material = new THREE.PointsMaterial({
-                color: 0xffffff,
-                size: 3,
-                transparent: true,
-                blending: THREE.AdditiveBlending,
-                map: this.generateSprite(),
-                fog: true,
-            });
+        // createPointCloud(geom) {
+        //     var material = new THREE.PointsMaterial({
+        //         color: 0xffffff,
+        //         size: 3,
+        //         transparent: true,
+        //         blending: THREE.AdditiveBlending,
+        //         map: this.generateSprite(),
+        //         fog: true,
+        //     });
+        //     console.log(material);
+        //     var cloud = new THREE.Points(geom, material);
+        //     cloud.sortParticles = true;
+        //     return cloud;
+        // },
+        // generateSprite() {
+        //     var canvas = document.createElement('canvas');
+        //     canvas.width = 32;
+        //     canvas.height = 32;
 
-            var cloud = new THREE.Points(geom, material);
-            cloud.sortParticles = true;
-            return cloud;
-        },
-        generateSprite() {
-            var canvas = document.createElement('canvas');
-            canvas.width = 32;
-            canvas.height = 32;
+        //     var context = canvas.getContext('2d');
+        //     var gradient = context.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2);
+        //     gradient.addColorStop(0, 'rgba(255,255,255,1)');
+        //     gradient.addColorStop(0.9, 'rgba(255,255,255,1)');
+        //     gradient.addColorStop(1, 'rgba(0,0,0,1)');
 
-            var context = canvas.getContext('2d');
-            var gradient = context.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2);
-            gradient.addColorStop(0, 'rgba(255,255,255,1)');
-            gradient.addColorStop(0.2, 'rgba(255,255,255,1)');
-            gradient.addColorStop(0.9, 'rgba(255,255,255,1)');
-            gradient.addColorStop(1, 'rgba(0,0,0,1)');
+        //     context.fillStyle = gradient;
+        //     context.fillRect(0, 0, canvas.width, canvas.height);
 
-            context.fillStyle = gradient;
-            context.fillRect(0, 0, canvas.width, canvas.height);
-
-            var texture = new THREE.Texture(canvas);
-            texture.needsUpdate = true;
-            return texture;
-        },
+        //     var texture = new THREE.Texture(canvas);
+        //     texture.needsUpdate = true;
+        //     return texture;
+        // },
         addAxes(scene) {
             const axes = this.initAxes(50);
             scene.add(axes);
