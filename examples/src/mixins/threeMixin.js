@@ -1,4 +1,5 @@
 import Stats from 'stats.js';
+import TWEEN from 'tween.js';
 import 'three/examples/js/controls/TrackballControls';
 
 const THREE = window.THREE;
@@ -44,13 +45,14 @@ export default {
                 far: 1000,
                 aspect: W / H,
                 position: { x: -30, y: 40, z: 30 },
+                antialias: false,
             };
             const cp = Object.assign(cpDefault, cameraParams);
             const camera = new THREE.PerspectiveCamera(cp.fov, cp.aspect, cp.near, cp.far);
             camera.position.set(cp.position.x, cp.position.y, cp.position.z);
             camera.lookAt(scene.position);
             // 渲染器
-            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            const renderer = new THREE.WebGLRenderer({ antialias: cp.antialias });
             const rpDefault = { clearColor: 0xeeeeee, shadowEnabled: false }; // shadowEnabled: 是否开启阴影
             const rp = Object.assign(rpDefault, rendererParams);
             renderer.setSize(W, H);
@@ -93,11 +95,6 @@ export default {
             const material = new THREE[constructor]();
             assignment(material, params);
             return material;
-        },
-        initTestMaterial() {
-            const normal = this.initMaterial('MeshNormal');
-            const wireframe = this.initMaterial('MeshBasic', { wireframe: true });
-            return [normal, wireframe];
         },
         initGeometry(type, ...params) { // 创建几何图形
             const constructor = `${type}Geometry`;
@@ -180,8 +177,9 @@ export default {
         createPoints(geom, matParam = {}, mapParam = []) { // 创建粒子云
             const defaults = {
                 color: 0xffffff,
-                size: 3,
+                size: 1,
                 map: this.generateSprite(mapParam),
+                transparent: true,
             };
             matParam = Object.assign({}, defaults, matParam);
             if (matParam.map) matParam.blending = THREE.AdditiveBlending;
@@ -217,6 +215,36 @@ export default {
             texture.needsUpdate = true;
             return texture;
         },
+        bindTwinkle(target, params = {}) { // 添加闪烁动画
+            const opaSrc = { opacity: 0 };
+            const defaults = {
+                inTime: 500,
+                duration: 0,
+                outTime: 1000,
+                delay: Math.floor(Math.random() * 3000),
+            };
+            params = Object.assign({}, defaults, params);
+
+            function onUpdate() {
+                if (target.material) target.material.opacity = this.opacity;
+            }
+
+            const tween = new TWEEN.Tween(opaSrc)
+                .to({ opacity: 1 }, params.inTime)
+                .easing(TWEEN.Easing.Sinusoidal.InOut)
+                .delay(params.delay)
+                .onUpdate(onUpdate);
+            const tweenBack = new TWEEN.Tween(opaSrc)
+                .to({ opacity: 0 }, params.outTime)
+                .easing(TWEEN.Easing.Sinusoidal.InOut)
+                .delay(params.duration)
+                .onUpdate(onUpdate);
+
+            tween.chain(tweenBack);
+            tweenBack.chain(tween);
+            target.tween = tween;
+            target.tweenBack = tweenBack;
+        },
         textSprite(message, params = {}) {
             const defaults = {
                 canvasWidth: 128,
@@ -233,7 +261,7 @@ export default {
             canvas.width = params.canvasWidth;
             canvas.height = params.canvasHeight;
             canvas.style.width = `${params.canvasWidth / 2}px`;
-            canvas.style.height = `${params.canvasHeight / 2}px`;;
+            canvas.style.height = `${params.canvasHeight / 2}px`;
             const context = canvas.getContext('2d');
             context.font = `${params.fontSize}px ${params.fontFace}`;
 
@@ -243,12 +271,12 @@ export default {
             context.textAlign = 'center';
             context.fillText(message, canvas.width / 2, canvas.height / 2 + (params.fontSize / 2.5));
 
-            const texture = new THREE.Texture(canvas)
+            const texture = new THREE.Texture(canvas);
             texture.needsUpdate = true;
-            const spriteMaterial = new THREE.SpriteMaterial({map: texture});
+            const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
             const sprite = new THREE.Sprite(spriteMaterial);
             sprite.scale.set(params.scale, params.scale, params.scale);
             return sprite;
-        }
+        },
     },
 };

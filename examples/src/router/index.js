@@ -2,7 +2,8 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Points from '@/view/Points';
 import Histogram from '@/view/Histogram';
-import Maps from '@/view/Map';
+// import Maps from '@/view/Map';
+import Maps from '@/view/Map3d';
 import Shader from '@/view/Shader';
 import PieChart from '@/view/PieChart';
 

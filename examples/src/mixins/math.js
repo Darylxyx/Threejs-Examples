@@ -18,5 +18,18 @@ export default {
             const z = r * cos(lat) * cos(lng);
             return {x, y, z};
         },
-    }
+        splitArray(arr, num) { // 将数组随便拆分为指定个数
+            const max = arr.length;
+            const len = Math.ceil(max / num);
+            const result = [];
+            arr.sort(() => {
+                const diff = Math.random() - Math.random();
+                return diff;
+            });
+            for (let i = 0; i < max; i += len) {
+                result.push(arr.slice(i, i + len));
+            }
+            return result;
+        },
+    },
 };

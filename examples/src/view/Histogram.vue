@@ -78,13 +78,13 @@ export default {
                 });
                 const mainColumn = this.initGeometry('Box', 1.4, item.main, 2);
                 const mainMesh = new THREE.Mesh(mainColumn, mainMat);
-                mainMesh.selfValue = item.main;
+                mainMesh.selfValue = Math.floor(item.main);
                 mainMesh.position.set(index * 2, item.main / 2, 0);
                 mainMesh.castShadow = true;
                 mainMesh.receiveShadow = true;
                 const viceColumn = this.initGeometry('Box', 1.4, item.vice, 2);
                 const viceMesh = new THREE.Mesh(viceColumn, viceMat);
-                viceMesh.selfValue = item.vice;
+                viceMesh.selfValue = Math.floor(item.vice);
                 viceMesh.position.set(index * 2, item.vice / 2, -3);
                 viceMesh.castShadow = true;
                 viceMesh.receiveShadow = true;
