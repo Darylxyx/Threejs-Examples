@@ -79,6 +79,133 @@
                 <p class='desc'>{{item.desc}}</p>
             </div>
         </div>
+        <div class='card-group'>
+            <div class='card card-blue card-stop'>
+                <span class='card-title'>园区停靠</span>
+                <p class='con'>停靠位置<span>B04</span></p>
+                <hr class='card-t' />
+                <hr class='card-l' />
+                <hr class='card-r' />
+                <hr class='card-b' />
+                <hr class='card-br' />
+            </div>
+            <div class='card card-blue card-load'>
+                <span class='card-title'>实时装载...</span>
+                <p class='con'>14 t<span>50 m³</span></p>
+                <hr class='card-t' />
+                <hr class='card-l' />
+                <hr class='card-r' />
+                <hr class='card-b' />
+                <hr class='card-br' />
+            </div>
+            <div class='card card-blue card-loadtime'>
+                <span class='card-title'>装载时长</span>
+                <p class='con'>00:32:09</p>
+                <hr class='card-t' />
+                <hr class='card-l' />
+                <hr class='card-r' />
+                <hr class='card-b' />
+                <hr class='card-br' />
+            </div>
+            <div class='card card-red card-unload'>
+                <span class='card-title'>实时卸载...</span>
+                <p class='con'>13 t<span>47 m³</span></p>
+                <hr class='card-t' />
+                <hr class='card-l' />
+                <hr class='card-r' />
+                <hr class='card-b' />
+                <hr class='card-br' />
+            </div>
+            <div class='card card-red card-unloadtime'>
+                <span class='card-title'>卸货时长</span>
+                <p class='con'>00:24:32</p>
+                <hr class='card-t' />
+                <hr class='card-l' />
+                <hr class='card-r' />
+                <hr class='card-b' />
+                <hr class='card-br' />
+            </div>
+            <div class='card card-blue card-temp'>
+                <span class='card-title'>车厢温度</span>
+                <div class='con'>
+                    <img src='static/img/icon10.png' />
+                    <hr class='split' />
+                    <div>
+                        <p>压缩机<span>打开</span></p>
+                        <p>温度<span>正常</span></p>
+                    </div>
+                </div>
+                <hr class='card-t' />
+                <hr class='card-l' />
+                <hr class='card-r' />
+                <hr class='card-b' />
+                <hr class='card-br' />
+            </div>
+            <div class='card card-blue card-weight'>
+                <span class='card-title'>挂车载重</span>
+                <div class='con'>
+                    <img src='static/img/icon11.png' />
+                    <hr class='split' />
+                    <div>
+                        <p>体积<span>50 m³</span></p>
+                        <p>载重<span>14 t</span></p>
+                    </div>
+                </div>
+                <hr class='card-t' />
+                <hr class='card-l' />
+                <hr class='card-r' />
+                <hr class='card-b' />
+                <hr class='card-br' />
+            </div>
+            <div class='card card-red card-wheel'>
+                <span class='card-title'>胎温胎压</span>
+                <div class='con'>
+                    <img src='static/img/icon12.png' />
+                    <hr class='split' />
+                    <div>
+                        <p>胎温<span>正常</span></p>
+                        <p>胎压<span>过高</span></p>
+                    </div>
+                </div>
+                <hr class='card-t' />
+                <hr class='card-l' />
+                <hr class='card-r' />
+                <hr class='card-b' />
+                <hr class='card-br' />
+            </div>
+            <div class='card card-red card-wheelalert'>
+                <span class='card-title'>事件报警</span>
+                <div class='con'>
+                    <img src='static/img/icon12.png' />
+                    <hr class='split' />
+                    <div>
+                        <p>12:15:32</p>
+                        <p>胎压报警</p>
+                    </div>
+                </div>
+                <hr class='card-t' />
+                <hr class='card-l' />
+                <hr class='card-r' />
+                <hr class='card-b' />
+                <hr class='card-br' />
+            </div>
+            <div class='card card-red card-rollalert'>
+                <span class='card-title'>事件报警</span>
+                <div class='con'>
+                    <img src='static/img/icon9.png' />
+                    <hr class='split' />
+                    <div>
+                        <p>12:32:54</p>
+                        <p>防侧翻保护</p>
+                    </div>
+                </div>
+                <hr class='card-t' />
+                <hr class='card-l' />
+                <hr class='card-r' />
+                <hr class='card-b' />
+                <hr class='card-br' />
+            </div>
+        </div>
     </div>
 </template>
 
@@ -139,6 +266,275 @@ export default {
 @C0: #C7CFEE;
 @C1: #747EA5;
 @C2: #5865B5;
+@C3: #22BBF2;
+@C4: #ED18CC;
+
+.card-group {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+/*园区停靠*/
+.card-stop {
+    top: 10%;
+    left: 14%;
+    .con {
+        font-size: .3rem;
+        color: @C1;
+        span {
+            margin-left: .23rem;
+            color: @C3;
+        }
+    }
+}
+
+/*实时装载*/
+.card-load {
+    top: 25%;
+    left: 14%;
+    .con {
+        font-size: .3rem;
+        color: @C3;
+        span {
+            margin-left: .73rem;
+        }
+    }
+}
+
+/*装载时长*/
+.card-loadtime {
+    top: 40%;
+    left: 14%;
+    .con {
+        font-size: .46rem;
+        color: @C3;
+    }
+}
+
+/*实时卸载*/
+.card-unload {
+    top: 55%;
+    left: 14%;
+    .con {
+        font-size: .3rem;
+        color: @C4;
+        span {
+            margin-left: .73rem;
+        }
+    }
+}
+
+/*卸货时长*/
+.card-unloadtime {
+    top: 70%;
+    left: 14%;
+    .con {
+        font-size: .46rem;
+        color: @C4;
+    }
+}
+
+/*车厢温度*/
+.card-temp {
+    top: 10%;
+    right: 20%;
+    .con {
+        img {
+            width: .7rem;
+            left: .14rem;
+            top: .2rem;
+        }
+        p {
+            font-size: .22rem;
+            color: @C1;
+            margin-bottom: .15rem;
+            &:last-child {
+                margin-bottom: 0;
+            }
+            span {
+                color: @C3;
+                margin-left: .2rem;
+            }
+        }
+    }
+}
+
+/*挂车载重*/
+.card-weight {
+    top: 25%;
+    right: 20%;
+    .con {
+        img {
+            width: .8rem;
+            left: .1rem;
+            top: .2rem;
+        }
+        p {
+            font-size: .22rem;
+            color: @C1;
+            margin-bottom: .15rem;
+            &:last-child {
+                margin-bottom: 0;
+            }
+            span {
+                color: @C3;
+                margin-left: .2rem;
+            }
+        }
+    }
+}
+
+/*胎温胎压*/
+.card-wheel {
+    top: 40%;
+    right: 20%;
+    .con {
+        img {
+            width: .65rem;
+            left: .17rem;
+            top: .25rem;
+        }
+        p {
+            font-size: .22rem;
+            color: @C1;
+            margin-bottom: .15rem;
+            &:last-child {
+                margin-bottom: 0;
+                span {
+                    color: @C4;
+                }
+            }
+            span {
+                color: @C3;
+                margin-left: .2rem;
+            }
+        }
+    }
+}
+
+/*胎压报警*/
+.card-wheelalert {
+    top: 55%;
+    right: 20%;
+    img {
+        width: .65rem;
+        left: .17rem;
+        top: .25rem;
+    }
+    .con {
+        p {
+            color: @C1;
+            font-size: .22rem;
+            margin-bottom: .15rem;
+            &:last-child {
+                color: @C4;
+                margin-bottom: 0;
+            }
+        }
+    }
+}
+
+/*防侧翻保护*/
+.card-rollalert {
+    top: 70%;
+    right: 20%;
+    img {
+        width: .65rem;
+        left: .17rem;
+        top: .25rem;
+    }
+    .con {
+        p {
+            color: @C1;
+            font-size: .22rem;
+            margin-bottom: .15rem;
+            &:last-child {
+                color: @C4;
+                margin-bottom: 0;
+            }
+        }
+    }
+}
+
+.card {
+    display: flex;
+    align-items: center;
+    padding: 0 .15rem;
+    line-height: 1;
+    position: absolute;
+    width: 2.8rem;
+    height: 1.1rem;
+    &-title {
+        line-height: 1;
+        font-size: .18rem;
+        position: absolute;
+        top: -.09rem;
+        left: 0;
+    }
+    hr {
+        position: absolute;
+        border: none;
+        opacity: 0.3;
+    }
+    &-t {
+        width: 62%;
+        height: 2px;
+        top: 0;
+        right: 0;
+    }
+    &-l {
+        width: 2px;
+        height: 80%;
+        left: 0;
+        bottom: 0;
+    }
+    &-r {
+        width: 2px;
+        height: 0.8rem;
+        top: 0;
+        right: 0;
+    }
+    &-b {
+        width: 2.5rem;
+        height: 2px;
+        bottom: 0;
+        left: 0;
+    }
+    &-br {
+        width: 0.42426rem;
+        height: 2px;
+        transform: rotate(-45deg);
+        right: -4px;
+        bottom: 0.14rem;
+    }
+    .con {
+        display: flex;
+        img {
+            position: absolute;
+        }
+        .split {
+            width: 2px;
+            height: .6rem;
+            margin: 0 .3rem 0 .8rem;
+            position: relative;
+        }
+    }
+}
+
+.card-blue {
+    color: @C3;
+    hr {
+        background: @C3;
+    }
+}
+
+.card-red {
+    color: @C4;
+    hr {
+        background: @C4;
+    }
+}
 
 .board {
     width: 100%;
