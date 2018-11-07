@@ -33,19 +33,23 @@
 			animate();
 			function init( texture ) {
 
-				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 100000 );
 				camera.position.set(0, 0, 1);
 				scene = new THREE.Scene();
 
 				controls = new THREE.OrbitControls( camera );
-				controls.minDistance = 300;
-				controls.maxDistance = 500;
+				console.log(controls);
+				controls.zoomSpeed = 3;
+				// controls.minDistance = 300;
+				// controls.maxDistance = 500;
 
 				var texture = textureLoader.load('./src/2294472375_24a3b8ef46_o.jpg');
 
-				var mesh = new THREE.Mesh( new THREE.SphereBufferGeometry(500, 32, 32), 
-					new THREE.MeshBasicMaterial( { map: texture } ) );
-				mesh.scale.x = -1;
+				var mesh = new THREE.Mesh( new THREE.SphereGeometry(500, 32, 32), 
+					new THREE.MeshBasicMaterial( { map: texture, side: THREE.DoubleSide } ) 
+					// new THREE.MeshNormalMaterial()
+				);
+				// mesh.scale.x = -1;
 				scene.add( mesh );
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );

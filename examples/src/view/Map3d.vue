@@ -19,7 +19,6 @@ const radius = 100;
 let globalDirec = true;
 const clock = new THREE.Clock();
 
-let logoGroup = new THREE.Group(); // LOGO组
 const mainGroup = new THREE.Group(); // 顶级组
 const lineGroup = new THREE.Group(); // 地图边界线组
 const sphereGroup = new THREE.Group(); // 地球组
@@ -159,7 +158,7 @@ export default {
             const control = this.addControl();
             console.log(clock);
 
-            // this.addAxes();
+            this.addAxes();
 
             this.addLight(); // 光源
 
@@ -176,7 +175,6 @@ export default {
                 stats.update();
                 const delta = clock.getDelta();
                 control.update(delta);
-                // if (isLoading) this.logoAnimate();
                 this.globalAnimate();
                 // this.scanAnimate();
                 TWEEN.update();
@@ -234,7 +232,7 @@ export default {
             const geom = this.initGeometry('Sphere', radius, 40, 40);
             const map = this.loadTexture(require('../assets/img/world2.png'));
             // const normal = this.loadTexture(require('../../assets/img/EarthNormal.png'));
-            const mat = this.initMaterial('MeshPhong', { color: 0x192452 }); // 0x192452
+            const mat = this.initMaterial('MeshPhong'); // 0x192452
             mat.map = map;
             // mat.normalMap = normal;
             // mat.normalScale.set(1, -2);
@@ -415,11 +413,11 @@ export default {
                 pro: 1,
                 color: 'rgba(0,0,0,1)',
             }];
-            let pointSize = 0.1;
+            let pointSize = 0.2;
             if (rank < 50) {
                 pointSize = 0.3;
             } else if (rank >= 50 && rank < 200) {
-                pointSize = 0.2;
+                pointSize = 0.25;
             }
             const points = this.createPoints(pointsGeom, {
                 color: 0xffffff,

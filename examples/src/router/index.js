@@ -6,6 +6,7 @@ import Histogram from '@/view/Histogram';
 import Maps from '@/view/Map3d';
 import Shader from '@/view/Shader';
 import PieChart from '@/view/PieChart';
+import Trailer from '@/view/Trailer';
 
 Vue.use(Router)
 
@@ -39,6 +40,11 @@ export default new Router({
             path: '/pie',
             name: 'pie',
             component: PieChart,
+        },
+        {
+            path: '/trailer',
+            name: 'trailer',
+            component: Trailer,
         }
     ]
 })

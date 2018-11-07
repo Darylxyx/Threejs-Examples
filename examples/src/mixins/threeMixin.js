@@ -77,7 +77,7 @@ export default {
             const sd = stats.domElement;
             stats.setMode(0);
             sd.style.position = 'absolute';
-            sd.style.left = '15px';
+            sd.style.left = '0';
             sd.style.top = '0';
             dom.appendChild(sd);
             return stats;
