@@ -103,13 +103,19 @@ export default {
             const geometry = new THREE[constructor](...params);
             return geometry;
         },
-        initLine(pointsList, params = {}) { // 创建线
+        initLine(pointsList, params = {}, isDashed) { // 创建线
             const lines = new THREE.Geometry();
             pointsList.forEach((p) => {
                 lines.vertices.push(p);
             });
-            const mat = new THREE.LineBasicMaterial(params);
+            let mat;
+            if (isDashed) {
+                mat = new THREE.LineDashedMaterial(params);
+            } else {
+                mat = new THREE.LineBasicMaterial(params);
+            }
             const line = new THREE.Line(lines, mat);
+            if (isDashed) line.computeLineDistances();
             return line;
         },
         initTarget(x, y, z) { // 创建目标点

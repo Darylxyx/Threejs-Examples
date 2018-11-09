@@ -1,7 +1,7 @@
 <template>
     <div class='container'>
         <div ref='stats'></div>
-        <board></board>
+        <!-- <board></board> -->
         <div ref='canvas' id='WebGL-output'></div>
     </div>
 </template>
@@ -12,6 +12,8 @@ import board from '../components/board';
 import mixin from '../mixins/threeMixin.js';
 import animate from '../mixins/animateList.js';
 import truck from '../mixins/createTruck.js';
+import park from '../mixins/createPark.js';
+import curve from '../mixins/createCurve.js';
 
 const PI = Math.PI;
 const cos = Math.cos;
@@ -24,11 +26,14 @@ const carGroup = new THREE.Group();
 const buildingGroup = new THREE.Group();
 
 export default {
-    mixins: [mixin, animate, truck],
+    mixins: [mixin, animate, truck, park, curve],
     data: () => ({
         PI: Math.PI,
+        sin: Math.sin,
+        cos: Math.cos,
         mainGroup: new THREE.Group(),
         truckGroup: new THREE.Group(),
+        parkGroup: new THREE.Group(),
     }),
     methods: {
         initWebGL() {
@@ -64,21 +69,37 @@ export default {
         },
         addObject() { // 添加对象
             this.addAxes();
-            // this.addGround();
-            this.createTruck();
+            // this.createTruck();
+            // 起点
+            const start = this.createStart();
+            start.position.x = - 80;
+            mainGroup.add(start);
+            // 装货点
+            const loadPark = this.createPark();
+            loadPark.position.set(0, 0, 80);
+            loadPark.rotation.y = PI;
+            mainGroup.add(loadPark);
+            // 卸货点
+            const unloadPark = this.createPark();
+            unloadPark.position.set(0, 0, -80);
+            mainGroup.add(unloadPark);
+            // 创建弯道
+            const curve = this.createCurve();
+            mainGroup.add(curve);
+
             carGroup.add(this.createCar());
             carGroup.position.set(-45, 0.95, -47);
             carGroup.rotation.y = - PI / 2;
             mainGroup.add(carGroup);
-            this.addRoad();
-            this.addBuilding();
         },
-        addGround() { // 地面系
-            const geom = this.initGeometry('Plane', 1000, 1000, 1, 1);
-            const mat = this.initMaterial('MeshNormal');
-            const mesh = new THREE.Mesh(geom, mat);
-            mesh.rotation.x = - PI / 2;
-            mainGroup.add(mesh);
+        createStart() { // 创建始发站
+            const startGeom = this.initGeometry('Plane', 32, 20);
+            const startMat = this.initMaterial('MeshBasic', {
+                color: 0x1E2642,
+            });
+            const start = new THREE.Mesh(startGeom, startMat);
+            start.rotation.x = - PI / 2;
+            return start;
         },
         createCar() { // 挂车系
             const carGroup = new THREE.Group();
