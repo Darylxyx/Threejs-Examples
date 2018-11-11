@@ -4,7 +4,7 @@ export default {
             const params = {
                 stationWidth: 32,
                 stationLength: 14,
-                stationHeight: 3,
+                stationHeight: 1,
                 stationOffset: 4.8, // 站台间隔
                 spaceWidth: 2.8,
                 spaceLength: 8,

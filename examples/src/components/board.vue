@@ -1,5 +1,8 @@
 <template>
     <div class='board'>
+        <div class='title-bar'>
+            <p>{{title}}</p>
+        </div>
         <div class='left-bar'>
             <div v-for='item in leftList' class='left-sec'>
                 <img class='icon' :src='item.icon' />
@@ -79,8 +82,8 @@
                 <p class='desc'>{{item.desc}}</p>
             </div>
         </div>
-        <div v-if='false' class='card-group'>
-            <div class='card card-blue card-stop'>
+        <div class='card-group'>
+            <div :class='{"card-active": actCardList.indexOf("stop") > -1 }' class='card card-blue card-stop'>
                 <span class='card-title'>园区停靠</span>
                 <p class='con'>停靠位置<span>B04</span></p>
                 <hr class='card-t' />
@@ -89,7 +92,7 @@
                 <hr class='card-b' />
                 <hr class='card-br' />
             </div>
-            <div class='card card-blue card-load'>
+            <div :class='{"card-active": actCardList.indexOf("load") > -1 }' class='card card-blue card-load'>
                 <span class='card-title'>实时装载...</span>
                 <p class='con'>14 t<span>50 m³</span></p>
                 <hr class='card-t' />
@@ -98,7 +101,7 @@
                 <hr class='card-b' />
                 <hr class='card-br' />
             </div>
-            <div class='card card-blue card-loadtime'>
+            <div :class='{"card-active": actCardList.indexOf("loadtime") > -1 }' class='card card-blue card-loadtime'>
                 <span class='card-title'>装载时长</span>
                 <p class='con'>00:32:09</p>
                 <hr class='card-t' />
@@ -107,7 +110,7 @@
                 <hr class='card-b' />
                 <hr class='card-br' />
             </div>
-            <div class='card card-red card-unload'>
+            <div :class='{"card-active": actCardList.indexOf("unload") > -1 }' class='card card-red card-unload'>
                 <span class='card-title'>实时卸载...</span>
                 <p class='con'>13 t<span>47 m³</span></p>
                 <hr class='card-t' />
@@ -116,7 +119,7 @@
                 <hr class='card-b' />
                 <hr class='card-br' />
             </div>
-            <div class='card card-red card-unloadtime'>
+            <div :class='{"card-active": actCardList.indexOf("unloadtime") > -1 }' class='card card-red card-unloadtime'>
                 <span class='card-title'>卸货时长</span>
                 <p class='con'>00:24:32</p>
                 <hr class='card-t' />
@@ -125,7 +128,7 @@
                 <hr class='card-b' />
                 <hr class='card-br' />
             </div>
-            <div class='card card-blue card-temp'>
+            <div :class='{"card-active": actCardList.indexOf("temp") > -1 }' class='card card-blue card-temp'>
                 <span class='card-title'>车厢温度</span>
                 <div class='con'>
                     <img src='static/img/icon10.png' />
@@ -141,7 +144,7 @@
                 <hr class='card-b' />
                 <hr class='card-br' />
             </div>
-            <div class='card card-blue card-weight'>
+            <div :class='{"card-active": actCardList.indexOf("weight") > -1 }' class='card card-blue card-weight'>
                 <span class='card-title'>挂车载重</span>
                 <div class='con'>
                     <img src='static/img/icon11.png' />
@@ -157,7 +160,7 @@
                 <hr class='card-b' />
                 <hr class='card-br' />
             </div>
-            <div class='card card-red card-wheel'>
+            <div :class='{"card-active": actCardList.indexOf("wheel") > -1 }' class='card card-red card-wheel'>
                 <span class='card-title'>胎温胎压</span>
                 <div class='con'>
                     <img src='static/img/icon12.png' />
@@ -173,7 +176,7 @@
                 <hr class='card-b' />
                 <hr class='card-br' />
             </div>
-            <div class='card card-red card-wheelalert'>
+            <div :class='{"card-active": actCardList.indexOf("wheelalert") > -1 }' class='card card-red card-wheelalert'>
                 <span class='card-title'>事件报警</span>
                 <div class='con'>
                     <img src='static/img/icon12.png' />
@@ -189,7 +192,7 @@
                 <hr class='card-b' />
                 <hr class='card-br' />
             </div>
-            <div class='card card-red card-rollalert'>
+            <div :class='{"card-active": actCardList.indexOf("rollalert") > -1 }' class='card card-red card-rollalert'>
                 <span class='card-title'>事件报警</span>
                 <div class='con'>
                     <img src='static/img/icon9.png' />
@@ -211,6 +214,14 @@
 
 <script>
 export default {
+    computed: { 
+        title() {
+            return this.$store.state.title;
+        },
+        actCardList() {
+            return this.$store.state.actCardList;
+        },
+    },
     data: () => ({
         leftList: [{
             icon: 'static/img/icon1.png',
@@ -259,6 +270,9 @@ export default {
             desc: '停靠场站',
         }],
     }),
+    // mounted() {
+    //     console.log(this.$store.state.);
+    // },
 };
 </script>
 
@@ -277,8 +291,8 @@ export default {
 
 /*园区停靠*/
 .card-stop {
-    top: 10%;
-    left: 14%;
+    bottom: 30%;
+    right: 30%;
     .con {
         font-size: .3rem;
         color: @C1;
@@ -291,8 +305,8 @@ export default {
 
 /*实时装载*/
 .card-load {
-    top: 25%;
-    left: 14%;
+    top: 20%;
+    right: 20%;
     .con {
         font-size: .3rem;
         color: @C3;
@@ -304,8 +318,8 @@ export default {
 
 /*装载时长*/
 .card-loadtime {
-    top: 40%;
-    left: 14%;
+    top: 45%;
+    right: 20%;
     .con {
         font-size: .46rem;
         color: @C3;
@@ -314,8 +328,8 @@ export default {
 
 /*实时卸载*/
 .card-unload {
-    top: 55%;
-    left: 14%;
+    top: 20%;
+    right: 20%;
     .con {
         font-size: .3rem;
         color: @C4;
@@ -327,8 +341,8 @@ export default {
 
 /*卸货时长*/
 .card-unloadtime {
-    top: 70%;
-    left: 14%;
+    top: 45%;
+    right: 20%;
     .con {
         font-size: .46rem;
         color: @C4;
@@ -337,8 +351,8 @@ export default {
 
 /*车厢温度*/
 .card-temp {
-    top: 10%;
-    right: 20%;
+    top: 30%;
+    right: 22%;
     .con {
         img {
             width: .7rem;
@@ -362,8 +376,8 @@ export default {
 
 /*挂车载重*/
 .card-weight {
-    top: 25%;
-    right: 20%;
+    top: 50%;
+    right: 22%;
     .con {
         img {
             width: .8rem;
@@ -387,8 +401,8 @@ export default {
 
 /*胎温胎压*/
 .card-wheel {
-    top: 40%;
-    right: 20%;
+    top: 70%;
+    right: 22%;
     .con {
         img {
             width: .65rem;
@@ -415,8 +429,8 @@ export default {
 
 /*胎压报警*/
 .card-wheelalert {
-    top: 55%;
-    right: 20%;
+    top: 50%;
+    left: 22%;
     img {
         width: .65rem;
         left: .17rem;
@@ -438,7 +452,7 @@ export default {
 /*防侧翻保护*/
 .card-rollalert {
     top: 70%;
-    right: 20%;
+    left: 22%;
     img {
         width: .65rem;
         left: .17rem;
@@ -457,6 +471,10 @@ export default {
     }
 }
 
+.card-active {
+    opacity: 1 !important;
+}
+
 .card {
     display: flex;
     align-items: center;
@@ -465,6 +483,8 @@ export default {
     position: absolute;
     width: 2.8rem;
     height: 1.1rem;
+    transition: opacity 0.5s linear;
+    opacity: 0;
     &-title {
         line-height: 1;
         font-size: .18rem;
@@ -544,6 +564,21 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    .title-bar {
+        position: absolute;
+        width: 100%;
+        top: .78rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        line-height: 1;
+
+        p {
+            font-size: .48rem;
+            color: #3A456F;
+        }
+    }
 
     .left-bar {
         display: flex;

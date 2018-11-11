@@ -46,12 +46,12 @@ export default {
 
             this.initAnimate();
 
-            const control = this.addControl();
+            // const control = this.addControl();
 
             const renderScene = () => {
                 stats.update();
-                const delta = clock.getDelta();
-                control.update(delta);
+                // const delta = clock.getDelta();
+                // control.update(delta);
                 this.carAnimate();
                 requestAnimationFrame(renderScene);
                 renderer.render(scene, camera);
@@ -60,7 +60,7 @@ export default {
             renderScene();
         },
         addObject() { // 添加对象
-            this.addAxes();
+            // this.addAxes();
             const truck = this.createTruck();
             this.truckGroup = truck;
             this.mainGroup.add(this.truckGroup);
