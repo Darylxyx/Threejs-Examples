@@ -39,7 +39,7 @@ export default {
                 opacity: 0.7,
             })
             for (let d = this.PI / 2 * 3; d <= this.PI / 2 * 5; d += 0.2) {
-                const height = Math.random() * 8 + 6;
+                const height = Math.random() * 8 + 10;
                 const buildingGeom = this.initGeometry('Cube', p.buildWidth, height, p.buildLengh);
                 const building = new THREE.Mesh(buildingGeom, buildingMat);
                 building.position.set((p.innerRadius - 4) * this.cos(d) + p.offsetX, height / 2, (p.innerRadius - 4) * this.sin(d));
@@ -47,7 +47,7 @@ export default {
                 buildingGroup.add(building);
             }
             for (let d = this.PI / 2 * 3; d <= this.PI / 2 * 5; d += 0.15) {
-                const height = Math.random() * 8 + 6;
+                const height = Math.random() * 8 + 10;
                 const buildingGeom = this.initGeometry('Cube', p.buildWidth, height, p.buildLengh);
                 const building = new THREE.Mesh(buildingGeom, buildingMat);
                 building.position.set((p.outerRadius + 4) * this.cos(d) + p.offsetX, height / 2, (p.outerRadius + 4) * this.sin(d));

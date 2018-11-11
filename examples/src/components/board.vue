@@ -54,7 +54,7 @@
                     </div>
                 </div>
             </div>
-            <div class='right-bottom'>
+<!--             <div class='right-bottom'>
                 <div class='sub-title'>
                     <span>GPS状态</span>
                     <hr />
@@ -71,7 +71,7 @@
                     <img src='static/img/offline.png' />
                     <p class='desc'>离线 <span class='num'>6</span></p>
                 </div>
-            </div>
+            </div> -->
         </div>
         <div class='bottom-bar'>
             <div class='bottom-sec' v-for='item in bottomList'>
@@ -79,7 +79,7 @@
                 <p class='desc'>{{item.desc}}</p>
             </div>
         </div>
-        <div class='card-group'>
+        <div v-if='false' class='card-group'>
             <div class='card card-blue card-stop'>
                 <span class='card-title'>园区停靠</span>
                 <p class='con'>停靠位置<span>B04</span></p>

@@ -14,13 +14,17 @@ export default {
         },
         createTruck() { // 创建卡车
             this.initTruckParam();
+            const truckGroup = new THREE.Group();
+            const p = this.truckParmas;
             const head = this.createHead();
-            this.truckGroup.add(head);
+            truckGroup.add(head);
             const trailer = this.createTrailer();
             trailer.position.y = 0.12;
             trailer.position.z = 4;
-            this.truckGroup.add(trailer);
-            this.mainGroup.add(this.truckGroup);
+            truckGroup.add(trailer);
+            truckGroup.position.set(-80, p.height / 2 + p.wheelDiameter * 2, 0);
+            truckGroup.rotation.y = - this.PI / 2;
+            return truckGroup;
         },
         createHead() { // 创建车头
             const p = this.truckParmas;

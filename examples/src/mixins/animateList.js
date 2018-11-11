@@ -1,99 +1,175 @@
 // 动画队列
-const { PI, sin, cos, abs } = Math;
-let rad = 0; // 通用弧度变量（用于计算车辆过弯）
-let car = null;
-let stepIndex = 1; // 当前动画步骤
+let truck = null;
+const { PI, sin, cos } = Math;
+let rad = PI / 2; // 通用弧度变量（用于计算车辆过弯）
+let stepIndex = 0; // 当前动画步骤
 let count = 0;
 export default {
     methods: {
-        carAnimate(carGroup) {
-            car = carGroup;
-            this[`step${stepIndex}`] && this[`step${stepIndex}`]();
-            const { x, y, z } = car.position;
-            // this.camera.position.set(x, 30, z + 30);
-            // this.camera.lookAt(car.position);
+        initAnimate() {
+            const params = {};
+            this.animateParams = params;
+            truck = this.truckGroup;
+            this.animateList = [
+                this.outStation,
+                this.inLoad,
+                this.reversInLoad,
+                this.loading,
+                this.outLoad,
+                this.inCurve,
+                this.reversInUnload,
+                this.unloading,
+                this.outUnload,
+                this.inStation,
+                this.resetStart,
+            ];
         },
-        step1() {
-            if (car.position.x <= - 55) {
-                rad = PI / 2;
-                stepIndex++;
-            }
-            car.position.x -= 0.2;
+        carAnimate() {
+            // console.log(truck.position);
+            this.animateList[stepIndex] && this.animateList[stepIndex]();
+            // const { x, y, z } = car.position;
+            // // this.camera.position.set(x, 30, z + 30);
+            // // this.camera.lookAt(car.position);
         },
-        step2() {
+        outStation() { // 出站
             if (rad <= 0) {
-                stepIndex++;
-            }
-            rad -= 0.02;
-            this.drift(10, -55, -37, true);
-        },
-        step3() {
-            car.position.z += 0.3;
-            if (car.position.z >= 22) {
-                rad = PI;
-                stepIndex++;
-            }
-        },
-        step4() {
-            rad += 0.015;
-            this.drift(25, -20, 22);
-            if (rad >= (PI / 2 * 3)) {
-                stepIndex++;
-            }
-        },
-        step5() {
-            car.position.x += 0.2;
-            if (car.position.x >= 1.5) {
-                rad = PI / 2;
-                stepIndex++;
-            }
-        },
-        step6() {
-            if (rad >= PI) {
-                if (count >= 180) {
+                if (truck.position.z >= 42) {
                     rad = PI;
                     stepIndex++;
                 }
-                count++;
-                return;
+                truck.position.z += 1;
+            } else {
+                rad -= 0.05;
+                this.drift(10, -80, 10, true);
             }
-            rad += 0.01;
-            this.drift(7.5, 1.5, 54.5, true);
         },
-        step7() {
-            if (rad <= PI / 2) {
+        inLoad() { // 进入装货园区
+            if (rad >= PI / 2 * 3) {
+                if (truck.position.x >= 11) {
+                    rad = PI / 2;
+                    stepIndex++;
+                } else {
+                    truck.position.x += 1;
+                }
+            } else {
+                rad += 0.1;
+                this.drift(15, -55, 42);
+            }
+        },
+        reversInLoad() { // 倒车进入装货阶段
+            if (rad >= PI) {
+                if (truck.position.z >= 76) {
+                    stepIndex++;
+                } else {
+                    truck.position.z += 1;
+                }
+            } else {
+                rad += 0.05;
+                this.drift(11, 11, 68, true);
+            }
+        },
+        loading() { // 装货
+            if (count >= 180) {
+                count = 0;
+                rad = PI;
                 stepIndex++;
             }
-            rad -= 0.01;
-            this.drift(7.5, 1.5, 54.5, true);
+            count++;
         },
-        step8() {
-            if (car.position.x >= 40) {
-                rad = PI / 2 * 3;
+        outLoad() { // 离开装货园区
+            if (truck.position.z <= 68) {
+                if (rad <= PI / 2) {
+                    if (truck.position.x >= 80) {
+                        rad = - PI / 2;
+                        stepIndex++;
+                    } else {
+                        truck.position.x += 1;
+                    }
+                } else {
+                    rad -= 0.05;
+                    this.drift(11, 11, 68, true);
+                }
+            } else {
+                truck.position.z -= 1;
+            }
+        },
+        inCurve() { // 进入弯道
+            if (rad >= PI / 2) {
+                if (truck.position.x <= - 11) {
+                    rad = - PI / 2;
+                    stepIndex++;
+                } else {
+                    truck.position.x -= 1;
+                }
+            } else {
+                rad += 0.02;
+                this.drift(57, 80, 0);
+            }
+        },
+        reversInUnload() { // 倒车进入卸货园区
+            if (rad >= 0) {
+                if (truck.position.z <= - 76) {
+                    stepIndex++;
+                } else {
+                    truck.position.z -= 1;
+                }
+            } else {
+                rad += 0.05;
+                this.drift(11, -11, -68, true);
+            }
+        },
+        unloading() {
+            if (count >= 180) {
+                count = 0;
+                rad = 0;
                 stepIndex++;
             }
-            car.position.x += 0.3;
+            count++;
         },
-        step9() {
-            if (rad >= (PI / 2 * 5)) {
-                stepIndex++;
+        outUnload() { // 离开卸货园区
+            if (truck.position.z >= - 68) {
+                if (rad <= - PI / 2) {
+                    if (truck.position.x <= -55) {
+                        rad = PI / 2;
+                        stepIndex++;
+                    } else {
+                        truck.position.x -= 1;
+                    }
+                } else {
+                    rad -= 0.05;
+                    this.drift(11, -11, -68, true);
+                }
+            } else {
+                truck.position.z += 1;
             }
-            rad += 0.008;
-            this.drift(47, 40, 0);
         },
-        step10() {
-            if (car.position.x <= -45) {
-                // stepIndex = 1;
-                return;
+        inStation() { // 回到始发点
+            if (rad >= PI) {
+                if (truck.position.z >= 10) {
+                    rad = 0;
+                    stepIndex++;
+                } else {
+                    truck.position.z += 1;
+                }
+            } else {
+                rad += 0.02;
+                this.drift(15, -55, -42);
             }
-            car.position.x -= 0.3;
+        },
+        resetStart() { // 复位
+            if (rad >= PI / 2) {
+                stepIndex = 0;
+            } else {
+                rad += 0.02;
+                this.drift(10, -80, 10, true);
+            }
         },
         drift(r, offsetX, offsetZ, clockwise = false) {
             const x = r * cos(rad) + offsetX;
             const z = - (r * sin(rad)) + offsetZ;
-            car.position.x = x;
-            car.position.z = z;
-            car.rotation.y = clockwise ? rad - PI : rad;
+            truck.position.x = x;
+            truck.position.z = z;
+            truck.rotation.y = clockwise ? rad - PI : rad;
         },
     },
 };
