@@ -71,14 +71,23 @@ export default {
                 } else {
                     truck.position.z += 0.2;
                 }
-                if (co.x < 4) {
-                    co.x += 0.1;
-                }
             } else {
                 rad += 0.01;
                 this.drift(11, 11, 68, true);
                 this.$store.commit('setTitle', '园区停靠');
                 this.$store.commit('setActCardList', ['stop']);
+            }
+            this.moveCamera();
+        },
+        loading() { // 装货
+            if (count >= 300) {
+                count = 0;
+                rad = PI;
+                stepIndex++;
+            }
+            count++;
+            if (co.x < 4) {
+                co.x += 0.1;
             }
             if (co.y > 2) {
                 co.y -= 0.5;
@@ -87,14 +96,6 @@ export default {
                 co.z += 0.5;
             }
             this.moveCamera();
-        },
-        loading() { // 装货
-            if (count >= 180) {
-                count = 0;
-                rad = PI;
-                stepIndex++;
-            }
-            count++;
             this.$store.commit('setTitle', '装货');
             this.$store.commit('setActCardList', ['load', 'loadtime']);
         },
@@ -163,13 +164,22 @@ export default {
                 } else {
                     truck.position.z -= 0.2;
                 }
-                if (co.x >- 4) {
-                    co.x -= 0.1;
-                }
             } else {
                 rad += 0.01;
                 this.drift(11, -11, -68, true);
                 this.$store.commit('setActCardList', ['stop']);
+            }
+            this.moveCamera();
+        },
+        unloading() {
+            if (count >= 300) {
+                count = 0;
+                rad = 0;
+                stepIndex++;
+            }
+            count++;
+            if (co.x >- 4) {
+                co.x -= 0.1;
             }
             if (co.y > 2) {
                 co.y -= 0.5;
@@ -177,15 +187,6 @@ export default {
             if (co.z > -12) {
                 co.z -= 0.5;
             }
-            this.moveCamera();
-        },
-        unloading() {
-            if (count >= 180) {
-                count = 0;
-                rad = 0;
-                stepIndex++;
-            }
-            count++;
             this.$store.commit('setTitle', '卸货');
             this.$store.commit('setActCardList', ['unload', 'unloadtime']);
             this.moveCamera();
