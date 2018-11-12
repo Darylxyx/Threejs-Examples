@@ -22,6 +22,15 @@ export default {
                 station.position.x = (i - 1) * (p.stationWidth + p.stationOffset);
                 parkGroup.add(station);
             }
+            const ox = p.spaceOffset + p.spaceWidth;
+            const pa = [- 2 * ox, - ox, ox, 2 * ox];
+            for (let i = 0; i < 4; i++) {
+                const truck = this.createTruck();
+                truck.position.x = pa[i];
+                truck.position.z = 14;
+                truck.rotation.y = this.PI;
+                parkGroup.add(truck);
+            }
             return parkGroup;
         },
         createStation() { // 创建站台

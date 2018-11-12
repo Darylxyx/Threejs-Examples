@@ -105,7 +105,10 @@ export default {
                         rad = - PI / 2;
                         stepIndex++;
                     } else {
-                        truck.position.x += 1;
+                        truck.position.x += 0.2;
+                        co.x = 0;
+                        co.y = 40;
+                        co.z = 0;
                     }
                 } else {
                     rad -= 0.05;
@@ -136,11 +139,21 @@ export default {
                 rad += 0.005;
                 this.drift(57, 80, 0);
                 this.$store.commit('setTitle', '沪123456挂');
-                this.$store.commit('setActCardList', ['temp', 'weight', 'wheel', 'wheelalert', 'rollalert']);
-                const x = 62 * cos(rad - 0.25) + 80;
+                const x = 60 * cos(rad - 0.25) + 80;
                 const y = 2;
-                const z = - 62 * sin(rad - 0.25);
+                const z = - 60 * sin(rad - 0.25);
                 this.moveCamera(x, y, z);
+                if (rad > PI / 3) {
+                    this.$store.commit('setActCardList', ['rollalert']);
+                } else if (rad > PI / 6) {
+                    this.$store.commit('setActCardList', ['wheelalert']);
+                } else if (rad > 0) {
+                    this.$store.commit('setActCardList', ['wheel']);
+                } else if (rad > - PI / 6) {
+                    this.$store.commit('setActCardList', ['weight']);
+                } else if (rad > - PI / 3) {
+                    this.$store.commit('setActCardList', ['temp']);
+                }
             }
         },
         reversInUnload() { // 倒车进入卸货园区
@@ -150,10 +163,19 @@ export default {
                 } else {
                     truck.position.z -= 0.2;
                 }
+                if (co.x >- 4) {
+                    co.x -= 0.1;
+                }
             } else {
                 rad += 0.01;
                 this.drift(11, -11, -68, true);
                 this.$store.commit('setActCardList', ['stop']);
+            }
+            if (co.y > 2) {
+                co.y -= 0.5;
+            }
+            if (co.z > -12) {
+                co.z -= 0.5;
             }
             this.moveCamera();
         },
@@ -166,6 +188,7 @@ export default {
             count++;
             this.$store.commit('setTitle', '卸货');
             this.$store.commit('setActCardList', ['unload', 'unloadtime']);
+            this.moveCamera();
         },
         outUnload() { // 离开卸货园区
             if (truck.position.z >= - 68) {
@@ -175,6 +198,9 @@ export default {
                         stepIndex++;
                     } else {
                         truck.position.x -= 0.2;
+                        co.x = 0;
+                        co.y = 40;
+                        co.z = 0;
                     }
                 } else {
                     rad -= 0.01;
@@ -211,6 +237,9 @@ export default {
             } else {
                 rad += 0.01;
                 this.drift(10, -80, 10, true);
+            }
+            if (co.y > 15) {
+                co.y -= 0.2;
             }
             this.moveCamera();
         },

@@ -63,6 +63,8 @@ export default {
             // this.addAxes();
             const truck = this.createTruck();
             this.truckGroup = truck;
+            this.truckGroup.position.x = -80;
+            this.truckGroup.rotation.y = - this.PI / 2;
             this.mainGroup.add(this.truckGroup);
             // 起点
             const start = this.createStart();

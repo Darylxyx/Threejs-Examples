@@ -22,8 +22,7 @@ export default {
             trailer.position.y = 0.12;
             trailer.position.z = 4;
             truckGroup.add(trailer);
-            truckGroup.position.set(-80, p.height / 2 + p.wheelDiameter * 2, 0);
-            truckGroup.rotation.y = - this.PI / 2;
+            truckGroup.position.y = p.height / 2 + p.wheelDiameter * 2;
             return truckGroup;
         },
         createHead() { // 创建车头
