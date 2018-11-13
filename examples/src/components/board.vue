@@ -7,7 +7,14 @@
             <div v-for='item in leftList' class='left-sec'>
                 <img class='icon' :src='item.icon' />
                 <div>
-                    <p class='num'>{{item.num}}</p>
+                    <p class='num'>
+                        <animated-number 
+                            :value="item.num"
+                            :duration="2 * 60 * 1000"
+                            :delay="700+Math.random()*600"
+                            :formatValue="format"
+                        />
+                    </p>
                     <p class='desc'>{{item.desc}}</p>
                 </div>
             </div>
@@ -213,6 +220,7 @@
 </template>
 
 <script>
+import AnimatedNumber from "animated-number-vue";
 export default {
     computed: { 
         title() {
@@ -221,6 +229,29 @@ export default {
         actCardList() {
             return this.$store.state.actCardList;
         },
+    },
+    components: {
+        AnimatedNumber
+    },
+    methods: {
+        format(value) {
+            return (value *1 +1).toFixed(0)
+        },
+        formatWarn() {
+            setInterval(() => {
+                this.leftList.forEach((item) => {
+                    item.num = parseInt(item.num + Math.random()*50);
+                });
+            },2 * 60 * 1000);
+        },
+        formatCount(value) {
+            setInterval(() => {
+                this.bottomList.forEach((item) => {
+                    var s = Math.random() > 0.4 ? 1 : -1;
+                    item.num = parseInt(item.num + s*Math.random()*5);
+                });
+            },10000);
+        }
     },
     data: () => ({
         leftList: [{
@@ -270,9 +301,11 @@ export default {
             desc: '停靠场站',
         }],
     }),
-    // mounted() {
-    //     console.log(this.$store.state.);
-    // },
+    mounted() {
+        this.formatCount();
+        this.formatWarn();
+        // console.log(this.$store.state.);
+    },
 };
 </script>
 

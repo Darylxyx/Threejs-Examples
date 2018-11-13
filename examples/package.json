@@ -14,6 +14,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "animated-number-vue": "^0.1.3",
     "axios": "^0.18.0",
     "latlon-geohash": "^1.1.0",
     "three": "^0.94.0",
