@@ -22,12 +22,14 @@ export default {
         PI: Math.PI,
         sin: Math.sin,
         cos: Math.cos,
-        mainGroup: new THREE.Group(),
-        truckGroup: new THREE.Group(),
+        mainGroup: new THREE.Group(), 
+        truckGroup: new THREE.Group(), // 卡车组
+        headGroup: new THREE.Group(), // 车头组
+        backGroup: new THREE.Group(), // 车挂组
         parkGroup: new THREE.Group(),
     }),
     methods: {
-        initWebGL() {
+        async initWebGL() {
             const {
                 scene,
                 camera,
@@ -42,29 +44,29 @@ export default {
 
             const stats = this.initStats(this.$refs.stats);
 
-            this.addObject();
+            await this.addObject();
 
             this.initAnimate();
 
-            // const control = this.addControl();
+            const control = this.addControl();
 
             const renderScene = () => {
                 stats.update();
-                // const delta = clock.getDelta();
-                // control.update(delta);
-                this.carAnimate();
+                const delta = clock.getDelta();
+                control.update(delta);
+                // this.carAnimate();
                 requestAnimationFrame(renderScene);
                 renderer.render(scene, camera);
             };
 
             renderScene();
         },
-        addObject() { // 添加对象
+        async addObject() { // 添加对象
             // this.addAxes();
-            const truck = this.createTruck();
-            this.truckGroup = truck;
-            this.truckGroup.position.x = -80;
-            this.truckGroup.rotation.y = - this.PI / 2;
+            // 光源
+            this.addLight();
+            //卡车
+            await this.createTruck();
             this.mainGroup.add(this.truckGroup);
             // 起点
             const start = this.createStart();
@@ -95,6 +97,10 @@ export default {
         addAxes(len = 50) { // 辅助坐标系
             const axes = this.initAxes(len);
             this.mainGroup.add(axes);
+        },
+        addLight() {
+            const ambientLight = this.initLight('Ambient', {color: 0xeeeeee});
+            this.mainGroup.add(ambientLight);
         },
         addControl() { // 轨迹球摄影机
             const control = this.initControls('Trackball', this.camera, {

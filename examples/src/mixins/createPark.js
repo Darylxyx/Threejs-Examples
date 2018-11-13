@@ -7,7 +7,7 @@ export default {
                 stationHeight: 1,
                 stationOffset: 4.8, // 站台间隔
                 spaceWidth: 2.8,
-                spaceLength: 8,
+                spaceLength: 12,
                 spaceOffset: 2, // 停车位间隔
                 betweenOffset: 0.35, // 停车位与站台的间隔
             };
@@ -24,10 +24,14 @@ export default {
             }
             const ox = p.spaceOffset + p.spaceWidth;
             const pa = [- 2 * ox, - ox, ox, 2 * ox];
+
             for (let i = 0; i < 4; i++) {
-                const truck = this.createTruck();
-                truck.position.x = pa[i];
-                truck.position.z = 14;
+                const truck = new THREE.Group();
+                const head = this.headGroup.clone();
+                const back = this.backGroup.clone();
+                truck.add(head);
+                truck.add(back);
+                truck.position.set(pa[i], 0, 12.5);
                 truck.rotation.y = this.PI;
                 parkGroup.add(truck);
             }
@@ -37,7 +41,7 @@ export default {
             const stationGroup = new THREE.Group();
             const p = this.parkParams;
             const stationGeom = this.initGeometry('Cube', p.stationWidth, p.stationHeight, p.stationLength);
-            const stationMat = this.initMaterial('MeshBasic', {
+            const stationMat = this.initMaterial('MeshLambert', {
                 color: 0x1E2642,
             });
             const station = new THREE.Mesh(stationGeom, stationMat);
