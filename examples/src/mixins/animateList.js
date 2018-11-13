@@ -179,7 +179,7 @@ export default {
                 }
                 this.moveCamera();
             } else {
-                rad += cornerSpeed;
+                rad += 0.005;
                 this.drift(57, 80, 0);
                 this.$store.commit('setTitle', '沪123456挂');
                 const cx = 60 * cos(rad - 0.25) + 80;
