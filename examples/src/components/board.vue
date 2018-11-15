@@ -4,7 +4,7 @@
             <p>{{title}}</p>
         </div>
         <div class='left-bar'>
-            <div v-for='item in leftList' class='left-sec'>
+            <div v-for='item in leftWarns' class='left-sec'>
                 <img class='icon' :src='item.icon' />
                 <div>
                     <p class='num'>{{item.num}}</p>
@@ -15,19 +15,19 @@
         <div class='right-bar'>
             <div class='right-top'>
                 <div class='right-top-left'>
-                    <p class='num'>1248</p>
+                    <p class='num'>2964辆</p>
                     <p class='desc'>智能挂车</p>
-                    <p class='num'>67%</p>
-                    <p class='desc'>平均装载率</p>
-                    <p class='num'>26分钟</p>
+                    <p class='num'>89%</p>
+                    <p class='desc'>平均体积装载率</p>
+                    <p class='num'>3.2小时</p>
                     <p class='desc'>平均装货时长</p>
                 </div>
                 <div class='right-top-right'>
-                    <p class='num'>108</p>
+                    <p class='num'>146家</p>
                     <p class='desc'>智能挂客户</p>
-                    <p class='num'>12.36t</p>
-                    <p class='desc'>平均载重</p>
-                    <p class='num'>21分钟</p>
+                    <p class='num'>73%</p>
+                    <p class='desc'>平均重量装载率</p>
+                    <p class='num'>2.4小时</p>
                     <p class='desc'>平均卸货时长</p>
                 </div>
             </div>
@@ -39,42 +39,42 @@
                 <div class='right-middle-left'>
                     <div class='middle-sec'>
                         <div class='icon'>厢</div>
-                        <p class='desc'>厢式挂 <span class='num'>23</span></p>
+                        <p class='desc'><span class='num'>2312辆</span></p>
                     </div>
                     <div class='middle-sec'>
                         <div class='icon'>冷</div>
-                        <p class='desc'>冷链挂 <span class='num'>23</span></p>
+                        <p class='desc'><span class='num'>119辆</span></p>
                     </div>
-                </div>
-                <div class='right-middle-right'>
                     <div class='middle-sec'>
                         <div class='icon'>轿</div>
-                        <p class='desc'>轿运挂 <span class='num'>23</span></p>
-                    </div>
-                    <div class='middle-sec'>
-                        <div class='icon'>罐</div>
-                        <p class='desc'>罐式挂 <span class='num'>23</span></p>
+                        <p class='desc'><span class='num'>533辆</span></p>
                     </div>
                 </div>
+                <!--<div class='right-middle-right'>-->
+                    <!--<div class='middle-sec'>-->
+                        <!--<div class='icon'>罐</div>-->
+                        <!--<p class='desc'>罐式挂 <span class='num'>0</span></p>-->
+                    <!--</div>-->
+                <!--</div>-->
             </div>
-<!--             <div class='right-bottom'>
-                <div class='sub-title'>
-                    <span>GPS状态</span>
-                    <hr />
-                </div>
-                <div class='bottom-sec'>
-                    <img src='static/img/run.png' />
-                    <p class='desc'>行驶 <span class='num'>23</span></p>
-                </div>
-                <div class='bottom-sec'>
-                    <img src='static/img/stop.png' />
-                    <p class='desc'>静止 <span class='num'>16</span></p>
-                </div>
-                <div class='bottom-sec'>
-                    <img src='static/img/offline.png' />
-                    <p class='desc'>离线 <span class='num'>6</span></p>
-                </div>
-            </div> -->
+            <!--             <div class='right-bottom'>
+                            <div class='sub-title'>
+                                <span>GPS状态</span>
+                                <hr />
+                            </div>
+                            <div class='bottom-sec'>
+                                <img src='static/img/run.png' />
+                                <p class='desc'>行驶 <span class='num'>23</span></p>
+                            </div>
+                            <div class='bottom-sec'>
+                                <img src='static/img/stop.png' />
+                                <p class='desc'>静止 <span class='num'>16</span></p>
+                            </div>
+                            <div class='bottom-sec'>
+                                <img src='static/img/offline.png' />
+                                <p class='desc'>离线 <span class='num'>6</span></p>
+                            </div>
+                        </div> -->
         </div>
         <div class='bottom-bar'>
             <div class='bottom-sec' v-for='item in bottomList'>
@@ -213,541 +213,585 @@
 </template>
 
 <script>
-export default {
-    computed: { 
-        title() {
-            return this.$store.state.title;
+    export default {
+        computed: {
+            title() {
+                return this.$store.state.title;
+            },
+            actCardList() {
+                return this.$store.state.actCardList;
+            }
         },
-        actCardList() {
-            return this.$store.state.actCardList;
+        methods: {
+            format(value) {
+                return (value *1 +1).toFixed(0)
+            },
+            formatWarn() {
+                setInterval(() => {
+                    this.leftWarns.forEach((item,index) => {
+                        var s = Math.round(this.leftList[index].num/24/30);
+                        item.num = item.num + s;
+                    });
+                },10000 + Math.random()*10000);
+            },
+            formatCount(value) {
+                setInterval(() => {
+                    this.bottomList.forEach((item) => {
+                        var s = Math.random() > 0.4 ? 1 : -1;
+                        item.num = parseInt(item.num + s*Math.random()*5);
+                    });
+                },10000);
+            },
+            makeLeftWarns() {
+                var h = new Date().getHours() + 1;
+                this.leftList.forEach((item) => {
+                    var warn = item;
+                    warn.num = Math.round(item.num / 24 * h);
+                    this.leftWarns.push(warn);
+                });
+            }
         },
-    },
-    data: () => ({
-        leftList: [{
-            icon: 'static/img/icon1.png',
-            num: 32,
-            desc: '头挂匹配',
-        }, {
-            icon: 'static/img/icon2.png',
-            num: 24,
-            desc: '头挂分离',
-        }, {
-            icon: 'static/img/icon3.png',
-            num: 32,
-            desc: '停靠月台',
-        }, {
-            icon: 'static/img/icon4.png',
-            num: 14,
-            desc: '进入场站',
-        }, {
-            icon: 'static/img/icon5.png',
-            num: 5,
-            desc: '防侧翻',
-        }, {
-            icon: 'static/img/icon6.png',
-            num: 6,
-            desc: '胎压过高',
-        }, {
-            icon: 'static/img/icon7.png',
-            num: 0,
-            desc: '轮胎漏气',
-        }, {
-            icon: 'static/img/icon8.png',
-            num: 4,
-            desc: '胎温过高', 
-        }],
-        bottomList: [{
-            num: 32,
-            desc: '装货中',
-        }, {
-            num: 24,
-            desc: '卸货中',
-        }, {
-            num: 56,
-            desc: '停靠月台',
-        }, {
-            num: 64,
-            desc: '停靠场站',
-        }],
+        data: () => ({
+        leftWarns:[],
+        leftList: [
+            {
+                icon: 'static/img/icon1.png',
+                num: 309,
+                desc: '头挂匹配',
+            }, {
+                icon: 'static/img/icon2.png',
+                num: 206,
+                desc: '头挂分离',
+            }, {
+                icon: 'static/img/icon4.png',
+                num: 784,
+                desc: '进入场站',
+            },{
+                icon: 'static/img/icon3.png',
+                num: 776,
+                desc: '停靠月台',
+            }, {
+                icon: 'static/img/icon5.png',
+                num: 21,
+                desc: '防侧翻保护',
+            }, {
+                icon: 'static/img/icon6.png',
+                num: 1633,
+                desc: '胎压异常',
+            }, {
+                icon: 'static/img/icon7.png',
+                num: 0,
+                desc: '胎温异常',
+            }, {
+                icon: 'static/img/icon8.png',
+                num: 2,
+                desc: '轮胎漏气',
+            }
+        ],
+        bottomList: [
+            {
+                num: 1850,
+                desc: '运行中',
+            }, {
+                num: 761,
+                desc: '静止中',
+            }, {
+                num: 353,
+                desc: '离线中',
+            }, {
+                num: 211,
+                desc: '装货中',
+            },{
+                num: 134,
+                desc: '卸货中',
+            }
+        ],
     }),
-    // mounted() {
-    //     console.log(this.$store.state.);
-    // },
-};
+    mounted() {
+        this.makeLeftWarns();
+        this.formatCount();
+        this.formatWarn();
+        // console.log(this.$store.state.);
+    },
+    };
 </script>
 
 <style lang='LESS' scoped>
-@C0: #C7CFEE;
-@C1: #747EA5;
-@C2: #5865B5;
-@C3: #22BBF2;
-@C4: #ED18CC;
+    @C0: #C7CFEE;
+    @C1: #747EA5;
+    @C2: #5865B5;
+    @C3: #22BBF2;
+    @C4: #ED18CC;
 
-.card-group {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-}
+    .card-group {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+    }
 
-/*园区停靠*/
-.card-stop {
-    bottom: 30%;
-    right: 30%;
-    .con {
-        font-size: .3rem;
-        color: @C1;
-        span {
-            margin-left: .23rem;
+    /*园区停靠*/
+    .card-stop {
+        bottom: 30%;
+        right: 30%;
+        .con {
+            font-size: .3rem;
+            color: @C1;
+            span {
+                margin-left: .23rem;
+                color: @C3;
+            }
+        }
+    }
+
+    /*实时装载*/
+    .card-load {
+        top: 20%;
+        right: 20%;
+        .con {
+            font-size: .3rem;
+            color: @C3;
+            span {
+                margin-left: .73rem;
+            }
+        }
+    }
+
+    /*装载时长*/
+    .card-loadtime {
+        top: 45%;
+        right: 20%;
+        .con {
+            font-size: .46rem;
             color: @C3;
         }
     }
-}
 
-/*实时装载*/
-.card-load {
-    top: 20%;
-    right: 20%;
-    .con {
-        font-size: .3rem;
-        color: @C3;
-        span {
-            margin-left: .73rem;
-        }
-    }
-}
-
-/*装载时长*/
-.card-loadtime {
-    top: 45%;
-    right: 20%;
-    .con {
-        font-size: .46rem;
-        color: @C3;
-    }
-}
-
-/*实时卸载*/
-.card-unload {
-    top: 20%;
-    right: 20%;
-    .con {
-        font-size: .3rem;
-        color: @C4;
-        span {
-            margin-left: .73rem;
-        }
-    }
-}
-
-/*卸货时长*/
-.card-unloadtime {
-    top: 45%;
-    right: 20%;
-    .con {
-        font-size: .46rem;
-        color: @C4;
-    }
-}
-
-/*车厢温度*/
-.card-temp {
-    top: 30%;
-    right: 22%;
-    .con {
-        img {
-            width: .7rem;
-            left: .14rem;
-            top: .2rem;
-        }
-        p {
-            font-size: .22rem;
-            color: @C1;
-            margin-bottom: .15rem;
-            &:last-child {
-                margin-bottom: 0;
-            }
+    /*实时卸载*/
+    .card-unload {
+        top: 20%;
+        right: 20%;
+        .con {
+            font-size: .3rem;
+            color: @C4;
             span {
-                color: @C3;
-                margin-left: .2rem;
+                margin-left: .73rem;
             }
         }
     }
-}
 
-/*挂车载重*/
-.card-weight {
-    top: 50%;
-    right: 22%;
-    .con {
-        img {
-            width: .8rem;
-            left: .1rem;
-            top: .2rem;
+    /*卸货时长*/
+    .card-unloadtime {
+        top: 45%;
+        right: 20%;
+        .con {
+            font-size: .46rem;
+            color: @C4;
         }
-        p {
-            font-size: .22rem;
-            color: @C1;
-            margin-bottom: .15rem;
-            &:last-child {
-                margin-bottom: 0;
+    }
+
+    /*车厢温度*/
+    .card-temp {
+        top: 30%;
+        right: 22%;
+        .con {
+            img {
+                width: .7rem;
+                left: .14rem;
+                top: .2rem;
             }
-            span {
-                color: @C3;
-                margin-left: .2rem;
+            p {
+                font-size: .22rem;
+                color: @C1;
+                margin-bottom: .15rem;
+                &:last-child {
+                    margin-bottom: 0;
+                }
+                span {
+                    color: @C3;
+                    margin-left: .2rem;
+                }
             }
         }
     }
-}
 
-/*胎温胎压*/
-.card-wheel {
-    top: 70%;
-    right: 22%;
-    .con {
+    /*挂车载重*/
+    .card-weight {
+        top: 50%;
+        right: 22%;
+        .con {
+            img {
+                width: .8rem;
+                left: .1rem;
+                top: .2rem;
+            }
+            p {
+                font-size: .22rem;
+                color: @C1;
+                margin-bottom: .15rem;
+                &:last-child {
+                    margin-bottom: 0;
+                }
+                span {
+                    color: @C3;
+                    margin-left: .2rem;
+                }
+            }
+        }
+    }
+
+    /*胎温胎压*/
+    .card-wheel {
+        top: 70%;
+        right: 22%;
+        .con {
+            img {
+                width: .65rem;
+                left: .17rem;
+                top: .25rem;
+            }
+            p {
+                font-size: .22rem;
+                color: @C1;
+                margin-bottom: .15rem;
+                &:last-child {
+                    margin-bottom: 0;
+                    span {
+                        color: @C4;
+                    }
+                }
+                span {
+                    color: @C3;
+                    margin-left: .2rem;
+                }
+            }
+        }
+    }
+
+    /*胎压报警*/
+    .card-wheelalert {
+        top: 50%;
+        left: 22%;
         img {
             width: .65rem;
             left: .17rem;
             top: .25rem;
         }
-        p {
-            font-size: .22rem;
-            color: @C1;
-            margin-bottom: .15rem;
-            &:last-child {
-                margin-bottom: 0;
-                span {
+        .con {
+            p {
+                color: @C1;
+                font-size: .22rem;
+                margin-bottom: .15rem;
+                &:last-child {
                     color: @C4;
+                    margin-bottom: 0;
                 }
             }
-            span {
-                color: @C3;
-                margin-left: .2rem;
-            }
         }
     }
-}
 
-/*胎压报警*/
-.card-wheelalert {
-    top: 50%;
-    left: 22%;
-    img {
-        width: .65rem;
-        left: .17rem;
-        top: .25rem;
-    }
-    .con {
-        p {
-            color: @C1;
-            font-size: .22rem;
-            margin-bottom: .15rem;
-            &:last-child {
-                color: @C4;
-                margin-bottom: 0;
-            }
-        }
-    }
-}
-
-/*防侧翻保护*/
-.card-rollalert {
-    top: 70%;
-    left: 22%;
-    img {
-        width: .65rem;
-        left: .17rem;
-        top: .25rem;
-    }
-    .con {
-        p {
-            color: @C1;
-            font-size: .22rem;
-            margin-bottom: .15rem;
-            &:last-child {
-                color: @C4;
-                margin-bottom: 0;
-            }
-        }
-    }
-}
-
-.card-active {
-    opacity: 1 !important;
-}
-
-.card {
-    display: flex;
-    align-items: center;
-    padding: 0 .15rem;
-    line-height: 1;
-    position: absolute;
-    width: 2.8rem;
-    height: 1.1rem;
-    transition: opacity 0.5s linear;
-    opacity: 0;
-    &-title {
-        line-height: 1;
-        font-size: .18rem;
-        position: absolute;
-        top: -.09rem;
-        left: 0;
-    }
-    hr {
-        position: absolute;
-        border: none;
-        opacity: 0.3;
-    }
-    &-t {
-        width: 62%;
-        height: 2px;
-        top: 0;
-        right: 0;
-    }
-    &-l {
-        width: 2px;
-        height: 80%;
-        left: 0;
-        bottom: 0;
-    }
-    &-r {
-        width: 2px;
-        height: 0.8rem;
-        top: 0;
-        right: 0;
-    }
-    &-b {
-        width: 2.5rem;
-        height: 2px;
-        bottom: 0;
-        left: 0;
-    }
-    &-br {
-        width: 0.42426rem;
-        height: 2px;
-        transform: rotate(-45deg);
-        right: -4px;
-        bottom: 0.14rem;
-    }
-    .con {
-        display: flex;
+    /*防侧翻保护*/
+    .card-rollalert {
+        top: 70%;
+        left: 22%;
         img {
-            position: absolute;
+            width: .65rem;
+            left: .17rem;
+            top: .25rem;
         }
-        .split {
-            width: 2px;
-            height: .6rem;
-            margin: 0 .3rem 0 .8rem;
-            position: relative;
+        .con {
+            p {
+                color: @C1;
+                font-size: .22rem;
+                margin-bottom: .15rem;
+                &:last-child {
+                    color: @C4;
+                    margin-bottom: 0;
+                }
+            }
         }
     }
-}
 
-.card-blue {
-    color: @C3;
-    hr {
-        background: @C3;
+    .card-active {
+        opacity: 1 !important;
     }
-}
 
-.card-red {
-    color: @C4;
-    hr {
-        background: @C4;
-    }
-}
-
-.board {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    z-index: 999;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    .title-bar {
-        position: absolute;
-        width: 100%;
-        top: .78rem;
+    .card {
         display: flex;
-        justify-content: center;
         align-items: center;
+        padding: 0 .15rem;
         line-height: 1;
-
-        p {
-            font-size: .48rem;
-            color: #3A456F;
-        }
-    }
-
-    .left-bar {
-        display: flex;
-        flex-direction: column;
-
-        .left-sec {
-            display: flex;
+        position: absolute;
+        width: 2.8rem;
+        height: 1.1rem;
+        transition: opacity 0.5s linear;
+        opacity: 0;
+        &-title {
             line-height: 1;
-            margin: 0 0 .3rem .37rem;
-            &:last-child {
-                margin-bottom: 0;
+            font-size: .18rem;
+            position: absolute;
+            top: -.09rem;
+            left: 0;
+        }
+        hr {
+            position: absolute;
+            border: none;
+            opacity: 0.3;
+        }
+        &-t {
+            width: 62%;
+            height: 2px;
+            top: 0;
+            right: 0;
+        }
+        &-l {
+            width: 2px;
+            height: 80%;
+            left: 0;
+            bottom: 0;
+        }
+        &-r {
+            width: 2px;
+            height: 0.8rem;
+            top: 0;
+            right: 0;
+        }
+        &-b {
+            width: 2.5rem;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+        }
+        &-br {
+            width: 0.42426rem;
+            height: 2px;
+            transform: rotate(-45deg);
+            right: -4px;
+            bottom: 0.14rem;
+        }
+        .con {
+            display: flex;
+            img {
+                position: absolute;
             }
-
-            .icon {
-                width: .64rem;
-                height: .64rem;
-                margin-right: .2rem;
-            }
-            .num {
-                font-size: .38rem;
-                color: @C0;
-                margin-bottom: .06rem;
-            }
-            .desc {
-                font-size: .18rem;
-                color: @C2;
+            .split {
+                width: 2px;
+                height: .6rem;
+                margin: 0 .3rem 0 .8rem;
+                position: relative;
             }
         }
     }
 
-    .right-bar {
-        line-height: 1;
-        padding: 0 .16rem 0 .24rem;
-        background-image: linear-gradient(149deg, #31338F 0%, #161756 93%);
-        .right-top {
+    .card-blue {
+        color: @C3;
+        hr {
+            background: @C3;
+        }
+    }
+
+    .card-red {
+        color: @C4;
+        hr {
+            background: @C4;
+        }
+    }
+
+    .board {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        z-index: 999;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .title-bar {
+            position: absolute;
+            width: 100%;
+            top: .78rem;
             display: flex;
-            padding: .39rem 0 .71rem 0;
+            justify-content: center;
+            align-items: center;
+            line-height: 1;
 
-            &-left {
-                margin-right: .69rem;
-            }
-
-            .num {
-                font-size: .26rem;
-                color: @C0;
-                margin-bottom: .1rem;
-            }
-
-            .desc {
-                font-size: .18rem;
-                color: @C2;
-                margin-bottom: .24rem;
-
-                &:last-child {
-                    margin-bottom: 0;
-                }
+            p {
+                font-size: .48rem;
+                color: #3A456F;
             }
         }
-        .right-middle {
-            padding: .28rem 0 .7rem;
-            position: relative;
+
+        .left-bar {
             display: flex;
-            &-left {
-                margin-right: .92rem;
-            }
-            .middle-sec {
+            flex-direction: column;
+
+            .left-sec {
                 display: flex;
-                flex-direction: column;
-                align-items: center;
-                margin-bottom: .28rem;
+                line-height: 1;
+                margin: 0 0 .3rem .37rem;
                 &:last-child {
                     margin-bottom: 0;
                 }
+
                 .icon {
-                    line-height: 1;
-                    width: .46rem;
-                    height: .46rem;
-                    border-radius: .23rem;
-                    font-size: .18rem;
+                    width: .64rem;
+                    height: .64rem;
+                    margin-right: .2rem;
+                }
+                .num {
+                    font-size: .38rem;
                     color: @C0;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    border: 1px solid #5865B5;
-                    margin-bottom: .1rem;
+                    margin-bottom: .06rem;
                 }
                 .desc {
                     font-size: .18rem;
                     color: @C2;
-                    .num {
-                        color: @C0;
-                    }
                 }
             }
         }
-        .right-bottom {
-            padding: .29rem .15rem .52rem 0;
-            position: relative;
-            display: flex;
-            justify-content: space-between;
-            .bottom-sec {
+
+        .right-bar {
+            line-height: 1;
+            padding: 0 .16rem 0 .24rem;
+            background-image: linear-gradient(149deg, #31338F 0%, #161756 93%);
+            .right-top {
                 display: flex;
-                flex-direction: column;
-                align-items: center;
-                img {
-                    width: .46rem;
-                    height: .46rem;
+                padding: .39rem 0 .71rem 0;
+
+                &-left {
+                    margin-right: .69rem;
+                }
+
+                .num {
+                    font-size: .26rem;
+                    color: @C0;
                     margin-bottom: .1rem;
                 }
+
                 .desc {
                     font-size: .18rem;
                     color: @C2;
-                    .num {
-                        color: @C0;
+                    margin-bottom: .24rem;
+
+                    &:last-child {
+                        margin-bottom: 0;
                     }
                 }
             }
+            .right-middle {
+                padding: .28rem 0 .1rem;
+                position: relative;
+                display: flex;
+                &-left {
+                    /*margin-right: .92rem;*/
+                    display: flex;
+                    width: 100%;
+                    flex-direction: row;
+                    justify-content: space-around;
+                }
+                .middle-sec {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    margin-bottom: .28rem;
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+                    .icon {
+                        line-height: 1;
+                        width: .46rem;
+                        height: .46rem;
+                        border-radius: .23rem;
+                        font-size: .18rem;
+                        color: @C0;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        border: 1px solid #5865B5;
+                        margin-bottom: .1rem;
+                    }
+                    .desc {
+                        font-size: .18rem;
+                        color: @C2;
+                        .num {
+                            color: @C0;
+                        }
+                    }
+                }
+            }
+            .right-bottom {
+                padding: .29rem .15rem .52rem 0;
+                position: relative;
+                display: flex;
+                justify-content: space-between;
+                .bottom-sec {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    img {
+                        width: .46rem;
+                        height: .46rem;
+                        margin-bottom: .1rem;
+                    }
+                    .desc {
+                        font-size: .18rem;
+                        color: @C2;
+                        .num {
+                            color: @C0;
+                        }
+                    }
+                }
+            }
+            .sub-title {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                position: absolute;
+                top: -0.09rem;
+                span {
+                    font-size: .18rem;
+                    color: @C2;
+                    padding-right: .126rem;
+                }
+                hr {
+                    display: flex;
+                    flex-grow: 1;
+                    border: none;
+                    height: 1px;
+                    background: @C2;
+                    opacity: .66;
+                }
+            }
         }
-        .sub-title {
+
+        .bottom-bar {
             width: 100%;
             display: flex;
-            align-items: center;
+            justify-content: center;
             position: absolute;
-            top: -0.09rem;
-            span {
-                font-size: .18rem;
-                color: @C2;
-                padding-right: .126rem;
-            }
-            hr {
-                display: flex;
-                flex-grow: 1;
-                border: none;
-                height: 1px;
-                background: @C2;
-                opacity: .66;
-            }
-        }
-    }
+            bottom: .28rem;
 
-    .bottom-bar {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        position: absolute;
-        bottom: .28rem;
+            .bottom-sec {
+                line-height: 1;
+                margin-right: 1.3rem;
+                &:last-child {
+                    margin: 0;
+                }
+                .num {
+                    color: @C0;
+                    font-size: .46rem;
+                    margin-bottom: .1rem;
 
-        .bottom-sec {
-            line-height: 1;
-            margin-right: 1.3rem;
-            &:last-child {
-                margin: 0;
-            }
-            .num {
-                color: @C0;
-                font-size: .46rem;
-                margin-bottom: .1rem;
-
-                .unit {
-                    color: @C1;
+                    .unit {
+                        color: @C1;
+                        font-size: .22rem;
+                        margin-left: .2rem;
+                    }
+                }
+                .desc {
                     font-size: .22rem;
-                    margin-left: .2rem;
+                    color: @C2;
                 }
             }
-            .desc {
-                font-size: .22rem;
-                color: @C2;
-            }
         }
     }
-}
 </style>
