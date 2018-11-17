@@ -1,7 +1,22 @@
 <template>
     <div class='board'>
         <div class='title-bar'>
-            <p>{{title}}</p>
+            <p v-if='titleType === "basic"' class='title-basic'>{{title}}</p>
+            <div v-if='titleType === "connect"' class='title-connect'>
+                <div class='title-connect-text'>
+                    <span>挂车：沪GD889挂</span>
+                    <span class='main'>接挂</span>
+                    <span>车头：沪AD9832</span>
+                </div>
+                <div class='progress'>
+                    <div :style='{width: `${connectProgress}%`}' class='progress-act'></div>
+                </div>
+            </div>
+      <!--       <div v-if='titleType === "trailer"' class='title-trailer'>
+                <span>沪GD889挂</span>
+                <img src='static/img/gua.png' />
+                <span>沪AD9832</span>
+            </div> -->
         </div>
         <div class='left-bar'>
             <div v-for='item in leftWarns' class='left-sec'>
@@ -86,6 +101,24 @@
             <div :class='{"card-active": actCardList.indexOf("stop") > -1 }' class='card card-blue card-stop'>
                 <span class='card-title'>园区停靠</span>
                 <p class='con'>停靠位置<span>B04</span></p>
+                <hr class='card-t' />
+                <hr class='card-l' />
+                <hr class='card-r' />
+                <hr class='card-b' />
+                <hr class='card-br' />
+            </div>
+            <div :class='{"card-active": actCardList.indexOf("location") > -1 }' class='card card-blue card-stop'>
+                <span class='card-title'>高精度定位</span>
+                <p class='con'>高精度定位成功</p>
+                <hr class='card-t' />
+                <hr class='card-l' />
+                <hr class='card-r' />
+                <hr class='card-b' />
+                <hr class='card-br' />
+            </div>
+            <div :class='{"card-active": actCardList.indexOf("platform") > -1 }' class='card card-blue card-stop'>
+                <span class='card-title'>月台匹配</span>
+                <p class='con'>月台匹配成功</p>
                 <hr class='card-t' />
                 <hr class='card-l' />
                 <hr class='card-r' />
@@ -220,7 +253,13 @@
             },
             actCardList() {
                 return this.$store.state.actCardList;
-            }
+            },
+            titleType() {
+                return this.$store.state.titleType;
+            },
+            connectProgress() {
+                return this.$store.state.connectProgress;
+            },
         },
         methods: {
             format(value) {
@@ -305,14 +344,13 @@
                 num: 134,
                 desc: '卸货中',
             }
-        ],
-    }),
-    mounted() {
-        this.makeLeftWarns();
-        this.formatCount();
-        this.formatWarn();
-        // console.log(this.$store.state.);
-    },
+        ]}),
+        mounted() {
+            this.makeLeftWarns();
+            this.formatCount();
+            this.formatWarn();
+            // console.log(this.$store.state.);
+        },
     };
 </script>
 
@@ -604,193 +642,256 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        line-height: 1;
 
-        .title-bar {
-            position: absolute;
-            width: 100%;
-            top: .78rem;
+        .title-basic {
+            font-size: .48rem;
+            color: #ffffff;
+        }
+
+        .title-connect {
+            width: 10rem;
+            height: 1.89rem;
+            background: rgba(17,22,35,0.7);
+            border: 2px solid rgba(30,222,255,0.2);
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            line-height: 1;
+            padding: .51rem .85rem .35rem;
+
+            &-text {
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                span {
+                    font-size: .32rem;
+                    color: #747EA5;
+                }
+                .main {
+                    font-size: .48rem;
+                    color: #22bbf2;
+                }
+            }
+
+            .progress {
+                width: 90%;
+                height: 8px;
+                background: #000;
+
+                &-act {
+                    height: 100%;
+                    background: #22BBF2;
+                }
+            }
+        }
+
+        .title-trailer {
+            width: 8rem;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
             line-height: 1;
 
-            p {
+            span {
                 font-size: .48rem;
                 color: #3A456F;
             }
+
+            img {
+                width: 2.22rem;
+            }
         }
+    }
 
-        .left-bar {
+    .title-bar {
+        position: absolute;
+        width: 100%;
+        top: .78rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        line-height: 1;
+
+        p {
+            font-size: .48rem;
+            color: #3A456F;
+        }
+    }
+
+    .left-bar {
+        display: flex;
+        flex-direction: column;
+
+        .left-sec {
             display: flex;
-            flex-direction: column;
+            line-height: 1;
+            margin: 0 0 .3rem .37rem;
+            &:last-child {
+                margin-bottom: 0;
+            }
 
-            .left-sec {
-                display: flex;
-                line-height: 1;
-                margin: 0 0 .3rem .37rem;
+            .icon {
+                width: .64rem;
+                height: .64rem;
+                margin-right: .2rem;
+            }
+            .num {
+                font-size: .38rem;
+                color: @C0;
+                margin-bottom: .06rem;
+            }
+            .desc {
+                font-size: .18rem;
+                color: @C2;
+            }
+        }
+    }
+
+    .right-bar {
+        line-height: 1;
+        padding: 0 .16rem 0 .24rem;
+        background-image: linear-gradient(149deg, #31338F 0%, #161756 93%);
+        .right-top {
+            display: flex;
+            padding: .39rem 0 .71rem 0;
+
+            &-left {
+                margin-right: .69rem;
+            }
+
+            .num {
+                font-size: .26rem;
+                color: @C0;
+                margin-bottom: .1rem;
+            }
+
+            .desc {
+                font-size: .18rem;
+                color: @C2;
+                margin-bottom: .24rem;
+
                 &:last-child {
                     margin-bottom: 0;
                 }
-
-                .icon {
-                    width: .64rem;
-                    height: .64rem;
-                    margin-right: .2rem;
-                }
-                .num {
-                    font-size: .38rem;
-                    color: @C0;
-                    margin-bottom: .06rem;
-                }
-                .desc {
-                    font-size: .18rem;
-                    color: @C2;
-                }
             }
         }
-
-        .right-bar {
-            line-height: 1;
-            padding: 0 .16rem 0 .24rem;
-            background-image: linear-gradient(149deg, #31338F 0%, #161756 93%);
-            .right-top {
+        .right-middle {
+            padding: .28rem 0 .1rem;
+            position: relative;
+            display: flex;
+            &-left {
+                /*margin-right: .92rem;*/
                 display: flex;
-                padding: .39rem 0 .71rem 0;
-
-                &-left {
-                    margin-right: .69rem;
+                width: 100%;
+                flex-direction: row;
+                justify-content: space-around;
+            }
+            .middle-sec {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin-bottom: .28rem;
+                &:last-child {
+                    margin-bottom: 0;
                 }
-
-                .num {
-                    font-size: .26rem;
+                .icon {
+                    line-height: 1;
+                    width: .46rem;
+                    height: .46rem;
+                    border-radius: .23rem;
+                    font-size: .18rem;
                     color: @C0;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border: 1px solid #5865B5;
                     margin-bottom: .1rem;
                 }
-
                 .desc {
                     font-size: .18rem;
                     color: @C2;
-                    margin-bottom: .24rem;
-
-                    &:last-child {
-                        margin-bottom: 0;
-                    }
-                }
-            }
-            .right-middle {
-                padding: .28rem 0 .1rem;
-                position: relative;
-                display: flex;
-                &-left {
-                    /*margin-right: .92rem;*/
-                    display: flex;
-                    width: 100%;
-                    flex-direction: row;
-                    justify-content: space-around;
-                }
-                .middle-sec {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    margin-bottom: .28rem;
-                    &:last-child {
-                        margin-bottom: 0;
-                    }
-                    .icon {
-                        line-height: 1;
-                        width: .46rem;
-                        height: .46rem;
-                        border-radius: .23rem;
-                        font-size: .18rem;
+                    .num {
                         color: @C0;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        border: 1px solid #5865B5;
-                        margin-bottom: .1rem;
                     }
-                    .desc {
-                        font-size: .18rem;
-                        color: @C2;
-                        .num {
-                            color: @C0;
-                        }
-                    }
-                }
-            }
-            .right-bottom {
-                padding: .29rem .15rem .52rem 0;
-                position: relative;
-                display: flex;
-                justify-content: space-between;
-                .bottom-sec {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    img {
-                        width: .46rem;
-                        height: .46rem;
-                        margin-bottom: .1rem;
-                    }
-                    .desc {
-                        font-size: .18rem;
-                        color: @C2;
-                        .num {
-                            color: @C0;
-                        }
-                    }
-                }
-            }
-            .sub-title {
-                width: 100%;
-                display: flex;
-                align-items: center;
-                position: absolute;
-                top: -0.09rem;
-                span {
-                    font-size: .18rem;
-                    color: @C2;
-                    padding-right: .126rem;
-                }
-                hr {
-                    display: flex;
-                    flex-grow: 1;
-                    border: none;
-                    height: 1px;
-                    background: @C2;
-                    opacity: .66;
                 }
             }
         }
-
-        .bottom-bar {
+        .right-bottom {
+            padding: .29rem .15rem .52rem 0;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            .bottom-sec {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                img {
+                    width: .46rem;
+                    height: .46rem;
+                    margin-bottom: .1rem;
+                }
+                .desc {
+                    font-size: .18rem;
+                    color: @C2;
+                    .num {
+                        color: @C0;
+                    }
+                }
+            }
+        }
+        .sub-title {
             width: 100%;
             display: flex;
-            justify-content: center;
+            align-items: center;
             position: absolute;
-            bottom: .28rem;
+            top: -0.09rem;
+            span {
+                font-size: .18rem;
+                color: @C2;
+                padding-right: .126rem;
+            }
+            hr {
+                display: flex;
+                flex-grow: 1;
+                border: none;
+                height: 1px;
+                background: @C2;
+                opacity: .66;
+            }
+        }
+    }
 
-            .bottom-sec {
-                line-height: 1;
-                margin-right: 1.3rem;
-                &:last-child {
-                    margin: 0;
-                }
-                .num {
-                    color: @C0;
-                    font-size: .46rem;
-                    margin-bottom: .1rem;
+    .bottom-bar {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        position: absolute;
+        bottom: .28rem;
 
-                    .unit {
-                        color: @C1;
-                        font-size: .22rem;
-                        margin-left: .2rem;
-                    }
-                }
-                .desc {
+        .bottom-sec {
+            line-height: 1;
+            margin-right: 1.3rem;
+            &:last-child {
+                margin: 0;
+            }
+            .num {
+                color: @C0;
+                font-size: .46rem;
+                margin-bottom: .1rem;
+
+                .unit {
+                    color: @C1;
                     font-size: .22rem;
-                    color: @C2;
+                    margin-left: .2rem;
                 }
+            }
+            .desc {
+                font-size: .22rem;
+                color: @C2;
             }
         }
     }

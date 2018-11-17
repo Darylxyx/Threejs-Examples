@@ -10,6 +10,8 @@ const store = new Vuex.Store({
     state: {
         actCardList: [],
         title: '',
+        titleType: '',
+        connectProgress: '',
     },
     mutations,
     actions,

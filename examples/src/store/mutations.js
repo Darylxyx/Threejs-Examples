@@ -6,8 +6,12 @@ export default {
             state.userInfo = { ...userInfo };
         }
     },
-    setTitle(state, title) {
-        state.title = title;
+    setTitle(state, params) {
+        state.title = params.title;
+        state.titleType = params.type || 'basic';
+        if (params.type === 'connect') { // 接挂阶段
+            state.connectProgress = params.progress;
+        }
     },
     setActCardList(state, list) {
         state.actCardList = list;

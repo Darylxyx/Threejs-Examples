@@ -4,6 +4,8 @@ const { PI, sin, cos } = Math;
 let rad = PI / 2; // 通用弧度变量（用于计算车辆过弯）
 let stepIndex = 0; // 当前动画步骤
 let count = 0;
+let goodsIndex = 0; // 货物动画索引
+let goodsFar = 0;
 const runSpeed = 0.5; // 直路行进速度
 const reversSpeed = 0.05; // 倒车速度
 const cornerSpeed = 0.01; // 转弯速度
@@ -12,6 +14,8 @@ const co = { // 摄影机偏移量
     y: 15,
     z: 5    
 };
+let s1, s2, s3; // 三组信号灯
+let flag = false;
 export default {
     methods: {
         initAnimate() {
@@ -38,6 +42,9 @@ export default {
             this.backGroup.position.x = -85;
             this.backGroup.rotation.y = - PI / 2;
             this.mainGroup.add(this.backGroup);
+
+            this.camera.position.set(-80, 15, 10);
+            this.camera.lookAt(this.v3(-80, 0, 0));
         },
         carAnimate() {
             this.animateList[stepIndex] && this.animateList[stepIndex]();
@@ -49,15 +56,38 @@ export default {
                     this.backGroup.position.x = 0;
                     truck.add(this.backGroup);
                     this.backGroup.rotation.y = 0;
-                    this.$store.commit('setTitle', '');
+                    this.$store.commit('setTitle', {});
+                    this.headGroup.remove(s1);
+                    this.backGroup.remove(s2);
+                    this.backGroup.remove(s3);
                     stepIndex++;
                 } else {
-                    truck.position.x -= reversSpeed;
-                    this.$store.commit('setTitle', '车挂匹配');
+                    if (count === 130) {
+                        s1 = this.createSignal();
+                        s1.position.set(0, 0.8, -5.5);
+                        s2 = this.createSignal();
+                        s2.position.set(-1, 0.8, -4.8);
+                        s3 = this.createSignal();
+                        s3.position.set(1, 0.8, -4.8);
+                        s1.tween.start();
+                        s2.tween.start();
+                        s3.tween.start();
+                        this.headGroup.add(s1);
+                        this.backGroup.add(s2);
+                        this.backGroup.add(s3);
+                    } else if (count > 130) {
+                        truck.position.x -= 0.02;
+                        let progress = Math.abs(truck.position.x + 75) / 10 * 100;
+                        if (progress > 100) progress = 100;
+                        this.$store.commit('setTitle', {
+                            title: '车挂匹配',
+                            type: 'connect',
+                            progress,
+                        });
+                    }
                 }
             } 
             count++;
-            this.moveCamera();
         },
         outStation() { // 出站
             count = 0;
@@ -104,30 +134,47 @@ export default {
             } else {
                 rad += cornerSpeed;
                 this.drift(11, 11, 68, true);
-                this.$store.commit('setTitle', '园区停靠');
-                this.$store.commit('setActCardList', ['stop']);
+            }
+            if (!flag) {
+                s1.position.set(0, 0.8, 0);
+                this.backGroup.add(s1);
+                flag = true;
             }
             this.moveCamera();
         },
         loading() { // 装货
-            if (count >= 300) {
+            if (count >= 1300) {
                 count = 0;
-                rad = PI;
                 stepIndex++;
+            } else if (count > 400 && count < 600) {
+                if (co.x < 4) {
+                    co.x += 0.055;
+                }
+                if (co.y > 8) {
+                    co.y -= 0.53;
+                }
+                if (co.z < 5) {
+                    co.z += 0.17;
+                }
+            } else if (count === 50) {
+                this.$store.commit('setActCardList', ['location']);
+            } else if (count === 200) {
+                this.$store.commit('setActCardList', ['platform']);
+            } else if (count === 400) {
+                this.$store.commit('setTitle', { title: '园区停靠' });
+                this.$store.commit('setActCardList', ['stop']);
+                this.backGroup.remove(s1);
+                flag = false;
+            } else if (count === 600) {
+                this.$store.commit('setTitle', { title: '装货' });
+                this.$store.commit('setActCardList', ['load', 'loadtime']);
+                const goods = this.goodsList;
+                goods.forEach((good) => {
+                    good.inTween.start();
+                });
             }
             count++;
-            if (co.x < 4) {
-                co.x += 0.055;
-            }
-            if (co.y > 2) {
-                co.y -= 0.53;
-            }
-            if (co.z < 12) {
-                co.z += 0.17;
-            }
             this.moveCamera();
-            this.$store.commit('setTitle', '装货');
-            this.$store.commit('setActCardList', ['load', 'loadtime']);
         },
         outLoad() { // 离开装货园区
             if (truck.position.z <= 68) {
@@ -144,7 +191,7 @@ export default {
                 }
             } else {
                 truck.position.z -= reversSpeed;
-                this.$store.commit('setTitle', '');
+                this.$store.commit('setTitle', {});
                 this.$store.commit('setActCardList', []);
             }
             if (co.x > 0) {
@@ -165,7 +212,7 @@ export default {
                     stepIndex++;
                 } else {
                     truck.position.x -= runSpeed;
-                    this.$store.commit('setTitle', '');
+                    this.$store.commit('setTitle', {});
                     this.$store.commit('setActCardList', []);
                 }
                 if (co.x > 0) {
@@ -181,17 +228,18 @@ export default {
             } else {
                 rad += 0.005;
                 this.drift(57, 80, 0);
-                this.$store.commit('setTitle', '沪123456挂');
-                const cx = 60 * cos(rad - 0.25) + 80;
-                const cy = 2;
-                const cz = - 60 * sin(rad - 0.25);
+                this.$store.commit('setTitle', {
+                    type: 'trailer',
+                });
+                const cx = 60 * cos(rad - 0.2) + 80;
+                const cy = 4;
+                const cz = - 60 * sin(rad - 0.2);
                 // console.log(x, y, z);
                 this.moveCamera(cx, cy, cz);
                 const { x, y, z } = truck.position;
                 co.x = cx - x;
                 co.y = cy - y;
                 co.z = cz - z;
-                console.log(co);
                 if (rad > PI / 3) {
                     this.$store.commit('setActCardList', ['rollalert']);
                 } else if (rad > PI / 6) {
@@ -215,33 +263,46 @@ export default {
             } else {
                 rad += cornerSpeed;
                 this.drift(11, -11, -68, true);
-                this.$store.commit('setActCardList', ['stop']);
+                if (!flag) {
+                    s1.position.set(0, 0.8, 0);
+                    this.backGroup.add(s1);
+                    flag = true;
+                }
             }
             this.moveCamera();
         },
         unloading() { // 卸货
-            if (count >= 300) {
+            if (count >= 1300) {
                 count = 0;
-                rad = 0;
                 stepIndex++;
+            } else if (count > 400 && count < 600) {
+                if (co.x >- 4) {
+                    co.x -= 0.55;
+                }
+                if (co.y > 8) {
+                    co.y -= 0.53;
+                }
+                if (co.z > -5) {
+                    co.z -= 0.17;
+                }
+            } else if (count === 50) {
+                this.$store.commit('setActCardList', ['location']);
+            } else if (count === 200) {
+                this.$store.commit('setActCardList', ['platform']);
+            } else if (count === 400) {
+                this.$store.commit('setTitle', { title: '园区停靠' });
+                this.$store.commit('setActCardList', ['stop']);
+                this.backGroup.remove(s1);
+                flag = false;
+            } else if (count === 600) {
+                this.$store.commit('setTitle', { title: '卸货' });
+                this.$store.commit('setActCardList', ['unload', 'unloadtime']);
+                const goods = this.goodsList;
+                for (let i = goods.length - 1; i > -1; i--) {
+                    goods[i].outTween.start();
+                }
             }
-            // 车挂分离
-            this.truckGroup.remove(this.backGroup);
-            this.mainGroup.add(this.backGroup);
-            this.backGroup.position.set(0, 2.3, -77.4);
-            this.backGroup.rotation.y = PI;
             count++;
-            if (co.x >- 4) {
-                co.x -= 0.55;
-            }
-            if (co.y > 2) {
-                co.y -= 0.53;
-            }
-            if (co.z > -12) {
-                co.z -= 0.17;
-            }
-            this.$store.commit('setTitle', '卸货');
-            this.$store.commit('setActCardList', ['unload', 'unloadtime']);
             this.moveCamera();
         },
         outUnload() { // 离开卸货园区
@@ -249,6 +310,11 @@ export default {
                 if (rad <= - PI / 2) {
                     if (truck.position.x <= -55) {
                         rad = PI / 2;
+                        // 车挂分离
+                        this.truckGroup.remove(this.backGroup);
+                        this.mainGroup.add(this.backGroup);
+                        this.backGroup.position.set(-55, 2.3, -57);
+                        this.backGroup.rotation.y = PI / 2;
                         stepIndex++;
                     } else {
                         truck.position.x -= runSpeed;
@@ -259,7 +325,7 @@ export default {
                 }
             } else {
                 truck.position.z += reversSpeed;
-                this.$store.commit('setTitle', '');
+                this.$store.commit('setTitle', {});
                 this.$store.commit('setActCardList', []);
             }
             if (co.x < 0) {
@@ -280,10 +346,10 @@ export default {
                     stepIndex++;
                 } else {
                     truck.position.z += runSpeed;
+                    this.backGroup.position.set(-85, 2.3, 0);
+                    this.backGroup.rotation.y = - PI / 2;
                 }
             } else {
-                this.backGroup.position.set(-85, 2.3, 0);
-                this.backGroup.rotation.y = - PI / 2;
                 rad += cornerSpeed;
                 this.drift(15, -55, -42);
             }
