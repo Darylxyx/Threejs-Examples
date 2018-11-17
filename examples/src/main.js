@@ -3,6 +3,7 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
+import VueAnimateNumber from 'vue-animate-number';
 
 import '@/assets/css/base.less';
 // import '@/assets/js/base.js';
@@ -13,6 +14,7 @@ Vue.config.productionTip = false;
 
 window.Vue = Vue;
 window.Bridge = new Vue();
+Vue.use(VueAnimateNumber);
 
 /* eslint-disable no-new */
 new Vue({

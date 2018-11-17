@@ -125,18 +125,21 @@
                 <hr class='card-b' />
                 <hr class='card-br' />
             </div>
-            <div :class='{"card-active": actCardList.indexOf("load") > -1 }' class='card card-blue card-load'>
+            <div v-if='actCardList.indexOf("load") > -1' class='card-active card card-blue card-load'>
                 <span class='card-title'>实时装载...</span>
-                <p class='con'>14 t<span>50 m³</span></p>
+                <p class='con'>
+                    <animate-number from="0" to="15" duration="11000" :formatter="formatter" style="margin-left:0"></animate-number> t
+                    <span><animate-number from="0" to="48" duration="11000" :formatter="formatter" style="margin-left:0"></animate-number> m³</span>
+                </p>
                 <hr class='card-t' />
                 <hr class='card-l' />
                 <hr class='card-r' />
                 <hr class='card-b' />
                 <hr class='card-br' />
             </div>
-            <div :class='{"card-active": actCardList.indexOf("loadtime") > -1 }' class='card card-blue card-loadtime'>
+            <div v-if='actCardList.indexOf("loadtime") > -1' class='card-active card card-blue card-loadtime'>
                 <span class='card-title'>装载时长</span>
-                <p class='con'>00:32:09</p>
+                <p class='con'><animate-number from="1" to="11304" duration="11000" :formatter="formattime" style="margin-left:0"></animate-number></p>
                 <hr class='card-t' />
                 <hr class='card-l' />
                 <hr class='card-r' />
@@ -262,9 +265,6 @@
             },
         },
         methods: {
-            format(value) {
-                return (value *1 +1).toFixed(0)
-            },
             formatWarn() {
                 setInterval(() => {
                     this.leftWarns.forEach((item,index) => {
@@ -288,7 +288,16 @@
                     warn.num = Math.round(item.num / 24 * h);
                     this.leftWarns.push(warn);
                 });
-            }
+            },
+            formatter(num) {
+                return num.toFixed(1);
+            },
+            formattime(num) {
+                const h = Math.floor(num / 60 / 60).toFixed(0).padStart(2,'0');
+                const m = Math.max((num - h*3600) / 60,0).toFixed(0).padStart(2,'0');
+                const s = (num % 60).toFixed(0).padStart(2,'0');
+                return h + ":" + m + ":" + s;
+            },
         },
         data: () => ({
         leftWarns:[],
@@ -383,7 +392,7 @@
 
     /*实时装载*/
     .card-load {
-        top: 20%;
+        top: 25%;
         right: 20%;
         .con {
             font-size: .3rem;
@@ -550,7 +559,16 @@
     }
 
     .card-active {
-        opacity: 1 !important;
+        opacity: .9 !important;
+        -webkit-animation-duration: 1s;
+        animation-duration: 1s;
+        -webkit-animation-fill-mode: both;
+        animation-fill-mode: both;
+
+        -webkit-backface-visibility: visible !important;
+        backface-visibility: visible !important;
+        -webkit-animation-name: flipInX;
+        animation-name: flipInX;
     }
 
     .card {
@@ -895,4 +913,71 @@
             }
         }
     }
+</style>
+<style>
+@-webkit-keyframes flipInX {
+  from {
+    -webkit-transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
+    transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
+    opacity: 0;
+  }
+
+  40% {
+    -webkit-transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+    transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
+  }
+
+  60% {
+    -webkit-transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
+    transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
+    opacity: 1;
+  }
+
+  80% {
+    -webkit-transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+    transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+  }
+
+  to {
+    -webkit-transform: perspective(400px);
+    transform: perspective(400px);
+  }
+}
+
+@keyframes flipInX {
+  from {
+    -webkit-transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
+    transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
+    opacity: 0;
+  }
+
+  40% {
+    -webkit-transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+    transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
+  }
+
+  60% {
+    -webkit-transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
+    transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
+    opacity: 1;
+  }
+
+  80% {
+    -webkit-transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+    transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+  }
+
+  to {
+    -webkit-transform: perspective(400px);
+    transform: perspective(400px);
+  }
+}
 </style>
