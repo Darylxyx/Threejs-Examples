@@ -366,6 +366,7 @@ export default {
                 co.y -= 0.2;
             }
             this.moveCamera();
+            window.$$vue.round++;
         },
         drift(r, offsetX, offsetZ, clockwise = false) {
             const x = r * cos(rad) + offsetX;

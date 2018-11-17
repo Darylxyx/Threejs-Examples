@@ -4,12 +4,13 @@
             <p v-if='titleType === "basic"' class='title-basic'>{{title}}</p>
             <div v-if='titleType === "connect"' class='title-connect'>
                 <div class='title-connect-text'>
-                    <span>挂车：沪GD889挂</span>
+                    <span>挂车：{{currentTruck}}</span>
                     <span class='main'>接挂</span>
-                    <span>车头：沪AD9832</span>
+                    <span>车头：{{currentTrailer}}</span>
                 </div>
                 <div class='progress'>
-                    <div :style='{width: `${connectProgress}%`}' class='progress-act'></div>
+                    <div :style='{width: `${connectProgress/2 + 1}%`}' class='left'></div>
+                    <div :style='{width: `${connectProgress/2 +1 }%`}' class='right'></div>
                 </div>
             </div>
       <!--       <div v-if='titleType === "trailer"' class='title-trailer'>
@@ -126,7 +127,7 @@
                 <hr class='card-br' />
             </div>
             <div v-if='actCardList.indexOf("load") > -1' class='card-active card card-blue card-load'>
-                <span class='card-title'>实时装载...</span>
+                <span class='card-title'>实时装货...</span>
                 <p class='con'>
                     <animate-number from="0" to="15" duration="11000" :formatter="formatter" style="margin-left:0"></animate-number> t
                     <span><animate-number from="0" to="48" duration="11000" :formatter="formatter" style="margin-left:0"></animate-number> m³</span>
@@ -138,7 +139,7 @@
                 <hr class='card-br' />
             </div>
             <div v-if='actCardList.indexOf("loadtime") > -1' class='card-active card card-blue card-loadtime'>
-                <span class='card-title'>装载时长</span>
+                <span class='card-title'>装货时长</span>
                 <p class='con'><animate-number from="1" to="11304" duration="11000" :formatter="formattime" style="margin-left:0"></animate-number></p>
                 <hr class='card-t' />
                 <hr class='card-l' />
@@ -146,18 +147,21 @@
                 <hr class='card-b' />
                 <hr class='card-br' />
             </div>
-            <div :class='{"card-active": actCardList.indexOf("unload") > -1 }' class='card card-red card-unload'>
-                <span class='card-title'>实时卸载...</span>
-                <p class='con'>13 t<span>47 m³</span></p>
+            <div v-if='actCardList.indexOf("unload") > -1' class='card-active card card-red card-unload'>
+                <span class='card-title'>实时卸货...</span>
+                <p class='con'>
+                    <animate-number from="15" to="0" duration="11000" :formatter="formatter" style="margin-left:0"></animate-number> t
+                    <span><animate-number from="48" to="0" duration="11000" :formatter="formatter" style="margin-left:0"></animate-number> m³</span>
+                </p>
                 <hr class='card-t' />
                 <hr class='card-l' />
                 <hr class='card-r' />
                 <hr class='card-b' />
                 <hr class='card-br' />
             </div>
-            <div :class='{"card-active": actCardList.indexOf("unloadtime") > -1 }' class='card card-red card-unloadtime'>
+            <div v-if='actCardList.indexOf("unloadtime") > -1' class='card-active card card-red card-unloadtime'>
                 <span class='card-title'>卸货时长</span>
-                <p class='con'>00:24:32</p>
+                <p class='con'><animate-number from="1" to="9796" duration="11000" :formatter="formattime" style="margin-left:0"></animate-number></p>
                 <hr class='card-t' />
                 <hr class='card-l' />
                 <hr class='card-r' />
@@ -186,8 +190,8 @@
                     <img src='static/img/icon11.png' />
                     <hr class='split' />
                     <div>
-                        <p>体积<span>50 m³</span></p>
-                        <p>载重<span>14 t</span></p>
+                        <p>体积<span>48 m³</span></p>
+                        <p>载重<span>15 t</span></p>
                     </div>
                 </div>
                 <hr class='card-t' />
@@ -263,6 +267,12 @@
             connectProgress() {
                 return this.$store.state.connectProgress;
             },
+            currentTruck() {
+                return this.truckNums[0];
+            },
+            currentTrailer() {
+                return this.trailerNums[this.round % 10];
+            },
         },
         methods: {
             formatWarn() {
@@ -300,64 +310,70 @@
             },
         },
         data: () => ({
-        leftWarns:[],
-        leftList: [
-            {
-                icon: 'static/img/icon1.png',
-                num: 309,
-                desc: '头挂匹配',
-            }, {
-                icon: 'static/img/icon2.png',
-                num: 206,
-                desc: '头挂分离',
-            }, {
-                icon: 'static/img/icon4.png',
-                num: 784,
-                desc: '进入场站',
-            },{
-                icon: 'static/img/icon3.png',
-                num: 776,
-                desc: '停靠月台',
-            }, {
-                icon: 'static/img/icon5.png',
-                num: 21,
-                desc: '防侧翻保护',
-            }, {
-                icon: 'static/img/icon6.png',
-                num: 1633,
-                desc: '胎压异常',
-            }, {
-                icon: 'static/img/icon7.png',
-                num: 0,
-                desc: '胎温异常',
-            }, {
-                icon: 'static/img/icon8.png',
-                num: 2,
-                desc: '轮胎漏气',
-            }
-        ],
-        bottomList: [
-            {
-                num: 1850,
-                desc: '运行中',
-            }, {
-                num: 761,
-                desc: '静止中',
-            }, {
-                num: 353,
-                desc: '离线中',
-            }, {
-                num: 211,
-                desc: '装货中',
-            },{
-                num: 134,
-                desc: '卸货中',
-            }
-        ]}),
+            leftWarns:[],
+            leftList: [
+                {
+                    icon: 'static/img/icon1.png',
+                    num: 309,
+                    desc: '头挂匹配',
+                }, {
+                    icon: 'static/img/icon2.png',
+                    num: 206,
+                    desc: '头挂分离',
+                }, {
+                    icon: 'static/img/icon4.png',
+                    num: 784,
+                    desc: '进入场站',
+                },{
+                    icon: 'static/img/icon3.png',
+                    num: 776,
+                    desc: '停靠月台',
+                }, {
+                    icon: 'static/img/icon5.png',
+                    num: 21,
+                    desc: '防侧翻保护',
+                }, {
+                    icon: 'static/img/icon6.png',
+                    num: 1633,
+                    desc: '胎压异常',
+                }, {
+                    icon: 'static/img/icon7.png',
+                    num: 0,
+                    desc: '胎温异常',
+                }, {
+                    icon: 'static/img/icon8.png',
+                    num: 2,
+                    desc: '轮胎漏气',
+                }
+            ],
+            bottomList: [
+                {
+                    num: 1850,
+                    desc: '运行中',
+                }, {
+                    num: 761,
+                    desc: '静止中',
+                }, {
+                    num: 353,
+                    desc: '离线中',
+                }, {
+                    num: 211,
+                    desc: '装货中',
+                },{
+                    num: 134,
+                    desc: '卸货中',
+                }
+            ],
+            truckNums:['沪AD9832'],
+            trailerNums:['沪GD889挂','沪F7T73挂','沪D9C73挂','沪D9C79挂','沪D9C81挂','沪D9C02挂','沪D9C46挂','沪D9C02挂','沪D9C66挂','沪D9C58挂'],
+            round:0,
+        }),    
         mounted() {
             this.makeLeftWarns();
             this.formatCount();
             this.formatWarn();
+
+            window.$$vue = this;
             // console.log(this.$store.state.);
         },
     };
@@ -378,7 +394,7 @@
 
     /*园区停靠*/
     .card-stop {
-        bottom: 30%;
+        top: 15%;
         right: 30%;
         .con {
             font-size: .3rem;
@@ -392,7 +408,7 @@
 
     /*实时装载*/
     .card-load {
-        top: 25%;
+        top: 30%;
         right: 20%;
         .con {
             font-size: .3rem;
@@ -699,10 +715,18 @@
                 width: 90%;
                 height: 8px;
                 background: #000;
+                position: relative;
 
-                &-act {
+                .left, .right {
+                    position: absolute;
                     height: 100%;
                     background: #22BBF2;
+                }
+                .left{
+                    left: 0;
+                }
+                .right{
+                    right:0;
                 }
             }
         }
