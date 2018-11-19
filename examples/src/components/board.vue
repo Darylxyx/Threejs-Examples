@@ -248,6 +248,16 @@
                 <hr class='card-b' />
                 <hr class='card-br' />
             </div>
+
+            <div class="card-active card-img img-1">
+                <img src="../assets/img/gua1.png" alt="">
+            </div>
+            <div class="card-active card-img img-2">
+                <img src="../assets/img/gua2.png" alt="">
+            </div>
+            <div class="card-active card-img img-3">
+                <img src="../assets/img/gua3.png" alt="">
+            </div>
         </div>
     </div>
 </template>
@@ -572,6 +582,17 @@
                     margin-bottom: 0;
                 }
             }
+        }
+    }
+
+    .card-img{
+        position: absolute;
+        top: 30%;
+        left: 20%;
+        img{
+            display: block;
+            width:240px;
+            border:3px solid #ffffff;
         }
     }
 
