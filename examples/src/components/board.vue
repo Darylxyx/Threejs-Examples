@@ -4,9 +4,9 @@
             <p v-if='titleType === "basic"' class='title-basic'>{{title}}</p>
             <div v-if='titleType === "connect"' class='title-connect'>
                 <div class='title-connect-text'>
-                    <span>挂车：{{currentTruck}}</span>
-                    <span class='main'>接挂</span>
-                    <span>车头：{{currentTrailer}}</span>
+                    <span>挂车：{{currentTrailer}}</span>
+                    <span class='main'>{{title}}</span>
+                    <span>车头：{{currentTruck}}</span>
                 </div>
                 <div class='progress'>
                     <div :style='{width: `${connectProgress/2 + 1}%`}' class='left'></div>
@@ -102,6 +102,15 @@
             <div :class='{"card-active": actCardList.indexOf("stop") > -1 }' class='card card-blue card-stop'>
                 <span class='card-title'>园区停靠</span>
                 <p class='con'>停靠位置<span>B04</span></p>
+                <hr class='card-t' />
+                <hr class='card-l' />
+                <hr class='card-r' />
+                <hr class='card-b' />
+                <hr class='card-br' />
+            </div>
+            <div :class='{"card-active": actCardList.indexOf("unloadstop") > -1 }' class='card card-blue card-stop'>
+                <span class='card-title'>园区停靠</span>
+                <p class='con'>停靠位置<span>E11</span></p>
                 <hr class='card-t' />
                 <hr class='card-l' />
                 <hr class='card-r' />
@@ -249,14 +258,14 @@
                 <hr class='card-br' />
             </div>
 
-            <div class="card-active card-img img-1">
-                <img src="../assets/img/gua1.png" alt="">
+            <div :class='{"card-active": picIndex === 1}' class="card card-img img-1">
+                <img src="../assets/img/gua1.png">
             </div>
-            <div class="card-active card-img img-2">
-                <img src="../assets/img/gua2.png" alt="">
+            <div :class='{"card-active": picIndex === 2}' class="card card-img img-2">
+                <img src="../assets/img/gua2.png">
             </div>
-            <div class="card-active card-img img-3">
-                <img src="../assets/img/gua3.png" alt="">
+            <div :class='{"card-active": picIndex === 3}' class="card card-img img-3">
+                <img src="../assets/img/gua3.png">
             </div>
         </div>
     </div>
@@ -282,6 +291,9 @@
             },
             currentTrailer() {
                 return this.trailerNums[this.round % 10];
+            },
+            picIndex() {
+                return this.$store.state.picIndex;
             },
         },
         methods: {
@@ -515,8 +527,8 @@
 
     /*胎温胎压*/
     .card-wheel {
-        top: 70%;
-        right: 22%;
+        top: 60%;
+        right: 30%;
         .con {
             img {
                 width: .65rem;
@@ -543,8 +555,8 @@
 
     /*胎压报警*/
     .card-wheelalert {
-        top: 50%;
-        left: 22%;
+        top: 60%;
+        right: 30%;
         img {
             width: .65rem;
             left: .17rem;
@@ -565,8 +577,8 @@
 
     /*防侧翻保护*/
     .card-rollalert {
-        top: 70%;
-        left: 22%;
+        top: 50%;
+        right: 30%;
         img {
             width: .65rem;
             left: .17rem;
@@ -587,8 +599,8 @@
 
     .card-img{
         position: absolute;
-        top: 30%;
-        left: 20%;
+        top: 65%;
+        right: 20%;
         img{
             display: block;
             width:240px;

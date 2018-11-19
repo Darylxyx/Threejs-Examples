@@ -16,4 +16,7 @@ export default {
     setActCardList(state, list) {
         state.actCardList = list;
     },
+    showPic(state, index) {
+        state.picIndex = index;
+    },
 };

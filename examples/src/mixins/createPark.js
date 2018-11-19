@@ -52,6 +52,9 @@ export default {
             const forklift = await this.createForklift();
             parkGroup.add(forklift);
 
+            const cargo = await this.createCargo();
+            parkGroup.add(cargo);
+
             return parkGroup;
         },
         createStation() { // 创建站台
@@ -155,6 +158,22 @@ export default {
                     objLoader.load('static/forklift.obj', (obj) => {
                         obj.position.set(-7.5, 3.3, 0);
                         obj.rotation.y = -this.PI / 1.5;
+                        obj.scale.set(0.04, 0.04, 0.04);
+                        resolve(obj);
+                    });
+                });
+            });
+        },
+        createCargo() {
+            return new Promise((resolve) => {
+                const mtlLoader = new THREE.MTLLoader();
+                mtlLoader.load('static/Cargo.mtl', (mat) => {
+                    mat.preload();
+                    const objLoader = new THREE.OBJLoader();
+                    objLoader.setMaterials(mat);
+                    objLoader.load('static/Cargo.obj', (obj) => {
+                        obj.position.set(-7.5, 3.3, 5);
+                        obj.rotation.y = - this.PI / 2;
                         obj.scale.set(0.04, 0.04, 0.04);
                         resolve(obj);
                     });

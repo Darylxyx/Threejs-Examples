@@ -55,15 +55,14 @@ export default {
             const backPromise = new Promise((resolve, reject) => {
                 const backGroup = new THREE.Group();
                 const mtlLoader = new THREE.MTLLoader();
-                mtlLoader.load('static/G7Trailer-logo1.mtl', (mat) => {
+                mtlLoader.load('static/G7Trailer-back.mtl', (mat) => {
                     mat.preload();
                     const objLoader = new THREE.OBJLoader();
                     objLoader.setMaterials(mat);
-                    objLoader.load('static/G7Trailer-logo1.obj', (obj) => {
+                    objLoader.load('static/G7Trailer-back.obj', (obj) => {
                         obj.scale.set(p.modelScale, p.modelScale, p.modelScale);
                         backGroup.add(obj);
                         backGroup.position.y = 2.3;
-                        // backGroup.scale.set(p.modelScale, p.modelScale, p.modelScale);
                         resolve(backGroup);
                     });
                 });
@@ -219,51 +218,48 @@ export default {
         },
         createSignal() {
             const signalGroup = new THREE.Group();
-            const initSignal = () => {
-                const signalGeom = this.initGeometry('Sphere', 0.5, 30, 30, 0, this.PI * 2, 0, this.PI * 2);
+            const initSignal = (size, opacity) => {
+                const signalGeom = this.initGeometry('Sphere', size, 30, 30, 0, this.PI * 2, 0, this.PI * 2);
                 const signalMat = this.initMaterial('MeshBasic', {
                     color: 0xED4AFF,
                     transparent: true,
-                    opacity: 0.001,
-                    depthTest: false,
+                    opacity,
                 });
                 const signal = new THREE.Mesh(signalGeom, signalMat);
                 signal.scale.set(0.001, 0.001, 0.001);
                 return signal;
             };
-            for (let i = 0; i < 1; i++) {
-                signalGroup.add(initSignal());
-            }
+            signalGroup.add(initSignal(0.12, 0.8));
+            signalGroup.add(initSignal(0.2, 0.4));
             this.initSignalTween(signalGroup);
             return signalGroup;
         },
         initSignalTween(group) {
-            const obj = {index: 0.001};
+            const obj = {index: 0.5};
+            function onStart() {
+                group.scale.set(1, 1, 1);
+            }
             function onUpdate() {
                 group.children[0].scale.set(this.index, this.index, this.index);
-                group.children[0].material.opacity = 1 - this.index;
-
-                // if (this.index - 0.2 > 0) {
-                //     group.children[1].scale.set(this.index - 0.2, this.index - 0.2, this.index - 0.2);
-                //     group.children[1].material.opacity = 1.2 - this.index;
-                // }
+                group.children[1].scale.set(this.index, this.index, this.index);
             }
             function onStop() {
-                obj.index = 0.001;
-                group.children[0].material.opacity = 0.001
+                group.scale.set(0.001, 0.001, 0.001);
             }
-            function onComplete() {
-                this.index = 0.001;
-            }
-            const duration = 2000;
-            const tween = new TWEEN.Tween(obj)
+            const duration = 1000;
+            const tweenIn = new TWEEN.Tween(obj)
                 .to({index: 1}, duration)
+                .onStart(onStart)
                 .onUpdate(onUpdate)
-                .onStop(onStop)
-                .onComplete(onComplete)
-                .delay(500);
-            tween.chain(tween);
-            group.tween = tween;
+                .onStop(onStop);
+            const tweenOut = new TWEEN.Tween(obj)
+                .to({index: 0.5}, duration)
+                .onStart(onStart)
+                .onUpdate(onUpdate)
+                .onStop(onStop);
+            tweenIn.chain(tweenOut);
+            tweenOut.chain(tweenIn);
+            group.tween = tweenIn;
         },
     },
 };

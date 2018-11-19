@@ -12,6 +12,7 @@ const store = new Vuex.Store({
         title: '',
         titleType: '',
         connectProgress: '',
+        picIndex: 0,
     },
     mutations,
     actions,

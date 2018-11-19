@@ -54,13 +54,12 @@ export default {
 
             this.animateStart();
 
-            const control = this.addControl();
+            // const control = this.addControl();
 
             const renderScene = () => {
                 stats.update();
-                const delta = clock.getDelta();
-                control.update(delta);
-                // this.carAnimate();
+                // const delta = clock.getDelta();
+                // control.update(delta);
                 TWEEN.update();
                 requestAnimationFrame(renderScene);
                 renderer.render(scene, camera);
@@ -76,35 +75,43 @@ export default {
             await this.createTruck();
             this.mainGroup.add(this.truckGroup);
             // 起点
-            // const start = this.createStart();
-            // this.mainGroup.add(start);
+            const start = this.createStart();
+            this.mainGroup.add(start);
             // 装货点
             const loadPark = await this.createPark(0);
             loadPark.position.set(0, 0, 90);
             loadPark.rotation.y = this.PI;
             this.loadParkGroup = loadPark;
             this.mainGroup.add(this.loadParkGroup);
-            // 卸货点
+            // // 卸货点
             const unloadPark = await this.createPark(1);
             unloadPark.position.set(0, 0, -90);
             this.unloadParkGroup = unloadPark;
             this.mainGroup.add(this.unloadParkGroup);
-            // 创建弯道
+            // // 创建弯道
             const curve = this.createCurve();
             this.mainGroup.add(curve);
-            // 创建建筑群
+            // // 创建建筑群
             const building = this.createBuilding();
             this.mainGroup.add(building);
         },
         createStart() { // 创建始发站
-            const startGeom = this.initGeometry('Plane', 32, 20);
-            const startMat = this.initMaterial('MeshLambert', {
-                color: 0x1E2642,
+            const points = [{
+                x: 16, y: 0, z: -10,
+            }, {
+                x: 16, y: 0, z: 10,
+            }, {
+                x: -16, y: 0, z: 10,
+            }, {
+                x: -16, y: 0, z: -10,
+            }, {
+                x: 16, y: 0, z: -10,
+            }];
+            const line = this.initLine(points, {
+                color: 0x283251,
             });
-            const start = new THREE.Mesh(startGeom, startMat);
-            start.position.x = - 80;
-            start.rotation.x = - this.PI / 2;
-            return start;
+            line.position.x = -80;
+            return line;
         },
         addAxes(len = 50) { // 辅助坐标系
             const axes = this.initAxes(len);
