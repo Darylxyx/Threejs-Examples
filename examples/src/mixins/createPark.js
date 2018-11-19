@@ -1,3 +1,6 @@
+import TWEEN from 'tween.js';
+import 'three/examples/js/loaders/OBJLoader.js';
+import 'three/examples/js/loaders/MTLLoader.js';
 export default {
     methods: {
         initParkParams() {
@@ -15,7 +18,7 @@ export default {
             };
             this.parkParams = params;
         },
-        createPark(haveGoods) { // 创建园区，haveGoods: 是否有货物
+        async createPark(index) { // 创建园区，index: 0为装货区，1为卸货区
             const parkGroup = new THREE.Group();
             this.initParkParams();
             const p = this.parkParams;
@@ -38,10 +41,16 @@ export default {
                 parkGroup.add(truck);
             }
 
-            // if (haveGoods) {
-                // const goodsGroup = this.createGoods();
-                // parkGroup.add(goodsGroup);
-            // }
+            const matchSpace = this.createMatchSpace();
+            if (index) {
+                this.unloadMatchSpace = matchSpace;
+            } else {
+                this.loadMatchSpace = matchSpace;
+            }
+            parkGroup.add(matchSpace);
+
+            const forklift = await this.createForklift();
+            parkGroup.add(forklift);
 
             return parkGroup;
         },
@@ -95,52 +104,62 @@ export default {
             spaceGroup.position.z = p.stationLength / 2 + p.betweenOffset;
             return spaceGroup;
         },
-        // createGoods() {
-        //     const p = this.parkParams;
-        //     const goodsGroup = new THREE.Group();
-        //     const matrix = [
-        //         [
-        //             [0, 0, 1, 1, 0],
-        //             [1, 1, 1, 1, 0],
-        //             [1, 1, 1, 1, 1],
-        //         ],
-        //         [
-        //             [1, 1, 0, 0, 0],
-        //             [1, 1, 0, 0, 1],
-        //             [1, 1, 1, 1, 1],
-        //         ],
-        //         [
-        //             [0, 1, 0, 0, 0],
-        //             [0, 1, 0, 0, 0],
-        //             [1, 1, 1, 1, 0],
-        //             [1, 1, 1, 1, 1],
-        //         ],
-        //     ];
-        //     const initGoods = (x, y, z) => {
-        //         const goodsGeom = this.initGeometry('Cube', p.goodSize, p.goodSize, p.goodSize);
-        //         const goodsMat = this.initMaterial('MeshLambert', {
-        //             color: 0xFFA500,
-        //         });
-        //         const goods = new THREE.Mesh(goodsGeom, goodsMat);
-        //         goods.position.set(x, y, z);
-        //         goods.castShadow = true;
-        //         goods.receiveShadow = true;
-        //         goodsGroup.add(goods);
-        //     };
-        //     matrix.forEach((z, zi) => { // z轴向货物数量
-        //         z.forEach((y, yi) => { // y轴向货物数量
-        //             y.forEach((x, xi) => {
-        //                 if (x) {
-        //                     const goodX = (xi - (y.length - 1) / 2) * (p.goodOffset + p.goodSize);
-        //                     const goodY = (z.length - 1 - yi) * (p.goodOffset + p.goodSize);
-        //                     const goodZ = zi * (p.goodSize + p.goodOffset);
-        //                     initGoods(goodX, goodY, goodZ);
-        //                 }
-        //             });
-        //         });
-        //     });
-        //     goodsGroup.position.y = p.stationHeight + p.goodSize / 2;
-        //     return goodsGroup;
-        // },
+        createMatchSpace() {
+            const p = this.parkParams;
+            const points = [{
+                x: - p.spaceWidth / 2, y: 0, z: 0,
+            }, {
+                x: p.spaceWidth / 2, y: 0, z: 0,
+            }, {
+                x: p.spaceWidth / 2, y: 0, z: p.spaceLength,
+            }, {
+                x: - p.spaceWidth / 2, y: 0, z: p.spaceLength,
+            }, {
+                x: - p.spaceWidth / 2, y: 0, z: 0,
+            }];
+            const matchLine = this.initLine(points, {
+                color: 0xED4AFF,
+                transparent: true,
+                opacity: 0,
+            });
+            matchLine.position.set(0, 0.05, p.stationLength / 2 + p.betweenOffset);
+
+            const obj = { opacity: 0 };
+            function onUpdate() {
+                matchLine.material.opacity = this.opacity;
+            }
+            function onStop() {
+                matchLine.material.opacity = 0;
+                obj.opacity = 0;
+            }
+            const tweenIn = new TWEEN.Tween(obj)
+                .to({opacity: 1}, 800)
+                .onUpdate(onUpdate)
+                .onStop(onStop);
+            const tweenOut = new TWEEN.Tween(obj)
+                .to({opacity: 0}, 800)
+                .onUpdate(onUpdate)
+                .onStop(onStop);
+            tweenIn.chain(tweenOut);
+            tweenOut.chain(tweenIn);
+            matchLine.tween = tweenIn;
+            return matchLine;
+        },
+        createForklift() {
+            return new Promise((resolve) => {
+                const mtlLoader = new THREE.MTLLoader();
+                mtlLoader.load('static/forklift.mtl', (mat) => {
+                    mat.preload();
+                    const objLoader = new THREE.OBJLoader();
+                    objLoader.setMaterials(mat);
+                    objLoader.load('static/forklift.obj', (obj) => {
+                        obj.position.set(-7.5, 3.3, 0);
+                        obj.rotation.y = -this.PI / 1.5;
+                        obj.scale.set(0.04, 0.04, 0.04);
+                        resolve(obj);
+                    });
+                });
+            });
+        },
     },
 };

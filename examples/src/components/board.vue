@@ -381,7 +381,8 @@
 
 <style lang='LESS' scoped>
     @C0: #C7CFEE;
-    @C1: #747EA5;
+    /*@C1: #747EA5;*/
+    @C1: #FFFFFF;
     @C2: #5865B5;
     @C3: #22BBF2;
     @C4: #ED18CC;

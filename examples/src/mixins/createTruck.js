@@ -25,6 +25,15 @@ export default {
             this.headGroup = truck[0];
             this.backGroup = truck[1];
             this.createGoods();
+            for (let i = 0; i < 3; i++) {
+                const signal = this.createSignal();
+                this[`signal${i+1}`] = signal;
+                if (i === 0) {
+                    this.headGroup.add(signal);
+                } else {
+                    this.backGroup.add(signal);
+                }
+            }
         },
         loadModel() {
             const p = this.truckParmas;
@@ -212,8 +221,8 @@ export default {
             const signalGroup = new THREE.Group();
             const initSignal = () => {
                 const signalGeom = this.initGeometry('Sphere', 0.5, 30, 30, 0, this.PI * 2, 0, this.PI * 2);
-                const signalMat = this.initMaterial('MeshLambert', {
-                    color: 0xFF0000,
+                const signalMat = this.initMaterial('MeshBasic', {
+                    color: 0xED4AFF,
                     transparent: true,
                     opacity: 0.001,
                     depthTest: false,
@@ -222,27 +231,39 @@ export default {
                 signal.scale.set(0.001, 0.001, 0.001);
                 return signal;
             };
-            const signal = initSignal();
-            this.initSignalTween(signal);
-
-            return signal;
+            for (let i = 0; i < 1; i++) {
+                signalGroup.add(initSignal());
+            }
+            this.initSignalTween(signalGroup);
+            return signalGroup;
         },
-        initSignalTween(obj) {
+        initSignalTween(group) {
+            const obj = {index: 0.001};
             function onUpdate() {
-                obj.scale.set(this.index, this.index, this.index);
-                obj.material.opacity = 1 - this.index;
+                group.children[0].scale.set(this.index, this.index, this.index);
+                group.children[0].material.opacity = 1 - this.index;
+
+                // if (this.index - 0.2 > 0) {
+                //     group.children[1].scale.set(this.index - 0.2, this.index - 0.2, this.index - 0.2);
+                //     group.children[1].material.opacity = 1.2 - this.index;
+                // }
+            }
+            function onStop() {
+                obj.index = 0.001;
+                group.children[0].material.opacity = 0.001
             }
             function onComplete() {
                 this.index = 0.001;
             }
             const duration = 2000;
-            const tween = new TWEEN.Tween({index: 0.001})
+            const tween = new TWEEN.Tween(obj)
                 .to({index: 1}, duration)
                 .onUpdate(onUpdate)
+                .onStop(onStop)
                 .onComplete(onComplete)
                 .delay(500);
             tween.chain(tween);
-            obj.tween = tween;
+            group.tween = tween;
         },
     },
 };

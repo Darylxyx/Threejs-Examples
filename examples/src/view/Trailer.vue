@@ -38,7 +38,7 @@ export default {
                 scene,
                 camera,
                 renderer,
-            } = this.initBasics(this.$refs.canvas, { position: {x: 0, y: 100, z: 100}, antialias: false }, { clearColor: 0x10141F, shadowEnabled: true });
+            } = this.initBasics(this.$refs.canvas, { position: {x: 0, y: 100, z: 100}, antialias: true }, { clearColor: 0x10141F, shadowEnabled: true });
             
             this.scene = scene;
             this.camera = camera;
@@ -52,13 +52,15 @@ export default {
 
             this.initAnimate();
 
-            // const control = this.addControl();
+            this.animateStart();
+
+            const control = this.addControl();
 
             const renderScene = () => {
                 stats.update();
-                // const delta = clock.getDelta();
-                // control.update(delta);
-                this.carAnimate();
+                const delta = clock.getDelta();
+                control.update(delta);
+                // this.carAnimate();
                 TWEEN.update();
                 requestAnimationFrame(renderScene);
                 renderer.render(scene, camera);
@@ -77,13 +79,13 @@ export default {
             // const start = this.createStart();
             // this.mainGroup.add(start);
             // 装货点
-            const loadPark = this.createPark(true);
+            const loadPark = await this.createPark(0);
             loadPark.position.set(0, 0, 90);
             loadPark.rotation.y = this.PI;
             this.loadParkGroup = loadPark;
             this.mainGroup.add(this.loadParkGroup);
             // 卸货点
-            const unloadPark = this.createPark();
+            const unloadPark = await this.createPark(1);
             unloadPark.position.set(0, 0, -90);
             this.unloadParkGroup = unloadPark;
             this.mainGroup.add(this.unloadParkGroup);
