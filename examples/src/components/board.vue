@@ -100,8 +100,8 @@
         </div>
         <div class='card-group'>
             <div :class='{"card-active": actCardList.indexOf("stop") > -1 }' class='card card-blue card-stop'>
-                <span class='card-title'>园区停靠</span>
-                <p class='con'>停靠位置<span>B04</span></p>
+                <span class='card-title'>月台匹配</span>
+                <p class='con'>停靠月台<span>B04</span></p>
                 <hr class='card-t' />
                 <hr class='card-l' />
                 <hr class='card-r' />
@@ -109,8 +109,8 @@
                 <hr class='card-br' />
             </div>
             <div :class='{"card-active": actCardList.indexOf("unloadstop") > -1 }' class='card card-blue card-stop'>
-                <span class='card-title'>园区停靠</span>
-                <p class='con'>停靠位置<span>E11</span></p>
+                <span class='card-title'>月台匹配</span>
+                <p class='con'>停靠月台<span>E11</span></p>
                 <hr class='card-t' />
                 <hr class='card-l' />
                 <hr class='card-r' />
@@ -194,7 +194,7 @@
                 <hr class='card-br' />
             </div>
             <div :class='{"card-active": actCardList.indexOf("weight") > -1 }' class='card card-blue card-weight'>
-                <span class='card-title'>挂车载重</span>
+                <span class='card-title'>挂车装载</span>
                 <div class='con'>
                     <img src='static/img/icon11.png' />
                     <hr class='split' />
@@ -258,14 +258,8 @@
                 <hr class='card-br' />
             </div>
 
-            <div :class='{"card-active": picIndex === 1}' class="card card-img img-1">
-                <img src="../assets/img/gua1.png">
-            </div>
-            <div :class='{"card-active": picIndex === 2}' class="card card-img img-2">
-                <img src="../assets/img/gua2.png">
-            </div>
-            <div :class='{"card-active": picIndex === 3}' class="card card-img img-3">
-                <img src="../assets/img/gua3.png">
+            <div v-for='(item,index) in picList' :class='{"card-active": picIndex === (index+1)}' class="card card-img img-1">
+                <img :src="item">
             </div>
         </div>
     </div>
@@ -333,6 +327,7 @@
         },
         data: () => ({
             leftWarns:[],
+            picList: ['static/img/gua1.png', 'static/img/gua2.png', 'static/img/gua3.png'],
             leftList: [
                 {
                     icon: 'static/img/icon1.png',
@@ -359,11 +354,11 @@
                     num: 1633,
                     desc: '胎压异常',
                 }, {
-                    icon: 'static/img/icon7.png',
+                    icon: 'static/img/icon8.png',
                     num: 0,
                     desc: '胎温异常',
                 }, {
-                    icon: 'static/img/icon8.png',
+                    icon: 'static/img/icon7.png',
                     num: 2,
                     desc: '轮胎漏气',
                 }

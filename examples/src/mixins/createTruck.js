@@ -208,7 +208,7 @@ export default {
             function onUpdate() {
                 obj.scale.set(this.scale, this.scale, this.scale);
             }
-            const duration = 100;
+            const duration = 200;
             const tween = new TWEEN.Tween(now)
                 .to(target, duration)
                 .onUpdate(onUpdate)

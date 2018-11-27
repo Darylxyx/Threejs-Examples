@@ -243,15 +243,16 @@ export default {
         loading() { // 装货
             const _this = this;
             const tweenLoc = new TWEEN.Tween({})
-                .to({}, 4000)
+                .to({}, 500)
                 .onStart(function() {
-                    _this.$store.commit('setActCardList', ['location']);
+                    // _this.$store.commit('setActCardList', ['location']);
                 });
             const tweenPlat = new TWEEN.Tween({})
                 .to({}, 4000)
                 .onStart(function() {
                     _this.loadMatchSpace.tween.start();
-                    _this.$store.commit('setActCardList', ['platform']);
+                    _this.$store.commit('setTitle', { title: '园区停靠' });
+                    _this.$store.commit('setActCardList', ['stop']);
                 });
             tweenLoc.chain(tweenPlat);
             const tweenStop = new TWEEN.Tween({})
@@ -259,8 +260,7 @@ export default {
                 .onStart(function() {
                     _this.signal2.tween.stop();
                     _this.loadMatchSpace.tween.stop();
-                    _this.$store.commit('setTitle', { title: '园区停靠' });
-                    _this.$store.commit('setActCardList', ['stop']);
+                    // _this.$store.commit('setActCardList', ['stop']);
                 });
             tweenPlat.chain(tweenStop);
             let co1 = {x: 0, y: 30, z: 87.4};
@@ -285,7 +285,7 @@ export default {
                 .delay(1000);
             ct1.chain(ct2);
             const tweenLoad = new TWEEN.Tween({})
-                .to({}, 12000)
+                .to({}, 15000)
                 .onStart(function() {
                     _this.$store.commit('setTitle', { title: '装货' });
                     _this.$store.commit('setActCardList', ['load', 'loadtime']);
@@ -372,28 +372,28 @@ export default {
         inCurve() { // 进入弯道
             const _this = this;
             const et1 = new TWEEN.Tween({})
-                .to({}, 6000)
+                .to({}, 100)
                 .onStart(function() {
-                    _this.signal2.position.set(0, 0.8, -4.5);
+                    // _this.signal2.position.set(0, 0.8, -4.5);
                     _this.signal2.tween.start();
-                    _this.$store.commit('setActCardList', ['temp']);
+                    // _this.$store.commit('setActCardList', ['temp']);
                 });
             const et2 = new TWEEN.Tween({})
                 .to({}, 6000)
                 .onStart(function() {
-                    _this.signal2.position.set(1, -1.4, 1);
+                    _this.signal2.position.set(1, 0, 0);
                     _this.$store.commit('setActCardList', ['weight']);
                 });
             const et3 = new TWEEN.Tween({})
                 .to({}, 6000)
                 .onStart(function() {
-                    _this.signal2.position.set(1, -1.85, 2.8);
+                    _this.signal2.position.set(1, -1.85, 3);
                     _this.$store.commit('setActCardList', ['wheel']);
                 });
             const et4 = new TWEEN.Tween({})
                 .to({}, 6000)
                 .onStart(function() {
-                    _this.signal2.position.set(1, -1.85, 2.8);
+                    _this.signal2.position.set(1, -1.85, 3);
                     _this.$store.commit('setActCardList', ['wheelalert']);
                 });
             const et5 = new TWEEN.Tween({})
@@ -478,15 +478,16 @@ export default {
         unloading() { // 卸货
             const _this = this;
             const tweenLoc = new TWEEN.Tween({})
-                .to({}, 4000)
+                .to({}, 500)
                 .onStart(function() {
-                    _this.$store.commit('setActCardList', ['location']);
+                    // _this.$store.commit('setActCardList', ['location']);
                 });
             const tweenPlat = new TWEEN.Tween({})
                 .to({}, 4000)
                 .onStart(function() {
                     _this.unloadMatchSpace.tween.start();
-                    _this.$store.commit('setActCardList', ['platform']);
+                    _this.$store.commit('setTitle', { title: '园区停靠' });
+                    _this.$store.commit('setActCardList', ['unloadstop']);
                 });
             tweenLoc.chain(tweenPlat);
             const tweenStop = new TWEEN.Tween({})
@@ -494,8 +495,8 @@ export default {
                 .onStart(function() {
                     _this.signal2.tween.stop();
                     _this.unloadMatchSpace.tween.stop();
-                    _this.$store.commit('setTitle', { title: '园区停靠' });
-                    _this.$store.commit('setActCardList', ['unloadstop']);
+                    // _this.$store.commit('setTitle', { title: '园区停靠' });
+                    // _this.$store.commit('setActCardList', ['unloadstop']);
                 });
             tweenPlat.chain(tweenStop);
             let co1 = {x: 0, y: 30, z: -87.4};
@@ -520,7 +521,7 @@ export default {
                 .delay(1000);
             ct1.chain(ct2);
             const tweenLoad = new TWEEN.Tween({})
-                .to({}, 12000)
+                .to({}, 15000)
                 .onStart(function() {
                     _this.$store.commit('setTitle', { title: '卸货' });
                     _this.$store.commit('setActCardList', ['unload', 'unloadtime']);
