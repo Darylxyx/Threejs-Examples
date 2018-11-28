@@ -284,30 +284,28 @@ export default {
                 })
                 .delay(1000);
             ct1.chain(ct2);
-            const tweenLoad = new TWEEN.Tween({})
-                .to({}, 15000)
+            let lo = {index: 0};
+            const tweenLoad = new TWEEN.Tween(lo)
+                .to({index: 15}, 15000)
                 .onStart(function() {
                     _this.$store.commit('setTitle', { title: '装货' });
                     _this.$store.commit('setActCardList', ['load', 'loadtime']);
                     const goods = _this.goodsList;
-                    goods.forEach((good, index) => {
+                    goods.forEach((good) => {
                         good.inTween.start();
-                        if (index === 30) {
-                            good.inTween.onComplete(function() {
-                                _this.$store.commit('showPic', 1);
-                            });
-                        } else if (index === 100) {
-                            good.inTween.onComplete(function() {
-                                _this.$store.commit('showPic', 2);
-                            });
-                        } else if (index === 170) {
-                            good.inTween.onComplete(function() {
-                                _this.$store.commit('showPic', 3);
-                            });
-                        }
                     });
                 })
+                .onUpdate(function() {
+                    if (this.index >= 10) {
+                        _this.$store.commit('showPic', 3);
+                    } else if (this.index >= 5) {
+                        _this.$store.commit('showPic', 2);
+                    } else if (this.index >= 1) {
+                        _this.$store.commit('showPic', 1);
+                    }
+                })
                 .onComplete(function() {
+                    lo.index = 0;
                     _this.$store.commit('showPic', 0);
                 });
             ct2.chain(tweenLoad);
