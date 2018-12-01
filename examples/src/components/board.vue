@@ -33,16 +33,14 @@
                 <div class='right-top-left'>
                     <p class='num'>2964辆</p>
                     <p class='desc'>智能挂车</p>
-                    <p class='num'>89%</p>
-                    <p class='desc'>平均体积装载率</p>
-                    <p class='num'>3.2小时</p>
-                    <p class='desc'>平均装货时长</p>
-                </div>
-                <div class='right-top-right'>
                     <p class='num'>146家</p>
                     <p class='desc'>智能挂客户</p>
+                    <p class='num'>89%</p>
+                    <p class='desc'>平均体积装载率</p>
                     <p class='num'>73%</p>
                     <p class='desc'>平均重量装载率</p>
+                    <p class='num'>3.2小时</p>
+                    <p class='desc'>平均装货时长</p>
                     <p class='num'>2.4小时</p>
                     <p class='desc'>平均卸货时长</p>
                 </div>
@@ -135,7 +133,7 @@
                 <hr class='card-b' />
                 <hr class='card-br' />
             </div>
-            <div v-if='actCardList.indexOf("load") > -1' class='card-active card card-blue card-load'>
+            <div v-if='actCardList.indexOf("load") > -1' class='card-active card card-red card-load'>
                 <span class='card-title'>实时装货...</span>
                 <p class='con'>
                     <animate-number from="0" to="15" duration="11000" :formatter="formatter" style="margin-left:0"></animate-number> t
@@ -147,7 +145,7 @@
                 <hr class='card-b' />
                 <hr class='card-br' />
             </div>
-            <div v-if='actCardList.indexOf("loadtime") > -1' class='card-active card card-blue card-loadtime'>
+            <div v-if='actCardList.indexOf("loadtime") > -1' class='card-active card card-red card-loadtime'>
                 <span class='card-title'>装货时长</span>
                 <p class='con'><animate-number from="1" to="11304" duration="11000" :formatter="formattime" style="margin-left:0"></animate-number></p>
                 <hr class='card-t' />
@@ -241,13 +239,26 @@
                 <hr class='card-b' />
                 <hr class='card-br' />
             </div>
+            <div :class='{"card-active": actCardList.indexOf("wheelalert") > -1 }' class='card card-red card-wheelvoice'>
+                <span class='card-title card-voice'>语音播报</span>
+                <div class='con'>
+                    <div>
+                        <p>挂车二轴右胎胎压过高，请及时处理</p>
+                    </div>
+                </div>
+                <hr class='card-t' />
+                <hr class='card-l' />
+                <hr class='card-r' />
+                <hr class='card-b' />
+                <hr class='card-br' />
+            </div>
             <div :class='{"card-active": actCardList.indexOf("rollalert") > -1 }' class='card card-red card-rollalert'>
                 <span class='card-title'>事件报警</span>
                 <div class='con'>
                     <img src='static/img/icon9.png' />
                     <hr class='split' />
                     <div>
-                        <p>12:32:54</p>
+                        <p>15:49:04</p>
                         <p>防侧翻保护</p>
                     </div>
                 </div>
@@ -342,6 +353,10 @@
                     num: 784,
                     desc: '进入场站',
                 },{
+                    icon: 'static/img/icon13.png',
+                    num: 813,
+                    desc: '离开场站',
+                },{
                     icon: 'static/img/icon3.png',
                     num: 776,
                     desc: '停靠月台',
@@ -430,9 +445,10 @@
         right: 20%;
         .con {
             font-size: .3rem;
-            color: @C3;
+            font-weight:bold;
+            color: @C4;
             span {
-                margin-left: .73rem;
+                margin-left: .6rem;
             }
         }
     }
@@ -442,8 +458,9 @@
         top: 45%;
         right: 20%;
         .con {
+            font-weight:bold;
             font-size: .46rem;
-            color: @C3;
+            color: @C4;
         }
     }
 
@@ -453,9 +470,10 @@
         right: 20%;
         .con {
             font-size: .3rem;
+            font-weight:bold;
             color: @C4;
             span {
-                margin-left: .73rem;
+                margin-left: .6rem;
             }
         }
     }
@@ -466,6 +484,7 @@
         right: 20%;
         .con {
             font-size: .46rem;
+            font-weight:bold;
             color: @C4;
         }
     }
@@ -570,6 +589,22 @@
         }
     }
 
+    .card-wheelvoice {
+        top: 10%;
+        right: 15%;
+        .con {
+            line-height: 1.5;
+            p {
+                color: @C1;
+                font-size: .22rem;
+                margin-bottom: .15rem;
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }
+
     /*防侧翻保护*/
     .card-rollalert {
         top: 50%;
@@ -594,12 +629,20 @@
 
     .card-img{
         position: absolute;
-        top: 65%;
+        top: 60%;
         right: 20%;
+        width: 2.8rem !important;
+        height: 2.11rem !important;
+        padding: 0 !important;
+        background: url('../../static/img/photobg.png');
+        background-size: cover;
         img{
             display: block;
-            width:240px;
-            border:3px solid #ffffff;
+            position: absolute;
+            width:2.2rem;
+            height: 1.66rem;
+            padding: 0 !important;
+            margin: 0.08rem 0 0 0.3rem;
         }
     }
 
@@ -628,10 +671,20 @@
         opacity: 0;
         &-title {
             line-height: 1;
-            font-size: .18rem;
+            font-size: .2rem;
             position: absolute;
             top: -.09rem;
             left: 0;
+        }
+        &-voice {
+            display: inline-block;
+            background-size: 24px;
+            background-position: left;
+            overflow: visible;
+            padding: 20px 0 20px 28px;
+            margin: -20px 0 0 0;
+            background-image: url('../../static/img/volume.png');
+            background-repeat: no-repeat;
         }
         hr {
             position: absolute;
@@ -823,16 +876,13 @@
     }
 
     .right-bar {
+        opacity: .9;
         line-height: 1;
-        padding: 0 .16rem 0 .24rem;
-        background-image: linear-gradient(149deg, #31338F 0%, #161756 93%);
+        padding:.24rem;
+        background-image: linear-gradient(149deg, rgba(49,51,143,.8) 0%, rgba(22,23,86,.8) 93%);
         .right-top {
             display: flex;
-            padding: .39rem 0 .71rem 0;
-
-            &-left {
-                margin-right: .69rem;
-            }
+            padding: 0 0 .5rem 0;
 
             .num {
                 font-size: .26rem;
@@ -851,12 +901,12 @@
             }
         }
         .right-middle {
-            padding: .28rem 0 .1rem;
+            padding: .3rem 0 0 0;
             position: relative;
             display: flex;
             &-left {
                 /*margin-right: .92rem;*/
-                display: flex;
+                /* display: flex; */
                 width: 100%;
                 flex-direction: row;
                 justify-content: space-around;
@@ -865,7 +915,7 @@
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                margin-bottom: .28rem;
+                margin-bottom: .2rem;
                 &:last-child {
                     margin-bottom: 0;
                 }
