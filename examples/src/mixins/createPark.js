@@ -22,8 +22,9 @@ export default {
             const parkGroup = new THREE.Group();
             this.initParkParams();
             const p = this.parkParams;
+            const stationModal = this.createStation();
             for (let i = 0; i < 3; i++) {
-                const station = this.createStation();
+                const station = stationModal.clone();
                 station.position.x = (i - 1) * (p.stationWidth + p.stationOffset);
                 parkGroup.add(station);
             }
@@ -55,6 +56,16 @@ export default {
             const cargo = await this.createCargo();
             parkGroup.add(cargo);
 
+            const road = this.createParkRoad();
+            parkGroup.add(road);
+
+            const gate = this.createParkGate();
+            gate.position.x = 58;
+            parkGroup.add(gate);
+            const gate2 = gate.clone();
+            gate2.position.x = -58;
+            parkGroup.add(gate2);
+
             return parkGroup;
         },
         createStation() { // 创建站台
@@ -70,6 +81,9 @@ export default {
             stationGroup.add(station);
             const spaces = this.createSpace();
             stationGroup.add(spaces);
+            const spaces1 = spaces.clone();
+            spaces1.position.z = 53;
+            stationGroup.add(spaces1);
             return stationGroup;
         },
         createSpace() { // 创建停车位
@@ -89,16 +103,21 @@ export default {
                     x: - p.spaceWidth / 2, y: 0, z: 0,
                 }];
                 const line = this.initLine(points, {
-                    color: 0x283251,
+                    color: this.lineColor,
+                    opacity: 0.5,
+                    transparent: true,
                 });
-                const points2 = [{
-                    x: 0, y: 0, z: 3,
-                }, {
-                    x: 0, y: 0, z: p.spaceLength - 3,
-                }];
+                const points2 = [
+                    this.v3(0, 0, 0),
+                    this.v3(0, 0, p.spaceLength),
+                ];
                 const dashLine = this.initLine(points2, {
-                    color: 0x283251,
-                });
+                    color: this.lineColor,
+                    opacity: 0.5,
+                    transparent: true,
+                    dashSize: 0.5,
+                    gapSize: 0.5,
+                }, true);
                 lineGroup.add(line);
                 lineGroup.add(dashLine);
                 lineGroup.position.x = (i - 3) * (p.spaceWidth + p.spaceOffset);
@@ -106,6 +125,98 @@ export default {
             }
             spaceGroup.position.z = p.stationLength / 2 + p.betweenOffset;
             return spaceGroup;
+        },
+        createParkRoad() {
+            const roadGroup = new THREE.Group();
+            const points = [
+                this.v3(-54, 0, 30),
+                this.v3(54, 0, 30),
+            ];
+            const line = this.initLine(points, {
+                color: this.lineColor,
+                opacity: 0.5,
+                transparent: true,
+            });
+            roadGroup.add(line);
+            const line2 = line.clone();
+            line2.position.z = 12;
+            roadGroup.add(line2);
+            const dashLine = this.initLine(points, {
+                color: this.lineColor,
+                opacity: 0.5,
+                transparent: true,
+                dashSize: 1,
+                gapSize: 3,
+            }, true);
+            dashLine.position.z = 6;
+            roadGroup.add(dashLine);
+            return roadGroup;
+        },
+        createParkGate() {
+            const gateGroup = new THREE.Group();
+            const gateUnit = this.createGateUnit();
+            gateUnit.position.z = 13.5;
+            gateGroup.add(gateUnit);
+            const gateUnit2 = gateUnit.clone();
+            gateUnit2.position.z = 59;
+            gateGroup.add(gateUnit2);
+            return gateGroup;
+        },
+        createGateUnit() {
+            const gateUnit = new THREE.Group();
+            const flower = this.createFlower();
+            gateUnit.add(flower);
+            const tree = this.createTree();
+            tree.position.z = -12;
+            gateUnit.add(tree);
+            const tree2 = tree.clone();
+            tree2.position.z = 12;
+            gateUnit.add(tree2);
+            return gateUnit;
+        },
+        createTree() {
+            const treeGroup = new THREE.Group();
+            const treeGeom = this.initGeometry('Cube', 2, 3, 2);
+            const treeMat = this.initMaterial('MeshLambert', {
+                color: 0x588559,
+                opacity: 0.6,
+                transparent: true,
+            });
+            const tree = new THREE.Mesh(treeGeom, treeMat);
+            tree.position.y = 3;
+            treeGroup.add(tree);
+            const trunkGeom = this.initGeometry('Cylinder', 0.2, 0.2, 2, 20, 1, false);
+            const trunkMat = this.initMaterial('MeshLambert', {
+                color: 0x313740,
+                opacity: 0.6,
+                transparent: true,
+            });
+            const trunk = new THREE.Mesh(trunkGeom, trunkMat);
+            trunk.position.y = 1;
+            treeGroup.add(trunk);
+            return treeGroup;
+        },
+        createFlower(x = 1.6, z = 16, isCurve = false) { // 创建花坛
+            const flowerGroup = new THREE.Group();
+            const flowerGeom = this.initGeometry('Cube', x - 0.6, 0.8, isCurve ? z : z - 1);
+            const flowerMat = this.initMaterial('MeshLambert', {
+                color: 0x588559,
+                opacity: 0.6,
+                transparent: !isCurve,
+            });
+            const flower = new THREE.Mesh(flowerGeom, flowerMat);
+            flower.position.y = 1;
+            flowerGroup.add(flower);
+            const bedGeom = this.initGeometry('Cube', x, 0.6, z);
+            const bedMat = this.initMaterial('MeshLambert', {
+                color: 0x313740,
+                opacity: 0.6,
+                transparent: !isCurve,
+            });
+            const bed = new THREE.Mesh(bedGeom, bedMat);
+            bed.position.y = 0.3;
+            flowerGroup.add(bed);
+            return flowerGroup;
         },
         createMatchSpace() {
             const p = this.parkParams;

@@ -2,8 +2,9 @@ export default {
     methods: {
         initCurveParams() {
             const params = {
-                innerRadius: 52,
-                outerRadius: 62,
+                radius: 53,
+                innerRadius: 41,
+                outerRadius: 65,
                 offsetX: 80,
                 buildWidth: 4,
                 buildLengh: 4,
@@ -17,47 +18,64 @@ export default {
             const curveGroup = new THREE.Group();
             const road = this.createRoad();
             curveGroup.add(road);
-            const roadLine = this.createRoadLine();
-            curveGroup.add(roadLine);
+            const flowers = this.createCurveFlower();
+            curveGroup.add(flowers);
             const buildings = this.createRoadBuilding();
             curveGroup.add(buildings);
             return curveGroup;
         },
         createRoad() {
             const p = this.curveParams;
-            const roadGeom = this.initGeometry('Ring', p.innerRadius, p.outerRadius, 60, 1, this.PI /2 * 3, this.PI);
-            console.log(roadGeom);
-            const roadMat = this.initMaterial('MeshLambert', {
-                color: 0x1E2642,
-            });
-            const road = new THREE.Mesh(roadGeom, roadMat);
-            road.rotation.x = - this.PI / 2;
-            road.position.x = p.offsetX;
-            return road;
-        },
-        createRoadLine() {
-            const p = this.curveParams;
-            const roadLineGroup = new THREE.Group();
-
-            const mat = this.initMaterial('MeshLambert', {
-                color: 0xffffff,
-            });
-            const initLine = () => {
-                const geom = this.initGeometry('Plane', p.lineWidth, p.lineLength);
-                const roadLine = new THREE.Mesh(geom, mat);
-                return roadLine;
-            };
-            for (let rad = this.PI / 2 * 3 + 0.1; rad < this.PI / 2 * 5 - 0.2; rad += 0.3) {
-                const roadLine = initLine();
-                const x = 57 * this.cos(rad);
-                const y = 57 * this.sin(rad);
-                roadLine.position.set(x, y, 0.005);
-                roadLine.rotation.z = rad;
-                roadLineGroup.add(roadLine);
+            const roadGroup = new THREE.Group();
+            const pointsArr = [];
+            const ir = p.innerRadius;
+            for (let i = 0; i < 5; i++) {
+                const r = ir + (i * 6);
+                const arr = [];
+                for (let rad = this.PI * 1.5; rad < this.PI * 2.5; rad += 0.005) {
+                    const x = r * this.cos(rad);
+                    const z = r * this.sin(rad);
+                    arr.push(this.v3(x, 0, z));
+                }
+                pointsArr.push(arr);
             }
-            roadLineGroup.position.x = p.offsetX;
-            roadLineGroup.rotation.x = - this.PI / 2;
-            return roadLineGroup;
+            pointsArr.forEach((item, index) => {
+                let line;
+                if (index === 2) return;
+                if (index % 2 === 0) {
+                    line = this.initLine(item, {
+                        color: this.lineColor,
+                        opacity: 0.5,
+                        transparent: true,
+                    });
+                } else {
+                    line = this.initLine(item, {
+                        color: this.lineColor,
+                        opacity: 0.5,
+                        transparent: true,
+                        dashSize: 5,
+                        gapSize: 2,
+                    }, true);
+                }
+                roadGroup.add(line);
+            });
+            roadGroup.position.x = 80;
+            return roadGroup;
+        },
+        createCurveFlower() {
+            const flowerGroup = new THREE.Group();
+            const p = this.curveParams;
+            const r = p.radius;
+            for (let rad = this.PI * 1.5; rad < this.PI * 2.5; rad += 0.14) {
+                const x = r * this.cos(rad);
+                const z = r * this.sin(rad);
+                const flower = this.createFlower(1, 7.5, true);
+                flower.position.set(x, 0, z);
+                flower.rotation.y = -rad;
+                flowerGroup.add(flower);
+            }
+            flowerGroup.position.x = 80;
+            return flowerGroup;
         },
         createRoadBuilding() {
             const p = this.curveParams;
@@ -76,23 +94,17 @@ export default {
                 buildingGroup.add(building);
             };
             for (let d = this.PI / 2 * 3; d <= this.PI / 2 * 5; d += 0.2) {
-                initBuilding(d, p.innerRadius - 4);
-            }
-            for (let d = this.PI / 2 * 3; d <= this.PI / 2 * 5; d += 0.25) {
                 initBuilding(d, p.innerRadius - 10);
             }
-            // for (let d = this.PI / 2 * 3; d <= this.PI / 2 * 5; d += 0.2) {
-            //     initBuilding(d, p.innerRadius - 16);
-            // }
-            for (let d = this.PI / 2 * 3; d <= this.PI / 2 * 5; d += 0.15) {
-                initBuilding(d, p.outerRadius + 4);
+            for (let d = this.PI / 2 * 3; d <= this.PI / 2 * 5; d += 0.25) {
+                initBuilding(d, p.innerRadius - 15);
             }
-            for (let d = this.PI / 2 * 3; d <= this.PI / 2 * 5; d += 0.12) {
+            for (let d = this.PI / 2 * 3; d <= this.PI / 2 * 5; d += 0.15) {
                 initBuilding(d, p.outerRadius + 10);
             }
-            // for (let d = this.PI / 2 * 3; d <= this.PI / 2 * 5; d += 0.1) {
-            //     initBuilding(d, p.outerRadius + 16);
-            // }
+            for (let d = this.PI / 2 * 3; d <= this.PI / 2 * 5; d += 0.12) {
+                initBuilding(d, p.outerRadius + 15);
+            }
             return buildingGroup;
         },
     },

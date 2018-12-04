@@ -17,20 +17,6 @@ let flag = false;
 export default {
     methods: {
         initAnimate() {
-            // this.animateList = [
-            //     this.truckCombine,
-            //     this.outStation,
-            //     this.inLoad,
-            //     this.reversInLoad,
-            //     this.loading,
-            //     this.outLoad,
-            //     this.inCurve,
-            //     this.reversInUnload,
-            //     this.unloading,
-            //     this.outUnload,
-            //     this.inStation,
-            //     this.resetStart,
-            // ];
             truck = this.truckGroup;
             truck.add(this.headGroup);
             truck.rotation.y = - PI / 2;
@@ -46,7 +32,7 @@ export default {
             this.firstAnimate = truckCombine.begin;
 
             const outStation = this.outStation();
-            truckCombine.begin.chain(outStation.begin);
+            truckCombine.end.chain(outStation.begin);
 
             const inLoad = this.inLoad();
             outStation.end.chain(inLoad.begin);
@@ -114,13 +100,29 @@ export default {
                     _this.signal1.tween.stop();
                     _this.signal2.tween.stop();
                     _this.signal3.tween.stop();
+                })
+                .delay(3000);
+            const tweenEnd = new TWEEN.Tween()
+                .to({}, 5000)
+                .onStart(function() {
+                    _this.signal2.position.set(0, -1.6, 3);
+                    _this.signal2.tween.start();
+                    _this.$store.commit('setTitle', {
+                        title: '',
+                    });
+                    _this.$store.commit('setActCardList', ['unlock']);
+                })
+                .onComplete(function() {
+                    _this.signal2.tween.stop();
                     _this.$store.commit('setTitle', {
                         title: '任务开始',
                     });
-                })
-                .delay(3000);
+                    _this.$store.commit('setActCardList', []);
+                });
+            tween.chain(tweenEnd);
             return {
                 begin: tween,
+                end: tweenEnd,
             };
         },
         outStation() { // 出站
@@ -184,6 +186,11 @@ export default {
             const objIn = {rad: PI};
             const tweenIn = new TWEEN.Tween(objIn)
                 .to({rad: PI / 2 * 3}, 2000)
+                .onStart(function() {
+                    _this.$store.commit('setTitle', {
+                        title: '进入园区',
+                    });
+                })
                 .onUpdate(function() {
                     _this.drift(15, this.rad, -55, 42);
                     _this.moveCamera();
@@ -201,6 +208,9 @@ export default {
                 })
                 .onComplete(function() {
                     objOut.x = -55;
+                    _this.$store.commit('setTitle', {
+                        title: '',
+                    });
                 });
             tweenIn.chain(tweenOut);
             return {
@@ -260,7 +270,6 @@ export default {
                 .onStart(function() {
                     _this.signal2.tween.stop();
                     _this.loadMatchSpace.tween.stop();
-                    // _this.$store.commit('setActCardList', ['stop']);
                 });
             tweenPlat.chain(tweenStop);
             let co1 = {x: 0, y: 30, z: 87.4};
@@ -270,7 +279,9 @@ export default {
                     _this.moveCamera(this.x, this.y, this.z);
                 })
                 .onComplete(function() {
-                    co1 = {x: 0, y: 30, z: 87.4};
+                    co1.x = 0;
+                    co1.y = 30;
+                    co1.z = 87.4;
                 });
             tweenStop.chain(ct1);
             let co2 = {x: 4, y: 5, z: 100};
@@ -280,7 +291,9 @@ export default {
                     _this.moveCamera(this.x, this.y, this.z);
                 })
                 .onComplete(function() {
-                    co2 = {x: 4, y: 5, z: 100};
+                    co2.x = 4;
+                    co2.y = 5;
+                    co2.z = 100;
                 })
                 .delay(1000);
             ct1.chain(ct2);
@@ -314,11 +327,11 @@ export default {
                 end: tweenLoad,
             };
         },
-        outLoad() { // 离开装货园区
+        outLoad() { // 离开园区
             const _this = this;
             const objIn = {z: 77.4};
             const tweenIn = new TWEEN.Tween(objIn)
-                .to({z: 70}, 3000)
+                .to({z: 68}, 3000)
                 .onStart(function() {
                     _this.$store.commit('setTitle', {});
                     _this.$store.commit('setActCardList', []);
@@ -337,14 +350,16 @@ export default {
                     _this.moveCamera(this.x, this.y, this.z);
                 })
                 .onComplete(function() {
-                    co = {x: 4, y: 8, z: 82.4};
+                    co.x = 4;
+                    co.y = 8;
+                    co.z = 82.4;
                 });
             ct.chain(tweenIn);
             const objMid = {rad: PI};
             const tweenMid = new TWEEN.Tween(objMid)
                 .to({rad: PI / 2}, 2000)
                 .onUpdate(function() {
-                    _this.drift(11, this.rad, 11, 70, true);
+                    _this.drift(11, this.rad, 11, 68, true);
                     _this.moveCamera();
                 })
                 .onComplete(function() {
@@ -354,12 +369,20 @@ export default {
             const objOut = {x: 11};
             const tweenOut = new TWEEN.Tween(objOut)
                 .to({x: 80}, 4000)
+                .onStart(function() {
+                    _this.$store.commit('setTitle', {
+                        title: '离开园区',
+                    });
+                })
                 .onUpdate(function() {
                     truck.position.x = this.x;
                     _this.moveCamera();
                 })
                 .onComplete(function() {
                     objOut.x = 11;
+                    _this.$store.commit('setTitle', {
+                        title: '',
+                    });
                 });
             tweenMid.chain(tweenOut);
             return {
@@ -411,7 +434,7 @@ export default {
                     et1.start();
                 })
                 .onUpdate(function() {
-                    _this.drift(59, this.rad, 80, 0);
+                    _this.drift(57, this.rad, 80, 0);
                     const cx = 64 * cos(this.rad - 0.1) + 80;
                     const cy = 4;
                     const cz = - 64 * sin(this.rad - 0.1);
@@ -428,12 +451,20 @@ export default {
             const objOut = {x: 80};
             const tweenOut = new TWEEN.Tween(objOut)
                 .to({x: -11}, 3000)
+                .onStart(function() {
+                    _this.$store.commit('setTitle', {
+                        title: '进入园区',
+                    });
+                })
                 .onUpdate(function() {
                     truck.position.x = this.x;
                     _this.moveCamera();
                 })
                 .onComplete(function() {
                     objOut.x = 80;
+                    _this.$store.commit('setTitle', {
+                        title: '',
+                    });
                 });
             tweenIn.chain(tweenOut);
             return {
@@ -451,13 +482,13 @@ export default {
                     _this.signal2.tween.start();
                 })
                 .onUpdate(function() {
-                    _this.drift(11, this.rad, -11, -70, true);
+                    _this.drift(11, this.rad, -11, -68, true);
                     _this.moveCamera();
                 })
                 .onComplete(function() {
                     objIn.rad = - PI / 2;
                 });
-            const objOut = {z: -70};
+            const objOut = {z: -68};
             const tweenOut = new TWEEN.Tween(objOut)
                 .to({z: -77.4}, 3000)
                 .onUpdate(function() {
@@ -465,7 +496,7 @@ export default {
                     _this.moveCamera();
                 })
                 .onComplete(function() {
-                    objOut.z = -70;
+                    objOut.z = -68;
                 });
             tweenIn.chain(tweenOut);
             return {
@@ -493,8 +524,6 @@ export default {
                 .onStart(function() {
                     _this.signal2.tween.stop();
                     _this.unloadMatchSpace.tween.stop();
-                    // _this.$store.commit('setTitle', { title: '园区停靠' });
-                    // _this.$store.commit('setActCardList', ['unloadstop']);
                 });
             tweenPlat.chain(tweenStop);
             let co1 = {x: 0, y: 30, z: -87.4};
@@ -504,7 +533,9 @@ export default {
                     _this.moveCamera(this.x, this.y, this.z);
                 })
                 .onComplete(function() {
-                    co1 = {x: 0, y: 30, z: -87.4};
+                    co1.x = 0;
+                    co1.y = 30;
+                    co1.z = -87.4;
                 });
             tweenStop.chain(ct1);
             let co2 = {x: -4, y: 5, z: -100};
@@ -514,7 +545,9 @@ export default {
                     _this.moveCamera(this.x, this.y, this.z);
                 })
                 .onComplete(function() {
-                    co2 = {x: -4, y: 5, z: -100};
+                    co2.x = -4;
+                    co2.y = 5;
+                    co2.z = -100;
                 })
                 .delay(1000);
             ct1.chain(ct2);
@@ -560,7 +593,9 @@ export default {
                     _this.moveCamera(this.x, this.y, this.z);
                 })
                 .onComplete(function() {
-                    co = {x: -4, y: 8, z: -82.4};
+                    co.x = -4;
+                    co.y = 8;
+                    co.z = -82.4;
                 });
             ct.chain(tweenIn);
             const objMid = {rad: 0};
@@ -587,7 +622,8 @@ export default {
                     _this.mainGroup.add(_this.backGroup);
                     _this.backGroup.position.set(-40, 2.3, -57);
                     _this.backGroup.rotation.y = PI / 2;
-                });
+                })
+                .easing(TWEEN.Easing.Sinusoidal.Out);
             tweenMid.chain(tweenOut);
             const objU = {x: -40};
             const tweenU = new TWEEN.Tween(objU)
@@ -603,15 +639,31 @@ export default {
                     _this.moveCamera();
                 })
                 .onComplete(function() {
-                    _this.$store.commit('setTitle', {
-                        title: '任务完成',
-                    });
+                    objU.x = -40;
                 })
                 .delay(1000);
             tweenOut.chain(tweenU);
+            const tweenD = new TWEEN.Tween()
+                .to({}, 5000)
+                .onStart(function() {
+                    _this.signal2.position.set(0, -1.6, 3);
+                    _this.signal2.tween.start();
+                    _this.$store.commit('setTitle', {
+                        title: '',
+                    });
+                    _this.$store.commit('setActCardList', ['lock']);
+                })
+                .onComplete(function() {
+                    _this.signal2.tween.stop();
+                    _this.$store.commit('setTitle', {
+                        title: '任务完成',
+                    });
+                    _this.$store.commit('setActCardList', []);
+                });
+            tweenU.chain(tweenD);
             return {
                 begin: ct,
-                end: tweenU,
+                end: tweenD,
             };
         },
         inStation() { // 回到起点
@@ -660,7 +712,6 @@ export default {
                     _this.moveCamera();
                 })
                 .onComplete(function() {
-                    console.log(_this.camera.position);
                     obj.rad = 0;
                 });
             let oc = {x: -75, y: 30, z: 10};

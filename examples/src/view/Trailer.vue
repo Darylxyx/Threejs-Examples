@@ -16,21 +16,24 @@ import truck from '../mixins/createTruck.js';
 import park from '../mixins/createPark.js';
 import curve from '../mixins/createCurve.js';
 import building from '../mixins/createBuilding.js';
+import roads from '../mixins/createRoad.js';
 
 const clock = new THREE.Clock();
 export default {
-    mixins: [mixin, animate, truck, park, curve, building],
+    mixins: [mixin, animate, truck, park, curve, building, roads],
     data: () => ({
         PI: Math.PI,
         sin: Math.sin,
         cos: Math.cos,
-        mainGroup: new THREE.Group(), 
+        mainGroup: new THREE.Group(),
         truckGroup: new THREE.Group(), // 卡车组
+        truckRotateGroup: new THREE.Group(), // 卡车旋转组，用来模拟卡车侧翻
         headGroup: new THREE.Group(), // 车头组
         backGroup: new THREE.Group(), // 车挂组
         loadParkGroup: new THREE.Group(),
         unloadParkGroup: new THREE.Group(),
         goodsGroup: new THREE.Group(),
+        lineColor: 0xffffff,
     }),
     methods: {
         async initWebGL() {
@@ -46,7 +49,7 @@ export default {
 
             this.scene.add(this.mainGroup);
 
-            const stats = this.initStats(this.$refs.stats);
+            // const stats = this.initStats(this.$refs.stats);
 
             await this.addObject();
 
@@ -57,7 +60,7 @@ export default {
             // const control = this.addControl();
 
             const renderScene = () => {
-                stats.update();
+                // stats.update();
                 // const delta = clock.getDelta();
                 // control.update(delta);
                 TWEEN.update();
@@ -74,9 +77,6 @@ export default {
             //卡车
             await this.createTruck();
             this.mainGroup.add(this.truckGroup);
-            // 起点
-            const start = this.createStart();
-            this.mainGroup.add(start);
             // 装货点
             const loadPark = await this.createPark(0);
             loadPark.position.set(0, 0, 90);
@@ -94,24 +94,22 @@ export default {
             // // 创建建筑群
             const building = this.createBuilding();
             this.mainGroup.add(building);
+            // 起点
+            const start = this.createStart();
+            this.mainGroup.add(start);
         },
         createStart() { // 创建始发站
-            const points = [{
-                x: 16, y: 0, z: -10,
-            }, {
-                x: 16, y: 0, z: 10,
-            }, {
-                x: -16, y: 0, z: 10,
-            }, {
-                x: -16, y: 0, z: -10,
-            }, {
-                x: 16, y: 0, z: -10,
-            }];
-            const line = this.initLine(points, {
-                color: 0x283251,
-            });
-            line.position.x = -80;
-            return line;
+            const startGroup = new THREE.Group();
+            const space = this.createSpace();
+            space.rotation.y = this.PI / 2;
+            space.position.set(0, 0, 0);
+            startGroup.add(space);
+            const gateUnit = this.createGateUnit();
+            // gateUnit.rotation.y = this.PI / 2;
+            gateUnit.position.set(-3, 0, 0);
+            startGroup.add(gateUnit);
+            startGroup.position.x = -90;
+            return startGroup;
         },
         addAxes(len = 50) { // 辅助坐标系
             const axes = this.initAxes(len);

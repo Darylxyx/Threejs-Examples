@@ -124,6 +124,24 @@
                 <hr class='card-b' />
                 <hr class='card-br' />
             </div>
+            <div style='left: 20%;' :class='{"card-active": actCardList.indexOf("unlock") > -1 }' class='card card-blue card-stop'>
+                <span class='card-title'>远程解锁</span>
+                <p class='con'>车挂匹配，智能挂远程自动解锁</p>
+                <hr class='card-t' />
+                <hr class='card-l' />
+                <hr class='card-r' />
+                <hr class='card-b' />
+                <hr class='card-br' />
+            </div>
+            <div style='top: 35%;right: 20%;' :class='{"card-active": actCardList.indexOf("lock") > -1 }' class='card card-red card-stop'>
+                <span class='card-title'>远程锁挂</span>
+                <p class='con'>车挂分离，智能挂远程自动锁定</p>
+                <hr class='card-t' />
+                <hr class='card-l' />
+                <hr class='card-r' />
+                <hr class='card-b' />
+                <hr class='card-br' />
+            </div>
             <div :class='{"card-active": actCardList.indexOf("platform") > -1 }' class='card card-blue card-stop'>
                 <span class='card-title'>月台匹配</span>
                 <p class='con'>月台匹配成功</p>
@@ -430,6 +448,7 @@
         top: 15%;
         right: 30%;
         .con {
+            line-height: 1.3;
             font-size: .3rem;
             color: @C1;
             span {

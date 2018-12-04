@@ -177,14 +177,14 @@ export default {
                 });
                 const goods = new THREE.Mesh(goodsGeom, goodsMat);
                 goods.scale.set(0.001, 0.001, 0.001);
-                goods.inTween = this.initGoodTween(goods, goodIndex, {scale: 0.001}, {scale: 1});
-                goods.inTween.onComplete(() => {
-                    this.goodsGroup.add(goods);
-                });
-                goods.outTween = this.initGoodTween(goods, 211 - goodIndex, {scale: 1}, {scale: 0.001});
-                goods.outTween.onComplete(() => {
-                    this.goodsGroup.remove(goods);
-                });
+                goods.inTween = this.initGoodTween('in', goods, goodIndex, 0.001, 1);
+                // goods.inTween.onStart(() => {
+                //     this.goodsGroup.add(goods);
+                // });
+                goods.outTween = this.initGoodTween('out', goods, 211 - goodIndex, 1, 0.001);
+                // goods.outTween.onComplete(() => {
+                //     this.goodsGroup.remove(goods);
+                // });
                 goods.position.set(x, y, z);
                 this.goodsList.push(goods);
                 goodIndex++;
@@ -204,14 +204,29 @@ export default {
             });
             this.backGroup.add(this.goodsGroup);
         },
-        initGoodTween(obj, i, now, target) {
+        initGoodTween(type, obj, i, now, target) {
+            const _this = this;
+            const data = {scale: now};
+            function onStart() {
+                if (type === 'in') {
+                    _this.goodsGroup.add(obj);
+                }
+            }
             function onUpdate() {
                 obj.scale.set(this.scale, this.scale, this.scale);
             }
+            function onComplete() {
+                data.scale = now;
+                if (type === 'out') {
+                    _this.goodsGroup.remove(obj);
+                }
+            }
             const duration = 200;
-            const tween = new TWEEN.Tween(now)
-                .to(target, duration)
+            const tween = new TWEEN.Tween(data)
+                .to({scale: target}, duration)
+                .onStart(onStart)
                 .onUpdate(onUpdate)
+                .onComplete(onComplete)
                 .easing(TWEEN.Easing.Sinusoidal.InOut)
                 .delay(i * 50);
             return tween;
