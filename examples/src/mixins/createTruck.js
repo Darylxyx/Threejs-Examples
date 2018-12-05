@@ -22,8 +22,10 @@ export default {
         async createTruck() { // 创建卡车
             this.initTruckParam();
             const truck = await this.loadModel();
-            this.headGroup = truck[0];
-            this.backGroup = truck[1];
+            this.headGroup.add(truck[0]);
+            this.headGroup.position.y = 2.3;
+            this.backGroup.add(truck[1]);
+            this.backGroup.position.y = 2.3;
             this.createGoods();
             for (let i = 0; i < 3; i++) {
                 const signal = this.createSignal();
@@ -46,8 +48,9 @@ export default {
                     objLoader.setMaterials(mat);
                     objLoader.load('static/G7Trailer-head.obj', (obj) => {
                         obj.scale.set(p.modelScale, p.modelScale, p.modelScale);
+                        obj.position.z = 3.5;
                         headGroup.add(obj);
-                        headGroup.position.y = 2.3;
+                        headGroup.position.z = -3.5;
                         resolve(headGroup);
                     });
                 });
@@ -61,8 +64,9 @@ export default {
                     objLoader.setMaterials(mat);
                     objLoader.load('static/G7Trailer-back.obj', (obj) => {
                         obj.scale.set(p.modelScale, p.modelScale, p.modelScale);
+                        obj.position.z = 3.5;
                         backGroup.add(obj);
-                        backGroup.position.y = 2.3;
+                        backGroup.position.z = -3.5;
                         resolve(backGroup);
                     });
                 });
@@ -178,13 +182,7 @@ export default {
                 const goods = new THREE.Mesh(goodsGeom, goodsMat);
                 goods.scale.set(0.001, 0.001, 0.001);
                 goods.inTween = this.initGoodTween('in', goods, goodIndex, 0.001, 1);
-                // goods.inTween.onStart(() => {
-                //     this.goodsGroup.add(goods);
-                // });
                 goods.outTween = this.initGoodTween('out', goods, 211 - goodIndex, 1, 0.001);
-                // goods.outTween.onComplete(() => {
-                //     this.goodsGroup.remove(goods);
-                // });
                 goods.position.set(x, y, z);
                 this.goodsList.push(goods);
                 goodIndex++;
@@ -202,7 +200,8 @@ export default {
                     });
                 }
             });
-            this.backGroup.add(this.goodsGroup);
+            this.goodsGroup.position.z = 3.5;
+            this.backGroup.children[0].add(this.goodsGroup);
         },
         initGoodTween(type, obj, i, now, target) {
             const _this = this;

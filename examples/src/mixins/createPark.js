@@ -104,7 +104,7 @@ export default {
                 }];
                 const line = this.initLine(points, {
                     color: this.lineColor,
-                    opacity: 0.5,
+                    opacity: 0.3,
                     transparent: true,
                 });
                 const points2 = [
@@ -113,7 +113,7 @@ export default {
                 ];
                 const dashLine = this.initLine(points2, {
                     color: this.lineColor,
-                    opacity: 0.5,
+                    opacity: 0.3,
                     transparent: true,
                     dashSize: 0.5,
                     gapSize: 0.5,
@@ -134,7 +134,7 @@ export default {
             ];
             const line = this.initLine(points, {
                 color: this.lineColor,
-                opacity: 0.5,
+                opacity: 0.3,
                 transparent: true,
             });
             roadGroup.add(line);
@@ -143,10 +143,10 @@ export default {
             roadGroup.add(line2);
             const dashLine = this.initLine(points, {
                 color: this.lineColor,
-                opacity: 0.5,
+                opacity: 0.3,
                 transparent: true,
-                dashSize: 1,
-                gapSize: 3,
+                dashSize: 5,
+                gapSize: 4,
             }, true);
             dashLine.position.z = 6;
             roadGroup.add(dashLine);

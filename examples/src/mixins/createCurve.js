@@ -2,9 +2,9 @@ export default {
     methods: {
         initCurveParams() {
             const params = {
-                radius: 53,
-                innerRadius: 41,
-                outerRadius: 65,
+                radius: 48,
+                innerRadius: 36,
+                outerRadius: 60,
                 offsetX: 80,
                 buildWidth: 4,
                 buildLengh: 4,
@@ -45,16 +45,16 @@ export default {
                 if (index % 2 === 0) {
                     line = this.initLine(item, {
                         color: this.lineColor,
-                        opacity: 0.5,
+                        opacity: 0.3,
                         transparent: true,
                     });
                 } else {
                     line = this.initLine(item, {
                         color: this.lineColor,
-                        opacity: 0.5,
+                        opacity: 0.3,
                         transparent: true,
                         dashSize: 5,
-                        gapSize: 2,
+                        gapSize: 4,
                     }, true);
                 }
                 roadGroup.add(line);
