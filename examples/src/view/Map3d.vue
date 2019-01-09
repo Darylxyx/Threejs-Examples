@@ -43,7 +43,7 @@ export default {
             const fetch = axios.create();
             fetch({
                 method: 'get',
-                url: '/static/geohash.json',
+                url: 'static/geohash.json',
                 data: {},
             }).then(async (res) => {
                 let run = [];
@@ -117,7 +117,7 @@ export default {
                 const fetch = axios.create();
                 fetch({
                     method: 'get',
-                    url: '/static/graphql.json',
+                    url: 'static/graphql.json',
                     data: {},
                 }).then((result) => {
                     // console.log(result);
@@ -154,11 +154,11 @@ export default {
 
             // scene.fog = new THREE.Fog(0x000000, 0.015, 1000);
 
-            const stats = this.initStats(this.$refs.stats);
-            const control = this.addControl();
-            console.log(clock);
+            // const stats = this.initStats(this.$refs.stats);
+            // const control = this.addControl();
+            // console.log(clock);
 
-            this.addAxes();
+            // this.addAxes();
 
             this.addLight(); // 光源
 
@@ -172,9 +172,9 @@ export default {
 
             // this.initGUI();
             const renderScene = () => {
-                stats.update();
-                const delta = clock.getDelta();
-                control.update(delta);
+                // stats.update();
+                // const delta = clock.getDelta();
+                // control.update(delta);
                 this.globalAnimate();
                 // this.scanAnimate();
                 TWEEN.update();
@@ -230,9 +230,8 @@ export default {
         },
         addSphere() { // 球
             const geom = this.initGeometry('Sphere', radius, 40, 40);
-            const map = this.loadTexture(require('../assets/img/world2.png'));
-            // const normal = this.loadTexture(require('../../assets/img/EarthNormal.png'));
-            const mat = this.initMaterial('MeshPhong'); // 0x192452
+            const map = this.loadTexture('static/img/world2.png');
+            const mat = this.initMaterial('MeshPhong', { color: 0x192452 });
             mat.map = map;
             // mat.normalMap = normal;
             // mat.normalScale.set(1, -2);

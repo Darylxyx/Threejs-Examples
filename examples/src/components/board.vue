@@ -100,56 +100,32 @@
             <div :class='{"card-active": actCardList.indexOf("stop") > -1 }' class='card card-blue card-stop'>
                 <span class='card-title'>月台匹配</span>
                 <p class='con'>停靠月台<span>B04</span></p>
-                <hr class='card-t' />
-                <hr class='card-l' />
-                <hr class='card-r' />
-                <hr class='card-b' />
-                <hr class='card-br' />
+                <cardborder border-color='blue'></cardborder>
             </div>
             <div :class='{"card-active": actCardList.indexOf("unloadstop") > -1 }' class='card card-blue card-stop'>
                 <span class='card-title'>月台匹配</span>
                 <p class='con'>停靠月台<span>E11</span></p>
-                <hr class='card-t' />
-                <hr class='card-l' />
-                <hr class='card-r' />
-                <hr class='card-b' />
-                <hr class='card-br' />
+                <cardborder border-color='blue'></cardborder>
             </div>
             <div :class='{"card-active": actCardList.indexOf("location") > -1 }' class='card card-blue card-stop'>
                 <span class='card-title'>高精度定位</span>
                 <p class='con'>高精度定位成功</p>
-                <hr class='card-t' />
-                <hr class='card-l' />
-                <hr class='card-r' />
-                <hr class='card-b' />
-                <hr class='card-br' />
+                <cardborder border-color='blue'></cardborder>
             </div>
             <div style='left: 20%;' :class='{"card-active": actCardList.indexOf("unlock") > -1 }' class='card card-blue card-stop'>
                 <span class='card-title'>远程解锁</span>
                 <p class='con'>车挂匹配，智能挂远程自动解锁</p>
-                <hr class='card-t' />
-                <hr class='card-l' />
-                <hr class='card-r' />
-                <hr class='card-b' />
-                <hr class='card-br' />
+                <cardborder border-color='blue'></cardborder>
             </div>
             <div style='top: 35%;right: 20%;' :class='{"card-active": actCardList.indexOf("lock") > -1 }' class='card card-red card-stop'>
                 <span class='card-title'>远程锁挂</span>
                 <p class='con'>车挂分离，智能挂远程自动锁定</p>
-                <hr class='card-t' />
-                <hr class='card-l' />
-                <hr class='card-r' />
-                <hr class='card-b' />
-                <hr class='card-br' />
+                <cardborder border-color='red'></cardborder>
             </div>
             <div :class='{"card-active": actCardList.indexOf("platform") > -1 }' class='card card-blue card-stop'>
                 <span class='card-title'>月台匹配</span>
                 <p class='con'>月台匹配成功</p>
-                <hr class='card-t' />
-                <hr class='card-l' />
-                <hr class='card-r' />
-                <hr class='card-b' />
-                <hr class='card-br' />
+                <cardborder border-color='blue'></cardborder>
             </div>
             <div v-if='actCardList.indexOf("load") > -1' class='card-active card card-red card-load'>
                 <span class='card-title'>实时装货...</span>
@@ -157,20 +133,12 @@
                     <animate-number from="0" to="15" duration="11000" :formatter="formatter" style="margin-left:0"></animate-number> t
                     <span><animate-number from="0" to="48" duration="11000" :formatter="formatter" style="margin-left:0"></animate-number> m³</span>
                 </p>
-                <hr class='card-t' />
-                <hr class='card-l' />
-                <hr class='card-r' />
-                <hr class='card-b' />
-                <hr class='card-br' />
+                <cardborder border-color='red'></cardborder>
             </div>
             <div v-if='actCardList.indexOf("loadtime") > -1' class='card-active card card-red card-loadtime'>
                 <span class='card-title'>装货时长</span>
                 <p class='con'><animate-number from="1" to="11304" duration="11000" :formatter="formattime" style="margin-left:0"></animate-number></p>
-                <hr class='card-t' />
-                <hr class='card-l' />
-                <hr class='card-r' />
-                <hr class='card-b' />
-                <hr class='card-br' />
+                <cardborder border-color='red'></cardborder>
             </div>
             <div v-if='actCardList.indexOf("unload") > -1' class='card-active card card-red card-unload'>
                 <span class='card-title'>实时卸货...</span>
@@ -178,20 +146,12 @@
                     <animate-number from="15" to="0" duration="11000" :formatter="formatter" style="margin-left:0"></animate-number> t
                     <span><animate-number from="48" to="0" duration="11000" :formatter="formatter" style="margin-left:0"></animate-number> m³</span>
                 </p>
-                <hr class='card-t' />
-                <hr class='card-l' />
-                <hr class='card-r' />
-                <hr class='card-b' />
-                <hr class='card-br' />
+                <cardborder border-color='red'></cardborder>
             </div>
             <div v-if='actCardList.indexOf("unloadtime") > -1' class='card-active card card-red card-unloadtime'>
                 <span class='card-title'>卸货时长</span>
                 <p class='con'><animate-number from="1" to="9796" duration="11000" :formatter="formattime" style="margin-left:0"></animate-number></p>
-                <hr class='card-t' />
-                <hr class='card-l' />
-                <hr class='card-r' />
-                <hr class='card-b' />
-                <hr class='card-br' />
+                <cardborder border-color='red'></cardborder>
             </div>
             <div :class='{"card-active": actCardList.indexOf("temp") > -1 }' class='card card-blue card-temp'>
                 <span class='card-title'>车厢温度</span>
@@ -203,11 +163,7 @@
                         <p>温度<span>正常</span></p>
                     </div>
                 </div>
-                <hr class='card-t' />
-                <hr class='card-l' />
-                <hr class='card-r' />
-                <hr class='card-b' />
-                <hr class='card-br' />
+                <cardborder border-color='blue'></cardborder>
             </div>
             <div :class='{"card-active": actCardList.indexOf("weight") > -1 }' class='card card-blue card-weight'>
                 <span class='card-title'>挂车装载</span>
@@ -219,11 +175,7 @@
                         <p>载重<span>15 t</span></p>
                     </div>
                 </div>
-                <hr class='card-t' />
-                <hr class='card-l' />
-                <hr class='card-r' />
-                <hr class='card-b' />
-                <hr class='card-br' />
+                <cardborder border-color='blue'></cardborder>
             </div>
             <div :class='{"card-active": actCardList.indexOf("wheel") > -1 }' class='card card-red card-wheel'>
                 <span class='card-title'>胎温胎压</span>
@@ -235,11 +187,7 @@
                         <p>胎压<span>过高</span></p>
                     </div>
                 </div>
-                <hr class='card-t' />
-                <hr class='card-l' />
-                <hr class='card-r' />
-                <hr class='card-b' />
-                <hr class='card-br' />
+                <cardborder border-color='red'></cardborder>
             </div>
             <div :class='{"card-active": actCardList.indexOf("wheelalert") > -1 }' class='card card-red card-wheelalert'>
                 <span class='card-title'>事件报警</span>
@@ -251,11 +199,7 @@
                         <p>胎压报警</p>
                     </div>
                 </div>
-                <hr class='card-t' />
-                <hr class='card-l' />
-                <hr class='card-r' />
-                <hr class='card-b' />
-                <hr class='card-br' />
+                <cardborder  border-color='red'></cardborder>
             </div>
             <div :class='{"card-active": actCardList.indexOf("wheelalert") > -1 }' class='card card-red card-wheelvoice'>
                 <span class='card-title card-voice'>语音播报</span>
@@ -264,11 +208,7 @@
                         <p>挂车二轴右胎胎压过高，请及时处理</p>
                     </div>
                 </div>
-                <hr class='card-t' />
-                <hr class='card-l' />
-                <hr class='card-r' />
-                <hr class='card-b' />
-                <hr class='card-br' />
+                <cardborder border-color='red'></cardborder>
             </div>
             <div :class='{"card-active": actCardList.indexOf("rollalert") > -1 }' class='card card-red card-rollalert'>
                 <span class='card-title'>事件报警</span>
@@ -280,11 +220,7 @@
                         <p>防侧翻保护</p>
                     </div>
                 </div>
-                <hr class='card-t' />
-                <hr class='card-l' />
-                <hr class='card-r' />
-                <hr class='card-b' />
-                <hr class='card-br' />
+                <cardborder border-color='red'></cardborder>
             </div>
 
             <div v-for='(item,index) in picList' :class='{"card-active": picIndex === (index+1)}' class="card card-img img-1">
@@ -295,138 +231,143 @@
 </template>
 
 <script>
-    export default {
-        computed: {
-            title() {
-                return this.$store.state.title;
-            },
-            actCardList() {
-                return this.$store.state.actCardList;
-            },
-            titleType() {
-                return this.$store.state.titleType;
-            },
-            connectProgress() {
-                return this.$store.state.connectProgress;
-            },
-            currentTruck() {
-                return this.truckNums[0];
-            },
-            currentTrailer() {
-                return this.trailerNums[this.round % 10];
-            },
-            picIndex() {
-                return this.$store.state.picIndex;
-            },
-        },
-        methods: {
-            formatWarn() {
-                setInterval(() => {
-                    this.leftWarns.forEach((item,index) => {
-                        var s = Math.round(this.leftList[index].num/24/30);
-                        item.num = item.num + s;
-                    });
-                },10000 + Math.random()*10000);
-            },
-            formatCount(value) {
-                setInterval(() => {
-                    this.bottomList.forEach((item) => {
-                        var s = Math.random() > 0.4 ? 1 : -1;
-                        item.num = parseInt(item.num + s*Math.random()*5);
-                    });
-                },10000);
-            },
-            makeLeftWarns() {
-                var h = new Date().getHours() + 1;
-                this.leftList.forEach((item) => {
-                    var warn = item;
-                    warn.num = Math.round(item.num / 24 * h);
-                    this.leftWarns.push(warn);
-                });
-            },
-            formatter(num) {
-                return num.toFixed(1);
-            },
-            formattime(num) {
-                const h = Math.floor(num / 60 / 60).toFixed(0).padStart(2,'0');
-                const m = Math.max((num - h*3600) / 60,0).toFixed(0).padStart(2,'0');
-                const s = (num % 60).toFixed(0).padStart(2,'0');
-                return h + ":" + m + ":" + s;
-            },
-        },
-        data: () => ({
-            leftWarns:[],
-            picList: ['static/img/gua1.png', 'static/img/gua2.png', 'static/img/gua3.png'],
-            leftList: [
-                {
-                    icon: 'static/img/icon1.png',
-                    num: 309,
-                    desc: '头挂匹配',
-                }, {
-                    icon: 'static/img/icon2.png',
-                    num: 206,
-                    desc: '头挂分离',
-                }, {
-                    icon: 'static/img/icon4.png',
-                    num: 784,
-                    desc: '进入场站',
-                },{
-                    icon: 'static/img/icon13.png',
-                    num: 813,
-                    desc: '离开场站',
-                },{
-                    icon: 'static/img/icon3.png',
-                    num: 776,
-                    desc: '停靠月台',
-                }, {
-                    icon: 'static/img/icon5.png',
-                    num: 21,
-                    desc: '防侧翻保护',
-                }, {
-                    icon: 'static/img/icon6.png',
-                    num: 1633,
-                    desc: '胎压异常',
-                }, {
-                    icon: 'static/img/icon8.png',
-                    num: 0,
-                    desc: '胎温异常',
-                }, {
-                    icon: 'static/img/icon7.png',
-                    num: 2,
-                    desc: '轮胎漏气',
-                }
-            ],
-            bottomList: [
-                {
-                    num: 1850,
-                    desc: '运行中',
-                }, {
-                    num: 761,
-                    desc: '静止中',
-                }, {
-                    num: 353,
-                    desc: '离线中',
-                }, {
-                    num: 211,
-                    desc: '装货中',
-                },{
-                    num: 134,
-                    desc: '卸货中',
-                }
-            ],
-            truckNums:['沪AD9832'],
-            trailerNums:['沪GD889挂','沪F7T73挂','沪D9C73挂','沪D9C79挂','沪D9C81挂','沪D9C02挂','沪D9C46挂','沪D9C02挂','沪D9C66挂','沪D9C58挂'],
-            round:0,
-        }),    
-        mounted() {
-            this.makeLeftWarns();
-            this.formatCount();
-            this.formatWarn();
+import cardborder from './cardborder.vue';
 
-            window.$$vue = this;
-            // console.log(this.$store.state.);
+export default {
+    computed: {
+        title() {
+            return this.$store.state.title;
         },
-    };
+        actCardList() {
+            return this.$store.state.actCardList;
+        },
+        titleType() {
+            return this.$store.state.titleType;
+        },
+        connectProgress() {
+            return this.$store.state.connectProgress;
+        },
+        currentTruck() {
+            return this.truckNums[0];
+        },
+        currentTrailer() {
+            return this.trailerNums[this.round % 10];
+        },
+        picIndex() {
+            return this.$store.state.picIndex;
+        },
+    },
+    methods: {
+        formatWarn() {
+            setInterval(() => {
+                this.leftWarns.forEach((item,index) => {
+                    var s = Math.round(this.leftList[index].num/24/30);
+                    item.num = item.num + s;
+                });
+            },10000 + Math.random()*10000);
+        },
+        formatCount(value) {
+            setInterval(() => {
+                this.bottomList.forEach((item) => {
+                    var s = Math.random() > 0.4 ? 1 : -1;
+                    item.num = parseInt(item.num + s*Math.random()*5);
+                });
+            },10000);
+        },
+        makeLeftWarns() {
+            var h = new Date().getHours() + 1;
+            this.leftList.forEach((item) => {
+                var warn = item;
+                warn.num = Math.round(item.num / 24 * h);
+                this.leftWarns.push(warn);
+            });
+        },
+        formatter(num) {
+            return num.toFixed(1);
+        },
+        formattime(num) {
+            const h = Math.floor(num / 60 / 60).toFixed(0).padStart(2,'0');
+            const m = Math.max((num - h*3600) / 60,0).toFixed(0).padStart(2,'0');
+            const s = (num % 60).toFixed(0).padStart(2,'0');
+            return h + ":" + m + ":" + s;
+        },
+    },
+    data: () => ({
+        leftWarns:[],
+        picList: ['static/img/gua1.png', 'static/img/gua2.png', 'static/img/gua3.png', 'static/img/gua4.png', 'static/img/gua5.png', 'static/img/gua6.png'],
+        leftList: [
+            {
+                icon: 'static/img/icon1.png',
+                num: 309,
+                desc: '头挂匹配',
+            }, {
+                icon: 'static/img/icon2.png',
+                num: 206,
+                desc: '头挂分离',
+            }, {
+                icon: 'static/img/icon4.png',
+                num: 784,
+                desc: '进入场站',
+            },{
+                icon: 'static/img/icon13.png',
+                num: 813,
+                desc: '离开场站',
+            },{
+                icon: 'static/img/icon3.png',
+                num: 776,
+                desc: '停靠月台',
+            }, {
+                icon: 'static/img/icon5.png',
+                num: 21,
+                desc: '防侧翻保护',
+            }, {
+                icon: 'static/img/icon6.png',
+                num: 1633,
+                desc: '胎压异常',
+            }, {
+                icon: 'static/img/icon8.png',
+                num: 0,
+                desc: '胎温异常',
+            }, {
+                icon: 'static/img/icon7.png',
+                num: 2,
+                desc: '轮胎漏气',
+            }
+        ],
+        bottomList: [
+            {
+                num: 1850,
+                desc: '运行中',
+            }, {
+                num: 761,
+                desc: '静止中',
+            }, {
+                num: 353,
+                desc: '离线中',
+            }, {
+                num: 211,
+                desc: '装货中',
+            },{
+                num: 134,
+                desc: '卸货中',
+            }
+        ],
+        truckNums:['沪AD9832'],
+        trailerNums:['沪GD889挂','沪F7T73挂','沪D9C73挂','沪D9C79挂','沪D9C81挂','沪D9C02挂','沪D9C46挂','沪D9C02挂','沪D9C66挂','沪D9C58挂'],
+        round:0,
+    }),    
+    mounted() {
+        this.makeLeftWarns();
+        this.formatCount();
+        this.formatWarn();
+
+        window.$$vue = this;
+        // console.log(this.$store.state.);
+    },
+    components: {
+        cardborder,
+    },
+};
 </script>
 
 <style lang='LESS' scoped>
@@ -463,11 +404,11 @@
         top: 30%;
         right: 20%;
         .con {
-            font-size: .3rem;
+            font-size: .35rem;
             font-weight:bold;
             color: @C4;
             span {
-                margin-left: .6rem;
+                margin-left: .2rem;
             }
         }
     }
@@ -478,21 +419,21 @@
         right: 20%;
         .con {
             font-weight:bold;
-            font-size: .46rem;
+            font-size: .35rem;
             color: @C4;
         }
     }
 
     /*实时卸载*/
     .card-unload {
-        top: 20%;
+        top: 30%;
         right: 20%;
         .con {
-            font-size: .3rem;
+            font-size: .35rem;
             font-weight:bold;
             color: @C4;
             span {
-                margin-left: .6rem;
+                margin-left: .2rem;
             }
         }
     }
@@ -502,7 +443,7 @@
         top: 45%;
         right: 20%;
         .con {
-            font-size: .46rem;
+            font-size: .35rem;
             font-weight:bold;
             color: @C4;
         }
@@ -704,42 +645,6 @@
             margin: -20px 0 0 0;
             background-image: url('../../static/img/volume.png');
             background-repeat: no-repeat;
-        }
-        hr {
-            position: absolute;
-            border: none;
-            opacity: 0.3;
-        }
-        &-t {
-            width: 62%;
-            height: 2px;
-            top: 0;
-            right: 0;
-        }
-        &-l {
-            width: 2px;
-            height: 80%;
-            left: 0;
-            bottom: 0;
-        }
-        &-r {
-            width: 2px;
-            height: 0.8rem;
-            top: 0;
-            right: 0;
-        }
-        &-b {
-            width: 2.5rem;
-            height: 2px;
-            bottom: 0;
-            left: 0;
-        }
-        &-br {
-            width: 0.42426rem;
-            height: 2px;
-            transform: rotate(-45deg);
-            right: -4px;
-            bottom: 0.14rem;
         }
         .con {
             display: flex;
@@ -1020,17 +925,17 @@
             }
             .num {
                 color: @C0;
-                font-size: .46rem;
+                font-size: .38rem;
                 margin-bottom: .1rem;
 
                 .unit {
                     color: @C1;
                     font-size: .22rem;
-                    margin-left: .2rem;
+                    margin-left: .15rem;
                 }
             }
             .desc {
-                font-size: .22rem;
+                font-size: .18rem;
                 color: @C2;
             }
         }

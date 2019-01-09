@@ -120,8 +120,8 @@ export default {
                 },
             });
             directionalLight.target = target;
-            const helper = new THREE.CameraHelper(directionalLight.shadow.camera);
-            this.scene.add(helper);
+            // const helper = new THREE.CameraHelper(directionalLight.shadow.camera);
+            // this.scene.add(helper);
             mainGroup.add(ambientLight);
             mainGroup.add(directionalLight);
             this.light = directionalLight;

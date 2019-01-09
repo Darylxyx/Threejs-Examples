@@ -12,7 +12,7 @@ const cornerSpeed = 0.01; // 转弯速度
 let co = { // 摄影机偏移量
     x: 0,
     y: 15,
-    z: 10
+    z: 10,
 };
 let flag = false;
 export default {
@@ -211,7 +211,7 @@ export default {
             // 直行
             const objOut = {x: -55};
             const tweenOut = new TWEEN.Tween(objOut)
-                .to({x: 11}, 4000)
+                .to({x: 11}, 6000)
                 .onUpdate(function() {
                     truck.position.x = this.x;
                     _this.moveCamera();
@@ -439,11 +439,15 @@ export default {
                 });
             const ro = {r: 0};
             const rollUp = new TWEEN.Tween(ro)
-                .to({r: PI / 18}, 1000)
+                .to({r: -PI / 18}, 500)
+                .onStart(function() {
+                    _this.signal2.position.set(1, -1.4, 1);
+                    _this.$store.commit('setActCardList', ['rollalert']);
+                })
                 .onUpdate(function() {
                     truck.rotation.z = this.r;
                 })
-                .easing(easing.InOut);
+                .easing(easing.Out);
             const rollDown = new TWEEN.Tween(ro)
                 .to({r: 0}, 1000)
                 .onUpdate(function() {
@@ -453,19 +457,12 @@ export default {
                     _this.signal2.tween.stop();
                     _this.$store.commit('setActCardList', []);
                 })
-                .easing(easing.InOut);
-            const et5 = new TWEEN.Tween({})
-                .to({}, 4000)
-                .onStart(function() {
-                    _this.signal2.position.set(1, -1.4, 1);
-                    _this.$store.commit('setActCardList', ['rollalert']);
-                });
+                .easing(easing.In);
             et1.chain(et2);
             et2.chain(et3);
             et3.chain(et4);
             et4.chain(rollUp);
-            rollUp.chain(et5)
-            et5.chain(rollDown);
+            rollUp.chain(rollDown);
             const objIn = {rad: - PI / 2};
             const tweenIn = new TWEEN.Tween(objIn)
                 .to({rad: PI / 2}, 30000)
@@ -487,7 +484,7 @@ export default {
                 });
             const objOut = {x: 80};
             const tweenOut = new TWEEN.Tween(objOut)
-                .to({x: -11}, 4000)
+                .to({x: -11}, 6000)
                 .onUpdate(function() {
                     truck.position.x = this.x;
                     _this.moveCamera();
@@ -582,8 +579,9 @@ export default {
                 })
                 .delay(1000);
             ct1.chain(ct2);
-            const tweenLoad = new TWEEN.Tween({})
-                .to({}, 15000)
+            let lo = {index: 0};
+            const tweenLoad = new TWEEN.Tween(lo)
+                .to({index: 15}, 15000)
                 .onStart(function() {
                     _this.$store.commit('setTitle', { title: '卸货' });
                     _this.$store.commit('setActCardList', ['unload', 'unloadtime']);
@@ -591,6 +589,19 @@ export default {
                     for (let i = goods.length - 1; i > -1; i--) {
                         goods[i].outTween.start();
                     }
+                })
+                .onUpdate(function() {
+                    if (this.index >= 10) {
+                        _this.$store.commit('showPic', 6);
+                    } else if (this.index >= 5) {
+                        _this.$store.commit('showPic', 5);
+                    } else if (this.index >= 2) {
+                        _this.$store.commit('showPic', 4);
+                    }
+                })
+                .onComplete(function() {
+                    lo.index = 0;
+                    _this.$store.commit('showPic', 0);
                 });
             ct2.chain(tweenLoad);
             return {
@@ -776,17 +787,17 @@ export default {
                 _this.backRotateGroup.rotation.y = this.r;
             }
             const rightIn = new TWEEN.Tween(br)
-                .to({r: 0.4}, duration)
+                .to({r: 0.2}, duration)
                 .onUpdate(onUpdate);
             const rightOut = new TWEEN.Tween(br)
-                .to({r: 0}, duration * 1.4)
+                .to({r: 0}, duration * 1)
                 .onUpdate(onUpdate);
             rightIn.chain(rightOut);
             const leftIn = new TWEEN.Tween(br)
-                .to({r: -0.4}, duration)
+                .to({r: -0.2}, duration)
                 .onUpdate(onUpdate);
             const leftOut = new TWEEN.Tween(br)
-                .to({r: 0}, duration * 1.4)
+                .to({r: 0}, duration * 1)
                 .onUpdate(onUpdate);
             leftIn.chain(leftOut);
             const revers = new TWEEN.Tween(br)

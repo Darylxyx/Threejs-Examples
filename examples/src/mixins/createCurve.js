@@ -107,5 +107,10 @@ export default {
             }
             return buildingGroup;
         },
+        createRoadSigns() { // 创建路牌
+            const signGroup = new THREE.Group();
+            const signBoardGeom = this.initGeometry('');
+            return signGroup;
+        },
     },
 };

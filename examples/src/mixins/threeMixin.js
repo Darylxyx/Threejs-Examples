@@ -262,7 +262,6 @@ export default {
                 textColor: '#000000',
             };
             params = Object.assign({}, defaults, params);
-            console.log(params.textColor);
             const canvas = document.createElement('canvas');
             canvas.width = params.canvasWidth;
             canvas.height = params.canvasHeight;
@@ -273,7 +272,6 @@ export default {
 
             context.lineWidth = params.borderThickness;
             context.fillStyle = params.textColor;
-            console.log(context.fillStyle);
             context.textAlign = 'center';
             context.fillText(message, canvas.width / 2, canvas.height / 2 + (params.fontSize / 2.5));
 
