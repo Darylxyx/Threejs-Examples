@@ -2,8 +2,10 @@ import TWEEN from 'tween.js';
 import 'three/examples/js/loaders/OBJLoader.js';
 import 'three/examples/js/loaders/MTLLoader.js';
 
-const arr = ['A', 'B', 'C'];
+const easing = TWEEN.Easing.Sinusoidal;
+const arr = ['A', 'B', 'C', 'D', 'E', 'F'];
 let lineMat;
+let arrMat;
 export default {
     methods: {
         initParkParams() {
@@ -25,6 +27,11 @@ export default {
                 opacity: 0.3,
                 transparent: true,
             };
+            arrMat = {
+                color: this.lineColor,
+                opacity: 0,
+                transparent: true,
+            };
         },
         async createPark(index) { // 创建园区，index: 0为装货区，1为卸货区
             const parkGroup = new THREE.Group();
@@ -33,7 +40,7 @@ export default {
             // const stationModal = this.createStation();
             for (let i = 0; i < 3; i++) {
                 // const station = stationModal.clone();
-                const station = this.createStation(i);
+                const station = this.createStation(i, index);
                 station.position.x = (i - 1) * (p.stationWidth + p.stationOffset);
                 parkGroup.add(station);
             }
@@ -65,7 +72,7 @@ export default {
             const cargo = await this.createCargo();
             parkGroup.add(cargo);
 
-            const road = this.createParkRoad();
+            const road = this.createParkRoad(index);
             parkGroup.add(road);
 
             const gate = this.createParkGate();
@@ -77,7 +84,7 @@ export default {
 
             return parkGroup;
         },
-        createStation(index) { // 创建站台
+        createStation(index, type) { // 创建站台
             const stationGroup = new THREE.Group();
             const p = this.parkParams;
             const stationGeom = this.initGeometry('Cube', p.stationWidth, p.stationHeight, p.stationLength);
@@ -88,14 +95,14 @@ export default {
             station.position.y = p.stationHeight / 2;
             station.receiveShadow = true;
             stationGroup.add(station);
-            const spaces = this.createSpace(index);
+            const spaces = this.createSpace(index, type);
             stationGroup.add(spaces);
             const spaces1 = spaces.clone();
             spaces1.position.z = 53;
             stationGroup.add(spaces1);
             return stationGroup;
         },
-        createSpace(index) { // 创建停车位
+        createSpace(index, type) { // 创建停车位
             const spaceGroup = new THREE.Group();
             const p = this.parkParams;
             for (let i = 0; i < 7; i ++) {
@@ -127,7 +134,12 @@ export default {
                 lineGroup.add(dashLine);
 
                 if (index !== undefined) {
-                    const num = arr[index];
+                    let num;
+                    if (type === 0) {
+                        num = arr[index];
+                    } else {
+                        num = arr[index + 3];
+                    }
                     const text = this.textSprite(`${num}0${i+1}`, {
                         scale: 4,
                         textColor: '#FFFFFF',
@@ -142,34 +154,60 @@ export default {
             spaceGroup.position.z = p.stationLength / 2 + p.betweenOffset;
             return spaceGroup;
         },
-        createParkRoad() {
+        createParkRoad(type) {
             const roadGroup = new THREE.Group();
-            const points = [
-                this.v3(-54, 0, 30),
-                this.v3(54, 0, 30),
-            ];
-            const line = this.initLine(points, lineMat);
-            roadGroup.add(line);
+            if (type === 0) {
+                const points = [
+                    this.v3(-54, 0, 30),
+                    this.v3(54, 0, 30),
+                ];
+                const line = this.initLine(points, lineMat);
+                roadGroup.add(line);
 
-            const points2 = [
-                this.v3(-54, 0, 36),
-                this.v3(40, 0, 36),
-            ];
-            const line2 = this.initLine(points2, lineMat);
-            roadGroup.add(line2);
+                const points2 = [
+                    this.v3(-54, 0, 36),
+                    this.v3(40, 0, 36),
+                ];
+                const line2 = this.initLine(points2, lineMat);
+                roadGroup.add(line2);
 
-            const points3 = [
-                this.v3(54, 0, 36),
-                this.v3(46, 0, 36),
-            ];
-            const line3 = this.initLine(points3, lineMat);
-            roadGroup.add(line3);
+                const points3 = [
+                    this.v3(54, 0, 36),
+                    this.v3(46, 0, 36),
+                ];
+                const line3 = this.initLine(points3, lineMat);
+                roadGroup.add(line3);
 
-            const sideRoad = this.createSideRoad();
-            roadGroup.add(sideRoad);
+                const sideRoad = this.createSideRoad();
+                roadGroup.add(sideRoad);
 
-            const guideLine = this.createParkGuideLine();
-            roadGroup.add(guideLine);
+                this.guideGroup = this.createParkGuideLine();
+                roadGroup.add(this.guideGroup);
+
+                const textMat = {
+                    scale: 4,
+                    fontSize: 40,
+                    textColor: '#FFFFFF',
+                    canvasWidth: 160,
+                    canvasHeight: 160,
+                };
+                const text1 = this.textSprite('园区一路', textMat);
+                text1.position.set(20, 0.5, 33);
+                roadGroup.add(text1);
+
+                const text2 = this.textSprite('园区二路', textMat);
+                text2.position.set(20, 0.5, 43);
+                roadGroup.add(text2);
+
+            } else {
+                const points = [this.v3(-54, 0, 30), this.v3(54, 0, 30)];
+                const line = this.initLine(points, lineMat);
+                roadGroup.add(line);
+                const line2 = line.clone();
+                line2.position.z = 6;
+                roadGroup.add(line2);
+            }
+
             return roadGroup;
         },
         createSideRoad() { // 园区二路
@@ -209,7 +247,9 @@ export default {
             const guideGroup = new THREE.Group();
             const guideGeom = this.initGeometry('Plane', 50, 1.4);
             const mat = this.initMaterial('MeshPhong', {
-                color: 0x246F98,
+                color: 0x05314A,
+                opacity: 0,
+                transparent: true,
             });
             const guide = new THREE.Mesh(guideGeom, mat);
             guide.rotation.x = - this.PI / 2;
@@ -228,7 +268,51 @@ export default {
             guide2.position.set(0, 0, 24);
             guideGroup.add(guide2);
 
+            const arrowGroup = new THREE.Group();
+            const arrow = this.createParkGuideArrow();
+            for (let i = 0; i < 20; i++) {
+                const arr = arrow.clone();
+                arr.position.x = i * 2;
+                arrowGroup.add(arr);
+            }
+            arrowGroup.position.x = 10;
+            guideGroup.add(arrowGroup);
+
+            function changeArrowMat(opacity) {
+                arrowGroup.children.forEach((arrow) => {
+                    arrow.children.forEach((item) => {
+                        item.material.opacity = opacity;
+                    });
+                });
+            }
+
+            const data = {opacity: 0};
+            guideGroup.tweenIn = new TWEEN.Tween(data)
+                .to({opacity: 0.75})
+                .onUpdate(function() {
+                    mat.opacity = this.opacity;
+                    changeArrowMat(this.opacity);
+                })
+                .easing(easing.In);
+            guideGroup.tweenOut = new TWEEN.Tween(data)
+                .to({opacity: 0})
+                .onUpdate(function() {
+                    mat.opacity = this.opacity;
+                    changeArrowMat(this.opacity);
+                })
+                .easing(easing.Out);
+
             return guideGroup;
+        },
+        createParkGuideArrow() { // 指引箭头
+            const group = new THREE.Group();
+            const points1 = [this.v3(0, 0.01, 33), this.v3(0.7, 0.01, 33.3)];
+            const points2 = [this.v3(0, 0.01, 33), this.v3(0.7, 0.01, 32.7)];
+            const line1 = this.initLine(points1, arrMat);
+            const line2 = this.initLine(points2, arrMat);
+            group.add(line1);
+            group.add(line2);
+            return group;
         },
         createParkGate() {
             const gateGroup = new THREE.Group();

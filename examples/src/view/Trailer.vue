@@ -33,6 +33,7 @@ export default {
         loadParkGroup: new THREE.Group(),
         unloadParkGroup: new THREE.Group(),
         goodsGroup: new THREE.Group(),
+        guideGroup: new THREE.Group(),
         lineColor: 0xffffff,
     }),
     methods: {

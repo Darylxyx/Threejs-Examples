@@ -104,7 +104,7 @@
             </div>
             <div  v-if='actCardList.indexOf("unloadstop") > -1' class='card-active card card-blue card-stop animated flipInX'>
                 <span class='card-title'>月台匹配</span>
-                <p class='con'>停靠月台<span>E11</span></p>
+                <p class='con'>停靠月台<span>E04</span></p>
                 <cardborder border-color='blue'></cardborder>
             </div>
             <div :class='{"card-active": actCardList.indexOf("location") > -1 }' class='card card-blue card-stop'>
