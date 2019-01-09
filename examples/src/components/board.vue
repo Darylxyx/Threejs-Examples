@@ -317,7 +317,7 @@ export default {
         data: () => ({
             timerCount:0,
             leftWarns:[],
-            picList: ['static/img/gua1.png', 'static/img/gua2.png', 'static/img/gua3.png'],
+            picList: ['static/img/gua1.png', 'static/img/gua2.png', 'static/img/gua3.png', 'static/img/gua4.png', 'static/img/gua5.png', 'static/img/gua6.png'],
             leftList: [
                 {
                     icon: 'static/img/icon1.png',

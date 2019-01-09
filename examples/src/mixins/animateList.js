@@ -600,6 +600,7 @@ export default {
                     }
                 })
                 .onUpdate(function() {
+                    console.log(this.index);
                     if (this.index >= 10) {
                         _this.$store.commit('showPic', 6);
                     } else if (this.index >= 5) {
