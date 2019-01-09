@@ -31,17 +31,17 @@
         <div class='right-bar'>
             <div class='right-top'>
                 <div class='right-top-left'>
-                    <p class='num'>2964辆</p>
+                    <p class='num'>{{rightList.trailerCount}}辆</p>
                     <p class='desc'>智能挂车</p>
-                    <p class='num'>146家</p>
+                    <p class='num'>{{rightList.clients}}家</p>
                     <p class='desc'>智能挂客户</p>
-                    <p class='num'>89%</p>
+                    <p class='num'>{{rightList.volumeRate}}%</p>
                     <p class='desc'>平均体积装载率</p>
-                    <p class='num'>73%</p>
+                    <p class='num'>{{rightList.weightRate}}%</p>
                     <p class='desc'>平均重量装载率</p>
-                    <p class='num'>3.2小时</p>
+                    <p class='num'>{{rightList.loadTime}}小时</p>
                     <p class='desc'>平均装货时长</p>
-                    <p class='num'>2.4小时</p>
+                    <p class='num'>{{rightList.unloadTime}}小时</p>
                     <p class='desc'>平均卸货时长</p>
                 </div>
             </div>
@@ -53,15 +53,15 @@
                 <div class='right-middle-left'>
                     <div class='middle-sec'>
                         <div class='icon'>厢</div>
-                        <p class='desc'><span class='num'>2312辆</span></p>
+                        <p class='desc'><span class='num'>{{rightList.boxTrailer}}辆</span></p>
                     </div>
                     <div class='middle-sec'>
                         <div class='icon'>冷</div>
-                        <p class='desc'><span class='num'>119辆</span></p>
+                        <p class='desc'><span class='num'>{{rightList.coldTrailer}}辆</span></p>
                     </div>
                     <div class='middle-sec'>
                         <div class='icon'>轿</div>
-                        <p class='desc'><span class='num'>533辆</span></p>
+                        <p class='desc'><span class='num'>{{rightList.carTrailer}}辆</span></p>
                     </div>
                 </div>
                 <!--<div class='right-middle-right'>-->
@@ -97,12 +97,12 @@
             </div>
         </div>
         <div class='card-group'>
-            <div :class='{"card-active": actCardList.indexOf("stop") > -1 }' class='card card-blue card-stop'>
+            <div  v-if='actCardList.indexOf("stop") > -1' class='card-active card card-blue card-stop animated flipInX'>
                 <span class='card-title'>月台匹配</span>
                 <p class='con'>停靠月台<span>B04</span></p>
                 <cardborder border-color='blue'></cardborder>
             </div>
-            <div :class='{"card-active": actCardList.indexOf("unloadstop") > -1 }' class='card card-blue card-stop'>
+            <div  v-if='actCardList.indexOf("unloadstop") > -1' class='card-active card card-blue card-stop animated flipInX'>
                 <span class='card-title'>月台匹配</span>
                 <p class='con'>停靠月台<span>E11</span></p>
                 <cardborder border-color='blue'></cardborder>
@@ -112,12 +112,12 @@
                 <p class='con'>高精度定位成功</p>
                 <cardborder border-color='blue'></cardborder>
             </div>
-            <div style='left: 20%;' :class='{"card-active": actCardList.indexOf("unlock") > -1 }' class='card card-blue card-stop'>
+            <div style='left: 20%;'  v-if='actCardList.indexOf("unlock") > -1' class='card-active card card-blue card-stop animated zoomInUp'>
                 <span class='card-title'>远程解锁</span>
                 <p class='con'>车挂匹配，智能挂远程自动解锁</p>
                 <cardborder border-color='blue'></cardborder>
             </div>
-            <div style='top: 35%;right: 20%;' :class='{"card-active": actCardList.indexOf("lock") > -1 }' class='card card-red card-stop'>
+            <div style='top: 35%;right: 20%;' v-if='actCardList.indexOf("lock") > -1' class='card-active card card-red card-stop animated zoomInUp'>
                 <span class='card-title'>远程锁挂</span>
                 <p class='con'>车挂分离，智能挂远程自动锁定</p>
                 <cardborder border-color='red'></cardborder>
@@ -127,7 +127,7 @@
                 <p class='con'>月台匹配成功</p>
                 <cardborder border-color='blue'></cardborder>
             </div>
-            <div v-if='actCardList.indexOf("load") > -1' class='card-active card card-red card-load'>
+            <div v-if='actCardList.indexOf("load") > -1' class='card-active card card-red card-load animated fadeInDown'>
                 <span class='card-title'>实时装货...</span>
                 <p class='con'>
                     <animate-number from="0" to="15" duration="11000" :formatter="formatter" style="margin-left:0"></animate-number> t
@@ -135,7 +135,7 @@
                 </p>
                 <cardborder border-color='red'></cardborder>
             </div>
-            <div v-if='actCardList.indexOf("loadtime") > -1' class='card-active card card-red card-loadtime'>
+            <div v-if='actCardList.indexOf("loadtime") > -1' class='card-active card card-red card-loadtime animated fadeInDown'>
                 <span class='card-title'>装货时长</span>
                 <p class='con'><animate-number from="1" to="11304" duration="11000" :formatter="formattime" style="margin-left:0"></animate-number></p>
                 <cardborder border-color='red'></cardborder>
@@ -165,7 +165,7 @@
                 </div>
                 <cardborder border-color='blue'></cardborder>
             </div>
-            <div :class='{"card-active": actCardList.indexOf("weight") > -1 }' class='card card-blue card-weight'>
+            <div v-if='actCardList.indexOf("weight") > -1' class='card-active card card-blue card-weight animated zoomInLeft'>
                 <span class='card-title'>挂车装载</span>
                 <div class='con'>
                     <img src='static/img/icon11.png' />
@@ -177,7 +177,7 @@
                 </div>
                 <cardborder border-color='blue'></cardborder>
             </div>
-            <div :class='{"card-active": actCardList.indexOf("wheel") > -1 }' class='card card-red card-wheel'>
+            <div v-if='actCardList.indexOf("wheel") > -1' class='card-active card card-red card-wheel  animated zoomInLeft'>
                 <span class='card-title'>胎温胎压</span>
                 <div class='con'>
                     <img src='static/img/icon12.png' />
@@ -189,7 +189,7 @@
                 </div>
                 <cardborder border-color='red'></cardborder>
             </div>
-            <div :class='{"card-active": actCardList.indexOf("wheelalert") > -1 }' class='card card-red card-wheelalert'>
+            <div v-if='actCardList.indexOf("wheelalert") > -1' class='card-active card card-red card-wheelalert  animated zoomInLeft'>
                 <span class='card-title'>事件报警</span>
                 <div class='con'>
                     <img src='static/img/icon12.png' />
@@ -201,7 +201,7 @@
                 </div>
                 <cardborder  border-color='red'></cardborder>
             </div>
-            <div :class='{"card-active": actCardList.indexOf("wheelalert") > -1 }' class='card card-red card-wheelvoice'>
+            <div  v-if='actCardList.indexOf("wheelalert") > -1' class='card-active card card-red card-wheelvoice  animated zoomInLeft'>
                 <span class='card-title card-voice'>语音播报</span>
                 <div class='con'>
                     <div>
@@ -210,7 +210,7 @@
                 </div>
                 <cardborder border-color='red'></cardborder>
             </div>
-            <div :class='{"card-active": actCardList.indexOf("rollalert") > -1 }' class='card card-red card-rollalert'>
+            <div v-if='actCardList.indexOf("rollalert") > -1' class='card-active card card-red card-rollalert  animated zoomInLeft'>
                 <span class='card-title'>事件报警</span>
                 <div class='con'>
                     <img src='static/img/icon9.png' />
@@ -234,134 +234,167 @@
 
 <script>
 import cardborder from './cardborder.vue';
-
 export default {
-    computed: {
-        title() {
-            return this.$store.state.title;
+        computed: {
+            title() {
+                return this.$store.state.title;
+            },
+            actCardList() {
+                return this.$store.state.actCardList;
+            },
+            titleType() {
+                return this.$store.state.titleType;
+            },
+            connectProgress() {
+                return this.$store.state.connectProgress;
+            },
+            currentTruck() {
+                return this.truckNums[0];
+            },
+            currentTrailer() {
+                return this.trailerNums[this.round % 10];
+            },
+            picIndex() {
+                return this.$store.state.picIndex;
+            },
         },
-        actCardList() {
-            return this.$store.state.actCardList;
-        },
-        titleType() {
-            return this.$store.state.titleType;
-        },
-        connectProgress() {
-            return this.$store.state.connectProgress;
-        },
-        currentTruck() {
-            return this.truckNums[0];
-        },
-        currentTrailer() {
-            return this.trailerNums[this.round % 10];
-        },
-        picIndex() {
-            return this.$store.state.picIndex;
-        },
-    },
-    methods: {
-        formatWarn() {
-            setInterval(() => {
-                this.leftWarns.forEach((item,index) => {
-                    var s = Math.round(this.leftList[index].num/24/30);
-                    item.num = item.num + s;
+        methods: {
+            formatWarn() {
+                setInterval(() => {
+                    this.timerCount++;
+                    this.leftWarns.forEach((item,index) => {
+                        // var s = Math.round(this.leftList[index].num/24/30);
+                        // 按步长增加1
+                        var x = this.timerCount % item.step;
+                        if(x == 0){
+                            item.num++;
+                        }
+                        // item.num = item.num + s;
+                    });
+                },6000);
+            },
+            formatCount() {
+                setInterval(() => {
+                    this.bottomList.forEach((item) => {
+                        //加还是减？
+                        var s = Math.random() > 0.4 ? 1 : -1;
+                        item.num = parseInt(item.num + s*Math.random()*5);
+                    });
+                    this.bottomList[2].num = this.rightList.trailerCount - this.bottomList[0].num - this.bottomList[1].num;
+                },10000);
+            },
+            formatRight() {
+                setInterval(() => {
+                    var x = Math.random() > 0.5 ? 1 :-1;
+                    for(let item in this.rightList){
+                        if(item == "volumeRate" || item == "weightRate"){
+                            this.rightList[item] = this.rightList[item] + Math.round(x * Math.random()*4);
+                        }else if(item == "loadTime" || item == "unloadTime"){
+                            // this.rightList[item] = (this.rightList[item] + parseInt(x * Math.random() * 10));
+                        }
+                    }
+                },10000);
+            },
+            makeLeftWarns() {
+                var h = new Date().getHours() + 1;
+                this.leftList.forEach((item) => {
+                    var warn = item;
+                    warn.num = Math.round(item.num / 24 * h);
+                    warn.step = Math.round(3600 / item.num);
+                    this.leftWarns.push(warn);
                 });
-            },10000 + Math.random()*10000);
+            },
+            formatter(num) {
+                return num.toFixed(1);
+            },
+            formattime(num) {
+                const h = Math.floor(num / 60 / 60).toFixed(0).padStart(2,'0');
+                const m = Math.max((num - h*3600) / 60,0).toFixed(0).padStart(2,'0');
+                const s = (num % 60).toFixed(0).padStart(2,'0');
+                return h + ":" + m + ":" + s;
+            },
         },
-        formatCount(value) {
-            setInterval(() => {
-                this.bottomList.forEach((item) => {
-                    var s = Math.random() > 0.4 ? 1 : -1;
-                    item.num = parseInt(item.num + s*Math.random()*5);
-                });
-            },10000);
-        },
-        makeLeftWarns() {
-            var h = new Date().getHours() + 1;
-            this.leftList.forEach((item) => {
-                var warn = item;
-                warn.num = Math.round(item.num / 24 * h);
-                this.leftWarns.push(warn);
-            });
-        },
-        formatter(num) {
-            return num.toFixed(1);
-        },
-        formattime(num) {
-            const h = Math.floor(num / 60 / 60).toFixed(0).padStart(2,'0');
-            const m = Math.max((num - h*3600) / 60,0).toFixed(0).padStart(2,'0');
-            const s = (num % 60).toFixed(0).padStart(2,'0');
-            return h + ":" + m + ":" + s;
-        },
-    },
-    data: () => ({
-        leftWarns:[],
-        picList: ['static/img/gua1.png', 'static/img/gua2.png', 'static/img/gua3.png', 'static/img/gua4.png', 'static/img/gua5.png', 'static/img/gua6.png'],
-        leftList: [
-            {
-                icon: 'static/img/icon1.png',
-                num: 309,
-                desc: '头挂匹配',
-            }, {
-                icon: 'static/img/icon2.png',
-                num: 206,
-                desc: '头挂分离',
-            }, {
-                icon: 'static/img/icon4.png',
-                num: 784,
-                desc: '进入场站',
-            },{
-                icon: 'static/img/icon13.png',
-                num: 813,
-                desc: '离开场站',
-            },{
-                icon: 'static/img/icon3.png',
-                num: 776,
-                desc: '停靠月台',
-            }, {
-                icon: 'static/img/icon5.png',
-                num: 21,
-                desc: '防侧翻保护',
-            }, {
-                icon: 'static/img/icon6.png',
-                num: 1633,
-                desc: '胎压异常',
-            }, {
-                icon: 'static/img/icon8.png',
-                num: 0,
-                desc: '胎温异常',
-            }, {
-                icon: 'static/img/icon7.png',
-                num: 2,
-                desc: '轮胎漏气',
-            }
-        ],
-        bottomList: [
-            {
-                num: 1850,
-                desc: '运行中',
-            }, {
-                num: 761,
-                desc: '静止中',
-            }, {
-                num: 353,
-                desc: '离线中',
-            }, {
-                num: 211,
-                desc: '装货中',
-            },{
-                num: 134,
-                desc: '卸货中',
-            }
-        ],
-        truckNums:['沪AD9832'],
-        trailerNums:['沪GD889挂','沪F7T73挂','沪D9C73挂','沪D9C79挂','沪D9C81挂','沪D9C02挂','沪D9C46挂','沪D9C02挂','沪D9C66挂','沪D9C58挂'],
-        round:0,
-    }),    
-    mounted() {
-        this.makeLeftWarns();
-        this.formatCount();
-        this.formatWarn();
+        data: () => ({
+            timerCount:0,
+            leftWarns:[],
+            picList: ['static/img/gua1.png', 'static/img/gua2.png', 'static/img/gua3.png'],
+            leftList: [
+                {
+                    icon: 'static/img/icon1.png',
+                    num: 309,
+                    desc: '头挂匹配',
+                }, {
+                    icon: 'static/img/icon2.png',
+                    num: 206,
+                    desc: '头挂分离',
+                }, {
+                    icon: 'static/img/icon4.png',
+                    num: 784,
+                    desc: '进入场站',
+                },{
+                    icon: 'static/img/icon13.png',
+                    num: 813,
+                    desc: '离开场站',
+                },{
+                    icon: 'static/img/icon3.png',
+                    num: 776,
+                    desc: '停靠月台',
+                }, {
+                    icon: 'static/img/icon5.png',
+                    num: 21,
+                    desc: '防侧翻保护',
+                }, {
+                    icon: 'static/img/icon6.png',
+                    num: 1633,
+                    desc: '胎压异常',
+                }, {
+                    icon: 'static/img/icon8.png',
+                    num: 0,
+                    desc: '胎温异常',
+                }, {
+                    icon: 'static/img/icon7.png',
+                    num: 2,
+                    desc: '轮胎漏气',
+                }
+            ],
+            rightList:{
+                trailerCount:2964,
+                clients:146,
+                volumeRate:89,
+                weightRate:73,
+                loadTime:3.2,
+                unloadTime:2.4,
+                boxTrailer:2312,
+                coldTrailer:119,
+                carTrailer:533,
+            },
+            bottomList: [
+                {
+                    num: 1850,
+                    desc: '运行中',
+                }, {
+                    num: 761,
+                    desc: '静止中',
+                }, {
+                    num: 353,
+                    desc: '离线中',
+                }, {
+                    num: 211,
+                    desc: '装货中',
+                },{
+                    num: 134,
+                    desc: '卸货中',
+                }
+            ],
+            truckNums:['沪AD9832'],
+            trailerNums:['沪GD889挂','沪F7T73挂','沪D9C73挂','沪D9C79挂','沪D9C81挂','沪D9C02挂','沪D9C46挂','沪D9C02挂','沪D9C66挂','沪D9C58挂'],
+            round:0,
+        }),
+        mounted() {
+            this.makeLeftWarns();
+            this.formatCount();
+            this.formatWarn();
+            this.formatRight();
 
         window.$$vue = this;
         // console.log(this.$store.state.);
@@ -624,15 +657,6 @@ export default {
 
     .card-active {
         opacity: .9 !important;
-        -webkit-animation-duration: 1s;
-        animation-duration: 1s;
-        -webkit-animation-fill-mode: both;
-        animation-fill-mode: both;
-
-        -webkit-backface-visibility: visible !important;
-        backface-visibility: visible !important;
-        -webkit-animation-name: flipInX;
-        animation-name: flipInX;
     }
 
     .card {
@@ -956,71 +980,4 @@ export default {
             }
         }
     }
-</style>
-<style>
-@-webkit-keyframes flipInX {
-  from {
-    -webkit-transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
-    transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
-    -webkit-animation-timing-function: ease-in;
-    animation-timing-function: ease-in;
-    opacity: 0;
-  }
-
-  40% {
-    -webkit-transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
-    transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
-    -webkit-animation-timing-function: ease-in;
-    animation-timing-function: ease-in;
-  }
-
-  60% {
-    -webkit-transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
-    transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
-    opacity: 1;
-  }
-
-  80% {
-    -webkit-transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
-    transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
-  }
-
-  to {
-    -webkit-transform: perspective(400px);
-    transform: perspective(400px);
-  }
-}
-
-@keyframes flipInX {
-  from {
-    -webkit-transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
-    transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
-    -webkit-animation-timing-function: ease-in;
-    animation-timing-function: ease-in;
-    opacity: 0;
-  }
-
-  40% {
-    -webkit-transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
-    transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
-    -webkit-animation-timing-function: ease-in;
-    animation-timing-function: ease-in;
-  }
-
-  60% {
-    -webkit-transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
-    transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
-    opacity: 1;
-  }
-
-  80% {
-    -webkit-transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
-    transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
-  }
-
-  to {
-    -webkit-transform: perspective(400px);
-    transform: perspective(400px);
-  }
-}
 </style>
