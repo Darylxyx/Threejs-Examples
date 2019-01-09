@@ -222,9 +222,11 @@
                 </div>
                 <cardborder border-color='red'></cardborder>
             </div>
-
             <div v-for='(item,index) in picList' :class='{"card-active": picIndex === (index+1)}' class="card card-img img-1">
                 <img :src="item">
+            </div>
+            <div :class='{"card-active": actCardList.indexOf("guide") > -1}' class='card-gif'>
+                <img id='guideGif' src='static/img/guide.gif' />
             </div>
         </div>
     </div>
@@ -496,6 +498,20 @@ export default {
                     margin-left: .2rem;
                 }
             }
+        }
+    }
+
+    .card-gif {
+        opacity: 0;
+        position: absolute;
+        top: 10%;
+        right: 10%;
+        width: 3rem;
+        padding: .08rem;
+        background: rgba(35, 43, 70, 0.5);
+
+        img {
+            width: 100%;
         }
     }
 

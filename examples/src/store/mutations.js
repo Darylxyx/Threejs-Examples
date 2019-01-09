@@ -15,6 +15,9 @@ export default {
     },
     setActCardList(state, list) {
         state.actCardList = list;
+        if (list.indexOf('guide') > -1) {
+            document.querySelector('#guideGif').src = `static/img/guide.gif?${Math.round(Math.random() * 100)}`;
+        }
     },
     showPic(state, index) {
         state.picIndex = index;

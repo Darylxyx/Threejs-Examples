@@ -212,12 +212,16 @@ export default {
             const objOut = {x: -55};
             const tweenOut = new TWEEN.Tween(objOut)
                 .to({x: 11}, 6000)
+                .onStart(function() {
+                    _this.$store.commit('setActCardList', ['guide']);
+                })
                 .onUpdate(function() {
                     truck.position.x = this.x;
                     _this.moveCamera();
                 })
                 .onComplete(function() {
                     objOut.x = -55;
+                    _this.$store.commit('setActCardList', []);
                 })
                 .easing(easing.Out);
             tweenIn.chain(tweenOut);
@@ -485,12 +489,16 @@ export default {
             const objOut = {x: 80};
             const tweenOut = new TWEEN.Tween(objOut)
                 .to({x: -11}, 6000)
+                .onStart(function() {
+                    _this.$store.commit('setActCardList', ['guide']);
+                })
                 .onUpdate(function() {
                     truck.position.x = this.x;
                     _this.moveCamera();
                 })
                 .onComplete(function() {
                     objOut.x = 80;
+                    _this.$store.commit('setActCardList', []);
                 })
                 .easing(easing.Out);
             tweenIn.chain(tweenOut);
