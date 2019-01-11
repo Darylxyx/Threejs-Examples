@@ -22,4 +22,10 @@ export default {
     showPic(state, index) {
         state.picIndex = index;
     },
+    nextRound(state) {
+        state.roundIndex++;
+        if (state.roundIndex > 4) {
+            state.roundIndex = 0;
+        }
+    },
 };

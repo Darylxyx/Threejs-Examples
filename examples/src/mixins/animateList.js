@@ -600,12 +600,13 @@ export default {
                     }
                 })
                 .onUpdate(function() {
-                    console.log(this.index);
-                    if (this.index >= 10) {
+                    if (this.index >= 12) {
+                        _this.$store.commit('showPic', 0);
+                    } else if (this.index >= 9) {
                         _this.$store.commit('showPic', 6);
                     } else if (this.index >= 5) {
                         _this.$store.commit('showPic', 5);
-                    } else if (this.index >= 2) {
+                    } else if (this.index >= 1) {
                         _this.$store.commit('showPic', 4);
                     }
                 })
@@ -730,6 +731,7 @@ export default {
                 })
                 .onComplete(function() {
                     objOut.z = -27;
+                    _this.$store.commit('nextRound');
                 });
             tweenIn.chain(tweenOut);
             return {

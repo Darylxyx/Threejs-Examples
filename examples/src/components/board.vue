@@ -222,7 +222,7 @@
                 </div>
                 <cardborder border-color='red'></cardborder>
             </div>
-            <div v-for='(item,index) in picList' :class='{"card-active": picIndex === (index+1)}' class="card card-img img-1">
+            <div v-for='(item,index) in picList[roundIndex]' :class='{"card-active": picIndex === (index+1)}' class="card card-img img-1">
                 <img :src="item">
             </div>
             <div :class='{"card-active": actCardList.indexOf("guide") > -1}' class='card-gif'>
@@ -235,167 +235,182 @@
 <script>
 import cardborder from './cardborder.vue';
 export default {
-        computed: {
-            title() {
-                return this.$store.state.title;
-            },
-            actCardList() {
-                return this.$store.state.actCardList;
-            },
-            titleType() {
-                return this.$store.state.titleType;
-            },
-            connectProgress() {
-                return this.$store.state.connectProgress;
-            },
-            currentTruck() {
-                return this.truckNums[0];
-            },
-            currentTrailer() {
-                return this.trailerNums[this.round % 10];
-            },
-            picIndex() {
-                return this.$store.state.picIndex;
-            },
+    computed: {
+        title() {
+            return this.$store.state.title;
         },
-        methods: {
-            formatWarn() {
-                setInterval(() => {
-                    this.timerCount++;
-                    this.leftWarns.forEach((item,index) => {
-                        // var s = Math.round(this.leftList[index].num/24/30);
-                        // 按步长增加1
-                        var x = this.timerCount % item.step;
-                        if(x == 0){
-                            item.num++;
-                        }
-                        // item.num = item.num + s;
-                    });
-                },6000);
-            },
-            formatCount() {
-                setInterval(() => {
-                    this.bottomList.forEach((item) => {
-                        //加还是减？
-                        var s = Math.random() > 0.4 ? 1 : -1;
-                        item.num = parseInt(item.num + s*Math.random()*5);
-                    });
-                    this.bottomList[2].num = this.rightList.trailerCount - this.bottomList[0].num - this.bottomList[1].num;
-                },10000);
-            },
-            formatRight() {
-                setInterval(() => {
-                    var x = Math.random() > 0.5 ? 1 :-1;
-                    for(let item in this.rightList){
-                        if(item == "volumeRate" || item == "weightRate"){
-                            this.rightList[item] = this.rightList[item] + Math.round(x * Math.random()*4);
-                        }else if(item == "loadTime" || item == "unloadTime"){
-                            // this.rightList[item] = (this.rightList[item] + parseInt(x * Math.random() * 10));
-                        }
+        actCardList() {
+            return this.$store.state.actCardList;
+        },
+        titleType() {
+            return this.$store.state.titleType;
+        },
+        connectProgress() {
+            return this.$store.state.connectProgress;
+        },
+        currentTruck() {
+            return this.truckNums[0];
+        },
+        currentTrailer() {
+            return this.trailerNums[this.round % 10];
+        },
+        picIndex() {
+            return this.$store.state.picIndex;
+        },
+        roundIndex() {
+            console.log(this.$store.state.roundIndex);
+            return this.$store.state.roundIndex;
+        },
+    },
+    methods: {
+        formatWarn() {
+            setInterval(() => {
+                this.timerCount++;
+                this.leftWarns.forEach((item,index) => {
+                    // var s = Math.round(this.leftList[index].num/24/30);
+                    // 按步长增加1
+                    var x = this.timerCount % item.step;
+                    if(x == 0){
+                        item.num++;
                     }
-                },10000);
-            },
-            makeLeftWarns() {
-                var h = new Date().getHours() + 1;
-                this.leftList.forEach((item) => {
-                    var warn = item;
-                    warn.num = Math.round(item.num / 24 * h);
-                    warn.step = Math.round(3600 / item.num);
-                    this.leftWarns.push(warn);
+                    // item.num = item.num + s;
                 });
-            },
-            formatter(num) {
-                return num.toFixed(1);
-            },
-            formattime(num) {
-                const h = Math.floor(num / 60 / 60).toFixed(0).padStart(2,'0');
-                const m = Math.max((num - h*3600) / 60,0).toFixed(0).padStart(2,'0');
-                const s = (num % 60).toFixed(0).padStart(2,'0');
-                return h + ":" + m + ":" + s;
-            },
+            },6000);
         },
-        data: () => ({
-            timerCount:0,
-            leftWarns:[],
-            picList: ['static/img/gua1.png', 'static/img/gua2.png', 'static/img/gua3.png', 'static/img/gua4.png', 'static/img/gua5.png', 'static/img/gua6.png'],
-            leftList: [
-                {
-                    icon: 'static/img/icon1.png',
-                    num: 309,
-                    desc: '头挂匹配',
-                }, {
-                    icon: 'static/img/icon2.png',
-                    num: 206,
-                    desc: '头挂分离',
-                }, {
-                    icon: 'static/img/icon4.png',
-                    num: 784,
-                    desc: '进入场站',
-                },{
-                    icon: 'static/img/icon13.png',
-                    num: 813,
-                    desc: '离开场站',
-                },{
-                    icon: 'static/img/icon3.png',
-                    num: 776,
-                    desc: '停靠月台',
-                }, {
-                    icon: 'static/img/icon5.png',
-                    num: 21,
-                    desc: '防侧翻保护',
-                }, {
-                    icon: 'static/img/icon6.png',
-                    num: 1633,
-                    desc: '胎压异常',
-                }, {
-                    icon: 'static/img/icon8.png',
-                    num: 0,
-                    desc: '胎温异常',
-                }, {
-                    icon: 'static/img/icon7.png',
-                    num: 2,
-                    desc: '轮胎漏气',
+        formatCount() {
+            setInterval(() => {
+                this.bottomList.forEach((item) => {
+                    //加还是减？
+                    var s = Math.random() > 0.4 ? 1 : -1;
+                    item.num = parseInt(item.num + s*Math.random()*5);
+                });
+                this.bottomList[2].num = this.rightList.trailerCount - this.bottomList[0].num - this.bottomList[1].num;
+            },10000);
+        },
+        formatRight() {
+            setInterval(() => {
+                var x = Math.random() > 0.5 ? 1 :-1;
+                for(let item in this.rightList){
+                    if(item == "volumeRate" || item == "weightRate"){
+                        this.rightList[item] = this.rightList[item] + Math.round(x * Math.random()*4);
+                    }else if(item == "loadTime" || item == "unloadTime"){
+                        // this.rightList[item] = (this.rightList[item] + parseInt(x * Math.random() * 10));
+                    }
                 }
-            ],
-            rightList:{
-                trailerCount:2964,
-                clients:146,
-                volumeRate:89,
-                weightRate:73,
-                loadTime:3.2,
-                unloadTime:2.4,
-                boxTrailer:2312,
-                coldTrailer:119,
-                carTrailer:533,
-            },
-            bottomList: [
-                {
-                    num: 1850,
-                    desc: '运行中',
-                }, {
-                    num: 761,
-                    desc: '静止中',
-                }, {
-                    num: 353,
-                    desc: '离线中',
-                }, {
-                    num: 211,
-                    desc: '装货中',
-                },{
-                    num: 134,
-                    desc: '卸货中',
+            },10000);
+        },
+        makeLeftWarns() {
+            var h = new Date().getHours() + 1;
+            this.leftList.forEach((item) => {
+                var warn = item;
+                warn.num = Math.round(item.num / 24 * h);
+                warn.step = Math.round(3600 / item.num);
+                this.leftWarns.push(warn);
+            });
+        },
+        formatter(num) {
+            return num.toFixed(1);
+        },
+        formattime(num) {
+            const h = Math.floor(num / 60 / 60).toFixed(0).padStart(2,'0');
+            const m = Math.max((num - h*3600) / 60,0).toFixed(0).padStart(2,'0');
+            const s = (num % 60).toFixed(0).padStart(2,'0');
+            return h + ":" + m + ":" + s;
+        },
+        initPicList() {
+            for (let i = 0; i < 5; i++) {
+                const loadArr = [];
+                const unloadArr = [];
+                for (let j = 0; j < 3; j ++) {
+                    loadArr.push(`static/img/load-${i+1}-${j+1}.png`);
+                    unloadArr.push(`static/img/unload-${i+1}-${j+1}.png`);
                 }
-            ],
-            truckNums:['沪AD9832'],
-            trailerNums:['沪GD889挂','沪F7T73挂','沪D9C73挂','沪D9C79挂','沪D9C81挂','沪D9C02挂','沪D9C46挂','沪D9C02挂','沪D9C66挂','沪D9C58挂'],
-            round:0,
-        }),
-        mounted() {
-            this.makeLeftWarns();
-            this.formatCount();
-            this.formatWarn();
-            this.formatRight();
-
+                this.picList.push(loadArr.concat(unloadArr));
+            }
+        },
+    },
+    data: () => ({
+        timerCount:0,
+        leftWarns:[],
+        picList: [],
+        leftList: [
+            {
+                icon: 'static/img/icon1.png',
+                num: 309,
+                desc: '头挂匹配',
+            }, {
+                icon: 'static/img/icon2.png',
+                num: 206,
+                desc: '头挂分离',
+            }, {
+                icon: 'static/img/icon4.png',
+                num: 784,
+                desc: '进入场站',
+            },{
+                icon: 'static/img/icon13.png',
+                num: 813,
+                desc: '离开场站',
+            },{
+                icon: 'static/img/icon3.png',
+                num: 776,
+                desc: '停靠月台',
+            }, {
+                icon: 'static/img/icon5.png',
+                num: 21,
+                desc: '防侧翻保护',
+            }, {
+                icon: 'static/img/icon6.png',
+                num: 1633,
+                desc: '胎压异常',
+            }, {
+                icon: 'static/img/icon8.png',
+                num: 0,
+                desc: '胎温异常',
+            }, {
+                icon: 'static/img/icon7.png',
+                num: 2,
+                desc: '轮胎漏气',
+            }
+        ],
+        rightList:{
+            trailerCount:2964,
+            clients:146,
+            volumeRate:89,
+            weightRate:73,
+            loadTime:3.2,
+            unloadTime:2.4,
+            boxTrailer:2312,
+            coldTrailer:119,
+            carTrailer:533,
+        },
+        bottomList: [
+            {
+                num: 1850,
+                desc: '运行中',
+            }, {
+                num: 761,
+                desc: '静止中',
+            }, {
+                num: 353,
+                desc: '离线中',
+            }, {
+                num: 211,
+                desc: '装货中',
+            },{
+                num: 134,
+                desc: '卸货中',
+            }
+        ],
+        truckNums:['沪AD9832'],
+        trailerNums:['沪GD889挂','沪F7T73挂','沪D9C73挂','沪D9C79挂','沪D9C81挂','沪D9C02挂','沪D9C46挂','沪D9C02挂','沪D9C66挂','沪D9C58挂'],
+        round:0,
+    }),
+    mounted() {
+        this.initPicList();
+        this.makeLeftWarns();
+        this.formatCount();
+        this.formatWarn();
+        this.formatRight();
         window.$$vue = this;
         // console.log(this.$store.state.);
     },

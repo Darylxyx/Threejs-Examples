@@ -13,6 +13,7 @@ const store = new Vuex.Store({
         titleType: '',
         connectProgress: '',
         picIndex: 0,
+        roundIndex: 0, // 动画播放轮数，每轮展示的装卸货照片不同
     },
     mutations,
     actions,
