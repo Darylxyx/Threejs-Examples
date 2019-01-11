@@ -1,4 +1,4 @@
-import TWEEN from 'tween.js';
+const { TWEEN } = window;
 const easing = TWEEN.Easing.Sinusoidal;
 // 动画队列
 let truck = null;
@@ -68,6 +68,18 @@ export default {
             inStation.end.chain(resetStart.begin);
             resetStart.end.chain(truckCombine.begin);
 
+            // 当标签页切换时，暂停当前动画
+            document.addEventListener('visibilitychange', () => {
+                const { visibilityState } = document;
+                if (!this.currentAnimate) {
+                    return;
+                }
+                if (visibilityState === 'hidden') {
+                    this.currentAnimate.stop();
+                } else if (visibilityState === 'visible') {
+                    this.currentAnimate.start();
+                }
+            });
         },
         animateStart() {
             this.firstAnimate.start();
@@ -78,6 +90,7 @@ export default {
             const tween = new TWEEN.Tween(obj)
                 .to({x: -85}, 6000)
                 .onStart(function() {
+                    _this.currentAnimate = tween;
                     _this.signal1.position.set(0, -0.7, -5.2);
                     _this.signal2.position.set(-1, -0.9, -4.8);
                     _this.signal3.position.set(1, -0.9, -4.8);
@@ -108,6 +121,7 @@ export default {
             const tweenEnd = new TWEEN.Tween()
                 .to({}, 5000)
                 .onStart(function() {
+                    _this.currentAnimate = tweenEnd;
                     _this.signal2.position.set(0, -1.6, 3);
                     _this.signal2.tween.start();
                     _this.$store.commit('setTitle', {
@@ -134,6 +148,9 @@ export default {
             const objIn = {x: -85};
             const tweenIn = new TWEEN.Tween(objIn)
                 .to({x: -80}, 2000)
+                .onStart(function() {
+                    _this.currentAnimate = tweenIn;
+                })
                 .onUpdate(function() {
                     truck.position.x = this.x;
                     _this.moveCamera();
@@ -145,6 +162,9 @@ export default {
             const objc = {y: 15};
             const ct = new TWEEN.Tween(objc)
                 .to({y: 30}, 1000)
+                .onStart(function() {
+                    _this.currentAnimate = ct;
+                })
                 .onUpdate(function() {
                     co.y = this.y;
                     _this.moveCamera();
@@ -158,6 +178,7 @@ export default {
             const tweenMid = new TWEEN.Tween(objMid)
                 .to({rad: 0}, 2000)
                 .onStart(function() {
+                    _this.currentAnimate = tweenMid;
                     _this.backRotateTween.rightIn.start();
                 })
                 .onUpdate(function() {
@@ -173,6 +194,9 @@ export default {
             const objOut = {z: 10};
             const tweenOut = new TWEEN.Tween(objOut)
                 .to({z: 42}, 3000)
+                .onStart(function() {
+                    _this.currentAnimate = tweenOut;
+                })
                 .onUpdate(function() {
                     truck.position.z = this.z;
                     _this.moveCamera();
@@ -193,6 +217,7 @@ export default {
             const tweenIn = new TWEEN.Tween(objIn)
                 .to({rad: PI / 2 * 3}, 2000)
                 .onStart(function() {
+                    _this.currentAnimate = tweenIn;
                     _this.$store.commit('setTitle', {
                         title: '车辆通过1号门进入园区',
                     });
@@ -214,6 +239,7 @@ export default {
             const tweenOut = new TWEEN.Tween(objOut)
                 .to({x: 11}, 6000)
                 .onStart(function() {
+                    _this.currentAnimate = tweenOut;
                     _this.$store.commit('setActCardList', ['guide']);
                 })
                 .onUpdate(function() {
@@ -238,6 +264,7 @@ export default {
             const tweenIn = new TWEEN.Tween(objIn)
                 .to({rad: PI}, 2000)
                 .onStart(function() {
+                    _this.currentAnimate = tweenIn;
                     _this.signal2.position.set(0, 0.9, 0);
                     _this.signal2.tween.start();
                     _this.backRotateTween.revers.start();
@@ -252,6 +279,9 @@ export default {
             const objOut = {z: 68};
             const tweenOut = new TWEEN.Tween(objOut)
                 .to({z: 77.4}, 3000)
+                .onStart(function() {
+                    _this.currentAnimate = tweenOut;
+                })
                 .onUpdate(function() {
                     truck.position.z = this.z;
                     _this.moveCamera();
@@ -270,11 +300,13 @@ export default {
             const tweenLoc = new TWEEN.Tween({})
                 .to({}, 500)
                 .onStart(function() {
+                    _this.currentAnimate = tweenLoc;
                     // _this.$store.commit('setActCardList', ['location']);
                 });
             const tweenPlat = new TWEEN.Tween({})
                 .to({}, 4000)
                 .onStart(function() {
+                    _this.currentAnimate = tweenPlat;
                     _this.loadMatchSpace.tween.start();
                     _this.$store.commit('setTitle', { title: '园区停靠' });
                     _this.$store.commit('setActCardList', ['stop']);
@@ -283,6 +315,7 @@ export default {
             const tweenStop = new TWEEN.Tween({})
                 .to({}, 1000)
                 .onStart(function() {
+                    _this.currentAnimate = tweenStop;
                     _this.signal2.tween.stop();
                     _this.loadMatchSpace.tween.stop();
                 });
@@ -290,6 +323,9 @@ export default {
             let co1 = {x: 0, y: 30, z: 87.4};
             const ct1 = new TWEEN.Tween(co1)
                 .to({x: 4, y: 5, z: 100}, 1000)
+                .onStart(function() {
+                    _this.currentAnimate = ct1;
+                })
                 .onUpdate(function() {
                     _this.moveCamera(this.x, this.y, this.z);
                 })
@@ -302,6 +338,9 @@ export default {
             let co2 = {x: 4, y: 5, z: 100};
             const ct2 = new TWEEN.Tween(co2)
                 .to({x: 4, y: 8, z: 82.4}, 1000)
+                .onStart(function() {
+                    _this.currentAnimate = ct2;
+                })
                 .onUpdate(function() {
                     _this.moveCamera(this.x, this.y, this.z);
                 })
@@ -316,6 +355,7 @@ export default {
             const tweenLoad = new TWEEN.Tween(lo)
                 .to({index: 15}, 13000)
                 .onStart(function() {
+                    _this.currentAnimate = tweenLoad;
                     _this.$store.commit('setTitle', { title: '装货' });
                     _this.$store.commit('setActCardList', ['load', 'loadtime']);
                     const goods = _this.goodsList;
@@ -348,6 +388,7 @@ export default {
             const tweenIn = new TWEEN.Tween(objIn)
                 .to({z: 68}, 3000)
                 .onStart(function() {
+                    _this.currentAnimate = tweenIn;
                     _this.$store.commit('setTitle', {});
                     _this.$store.commit('setActCardList', []);
                 })
@@ -361,6 +402,9 @@ export default {
             let co1 = {x: 4, y: 8, z: 82.4};
             const ct = new TWEEN.Tween(co1)
                 .to({x: 0, y: 30, z: 87.4}, 1000)
+                .onStart(function() {
+                    _this.currentAnimate = ct;
+                })
                 .onUpdate(function() {
                     _this.moveCamera(this.x, this.y, this.z);
                 })
@@ -374,6 +418,7 @@ export default {
             const tweenMid = new TWEEN.Tween(objMid)
                 .to({rad: PI / 2}, 2000)
                 .onStart(function() {
+                    _this.currentAnimate = tweenMid;
                     _this.backRotateTween.rightIn.start();
                 })
                 .onUpdate(function() {
@@ -401,6 +446,7 @@ export default {
             const tweenOut = new TWEEN.Tween(objOut)
                 .to({x: 80}, 4000)
                 .onStart(function() {
+                    _this.currentAnimate = tweenOut;
                     titleTween.start();
                 })
                 .onUpdate(function() {
@@ -421,9 +467,7 @@ export default {
             const et1 = new TWEEN.Tween({})
                 .to({}, 100)
                 .onStart(function() {
-                    // _this.signal2.position.set(0, 0.8, -4.5);
                     _this.signal2.tween.start();
-                    // _this.$store.commit('setActCardList', ['temp']);
                 });
             const et2 = new TWEEN.Tween({})
                 .to({}, 6000)
@@ -476,6 +520,7 @@ export default {
             const tweenIn = new TWEEN.Tween(objIn)
                 .to({rad: PI / 2}, 30000)
                 .onStart(function() {
+                    _this.currentAnimate = tweenIn;
                     et1.start();
                 })
                 .onUpdate(function() {
@@ -494,6 +539,9 @@ export default {
             const objOut = {x: 80};
             const tweenOut = new TWEEN.Tween(objOut)
                 .to({x: -11}, 6000)
+                .onStart(function() {
+                    _this.currentAnimate = tweenOut;
+                })
                 .onUpdate(function() {
                     truck.position.x = this.x;
                     _this.moveCamera();
@@ -514,6 +562,7 @@ export default {
             const tweenIn = new TWEEN.Tween(objIn)
                 .to({rad: 0}, 3000)
                 .onStart(function() {
+                    _this.currentAnimate = tweenIn;
                     _this.signal2.position.set(0, 0.9, 0);
                     _this.signal2.tween.start();
                     _this.backRotateTween.revers.start();
@@ -528,6 +577,9 @@ export default {
             const objOut = {z: -68};
             const tweenOut = new TWEEN.Tween(objOut)
                 .to({z: -77.4}, 3000)
+                .onStart(function() {
+                    _this.currentAnimate = tweenOut;
+                })
                 .onUpdate(function() {
                     truck.position.z = this.z;
                     _this.moveCamera();
@@ -546,11 +598,12 @@ export default {
             const tweenLoc = new TWEEN.Tween({})
                 .to({}, 500)
                 .onStart(function() {
-                    // _this.$store.commit('setActCardList', ['location']);
+                    _this.currentAnimate = tweenLoc;
                 });
             const tweenPlat = new TWEEN.Tween({})
                 .to({}, 4000)
                 .onStart(function() {
+                    _this.currentAnimate = tweenPlat;
                     _this.unloadMatchSpace.tween.start();
                     _this.$store.commit('setTitle', { title: '园区停靠' });
                     _this.$store.commit('setActCardList', ['unloadstop']);
@@ -559,6 +612,7 @@ export default {
             const tweenStop = new TWEEN.Tween({})
                 .to({}, 1000)
                 .onStart(function() {
+                    _this.currentAnimate = tweenStop;
                     _this.signal2.tween.stop();
                     _this.unloadMatchSpace.tween.stop();
                 });
@@ -566,6 +620,9 @@ export default {
             let co1 = {x: 0, y: 30, z: -87.4};
             const ct1 = new TWEEN.Tween(co1)
                 .to({x: -4, y: 5, z: -100}, 1000)
+                .onStart(function() {
+                    _this.currentAnimate = ct1;
+                })
                 .onUpdate(function() {
                     _this.moveCamera(this.x, this.y, this.z);
                 })
@@ -578,6 +635,9 @@ export default {
             let co2 = {x: -4, y: 5, z: -100};
             const ct2 = new TWEEN.Tween(co2)
                 .to({x: -4, y: 8, z: -82.4}, 1000)
+                .onStart(function() {
+                    _this.currentAnimate = ct2;
+                })
                 .onUpdate(function() {
                     _this.moveCamera(this.x, this.y, this.z);
                 })
@@ -592,6 +652,7 @@ export default {
             const tweenLoad = new TWEEN.Tween(lo)
                 .to({index: 15}, 13000)
                 .onStart(function() {
+                    _this.currentAnimate = tweenLoad;
                     _this.$store.commit('setTitle', { title: '卸货' });
                     _this.$store.commit('setActCardList', ['unload', 'unloadtime']);
                     const goods = _this.goodsList;
@@ -626,6 +687,7 @@ export default {
             const tweenIn = new TWEEN.Tween(objIn)
                 .to({z: -68}, 3000)
                 .onStart(function() {
+                    _this.currentAnimate = tweenIn;
                     co.x = 0;
                     co.y = 30;
                     co.z = 10;
@@ -651,6 +713,7 @@ export default {
             const tweenD = new TWEEN.Tween()
                 .to({}, 5000)
                 .onStart(function() {
+                    _this.currentAnimate = tweenD;
                     _this.signal2.position.set(0, -1.6, 3);
                     _this.signal2.tween.start();
                     _this.$store.commit('setTitle', {
@@ -669,6 +732,9 @@ export default {
             let co1 = {x: -4, y: 8, z: -82.4};
             const ct = new TWEEN.Tween(co1)
                 .to({x: 0, y: 30, z: -87.4}, 1000)
+                .onStart(function() {
+                    _this.currentAnimate = ct;
+                })
                 .onUpdate(function() {
                     _this.moveCamera(this.x, this.y, this.z);
                 })
@@ -681,6 +747,9 @@ export default {
             const objMid = {rad: 0};
             const tweenMid = new TWEEN.Tween(objMid)
                 .to({rad: - PI / 2}, 2000)
+                .onStart(function() {
+                    _this.currentAnimate = tweenMid;
+                })
                 .onUpdate(function() {
                     _this.drift(11, this.rad, -11, -68, true);
                     _this.moveCamera();
@@ -692,6 +761,9 @@ export default {
             const objOut = {x: -11};
             const tweenOut = new TWEEN.Tween(objOut)
                 .to({x: -50}, 3000)
+                .onStart(function() {
+                    _this.currentAnimate = tweenOut;
+                })
                 .onUpdate(function() {
                     truck.position.x = this.x;
                     _this.moveCamera();
@@ -710,6 +782,9 @@ export default {
             const objIn = {rad: PI / 2};
             const tweenIn = new TWEEN.Tween(objIn)
                 .to({rad: PI}, 2000)
+                .onStart(function() {
+                    _this.currentAnimate = tweenIn;
+                })
                 .onUpdate(function() {
                     _this.drift(15, this.rad, -50, -42);
                     _this.moveCamera();
@@ -722,6 +797,7 @@ export default {
             const tweenOut = new TWEEN.Tween(objOut)
                 .to({z: 10}, 3000)
                 .onStart(function() {
+                    _this.currentAnimate = tweenOut;
                     _this.backGroup.position.set(-85, 2.3, 0);
                     _this.backGroup.rotation.y = - PI / 2;
                 })
@@ -745,6 +821,7 @@ export default {
             const tween = new TWEEN.Tween(obj)
                 .to({rad: PI / 2}, 3000)
                 .onStart(function() {
+                    _this.currentAnimate = tween;
                     window.$$vue.round++;
                 })
                 .onUpdate(function() {
@@ -757,6 +834,9 @@ export default {
             let oc = {x: -75, y: 30, z: 10};
             const ct = new TWEEN.Tween(oc)
                 .to({x: -80, y: 15, z: 10}, 1000)
+                .onStart(function() {
+                    _this.currentAnimate = ct;
+                })
                 .onUpdate(function() {
                     _this.moveCamera(this.x, this.y, this.z);
                     _this.camera.lookAt(_this.v3(-80, 0, 0));

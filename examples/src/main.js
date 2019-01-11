@@ -9,7 +9,6 @@ import '@/assets/css/base.less';
 // import '@/assets/js/base.js';
 
 // console.log(window.basefn);
-
 Vue.config.productionTip = false;
 
 window.Vue = Vue;

@@ -8,7 +8,6 @@
 
 <script>
 import { GUI } from 'dat.gui';
-import TWEEN from 'tween.js';
 import board from '../components/board';
 import mixin from '../mixins/threeMixin.js';
 import animate from '../mixins/animateList.js';
@@ -18,6 +17,7 @@ import curve from '../mixins/createCurve.js';
 import building from '../mixins/createBuilding.js';
 import roads from '../mixins/createRoad.js';
 
+const { TWEEN } = window;
 const clock = new THREE.Clock();
 export default {
     mixins: [mixin, animate, truck, park, curve, building, roads],
@@ -56,8 +56,6 @@ export default {
 
             this.initAnimate();
 
-            this.animateStart();
-
             // const control = this.addControl();
 
             const renderScene = () => {
@@ -70,6 +68,8 @@ export default {
             };
 
             renderScene();
+
+            this.animateStart();
         },
         async addObject() { // 添加对象
             // this.addAxes();

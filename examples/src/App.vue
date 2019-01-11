@@ -6,7 +6,9 @@
 
 <script>
 import store from './store';
+import TWEEN from 'tween.js';
 
+window.TWEEN = TWEEN;
 export default {
     store,
     name: 'App'

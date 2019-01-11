@@ -258,7 +258,6 @@ export default {
             return this.$store.state.picIndex;
         },
         roundIndex() {
-            console.log(this.$store.state.roundIndex);
             return this.$store.state.roundIndex;
         },
     },
