@@ -292,7 +292,8 @@ export default {
                 var x = Math.random() > 0.5 ? 1 :-1;
                 for(let item in this.rightList){
                     if(item == "volumeRate" || item == "weightRate"){
-                        this.rightList[item] = this.rightList[item] + Math.round(x * Math.random()*4);
+                        this.rightList[item] = this.rightList[item] + x * Math.round(Math.random()*4);
+                        this.rightList[item] = this.rightList[item] > 75 ? 75 : (this.rightList[item] < 40 ? 40 : this.rightList[item]);
                     }else if(item == "loadTime" || item == "unloadTime"){
                         // this.rightList[item] = (this.rightList[item] + parseInt(x * Math.random() * 10));
                     }
@@ -360,7 +361,7 @@ export default {
                 desc: '防侧翻保护',
             }, {
                 icon: 'static/img/icon6.png',
-                num: 1633,
+                num: 163,
                 desc: '胎压异常',
             }, {
                 icon: 'static/img/icon8.png',
@@ -375,8 +376,8 @@ export default {
         rightList:{
             trailerCount:2964,
             clients:146,
-            volumeRate:89,
-            weightRate:73,
+            volumeRate:72,
+            weightRate:66,
             loadTime:3.2,
             unloadTime:2.4,
             boxTrailer:2312,
