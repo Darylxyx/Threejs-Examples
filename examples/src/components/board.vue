@@ -130,27 +130,27 @@
             <div v-if='actCardList.indexOf("load") > -1' class='card-active card card-red card-load animated fadeInDown'>
                 <span class='card-title'>实时装货...</span>
                 <p class='con'>
-                    <animate-number from="0" to="15" duration="11000" :formatter="formatter" style="margin-left:0"></animate-number> t
-                    <span><animate-number from="0" to="48" duration="11000" :formatter="formatter" style="margin-left:0"></animate-number> m³</span>
+                    <animate-number from="0" :to="numList[roundIndex].weight" duration="11000" :formatter="formatter" style="margin-left:0"></animate-number> t
+                    <span><animate-number from="0" :to="numList[roundIndex].volume" duration="11000" :formatter="formatter" style="margin-left:0"></animate-number> m³</span>
                 </p>
                 <cardborder border-color='red'></cardborder>
             </div>
             <div v-if='actCardList.indexOf("loadtime") > -1' class='card-active card card-red card-loadtime animated fadeInDown'>
                 <span class='card-title'>装货时长</span>
-                <p class='con'><animate-number from="1" to="11304" duration="11000" :formatter="formattime" style="margin-left:0"></animate-number></p>
+                <p class='con'><animate-number from="1" :to="numList[roundIndex].time" duration="11000" :formatter="formattime" style="margin-left:0"></animate-number></p>
                 <cardborder border-color='red'></cardborder>
             </div>
             <div v-if='actCardList.indexOf("unload") > -1' class='card-active card card-red card-unload'>
                 <span class='card-title'>实时卸货...</span>
                 <p class='con'>
-                    <animate-number from="15" to="0" duration="11000" :formatter="formatter" style="margin-left:0"></animate-number> t
-                    <span><animate-number from="48" to="0" duration="11000" :formatter="formatter" style="margin-left:0"></animate-number> m³</span>
+                    <animate-number :from="numList[roundIndex].weight" to="0" duration="11000" :formatter="formatter" style="margin-left:0"></animate-number> t
+                    <span><animate-number :from="numList[roundIndex].volume" to="0" duration="11000" :formatter="formatter" style="margin-left:0"></animate-number> m³</span>
                 </p>
                 <cardborder border-color='red'></cardborder>
             </div>
             <div v-if='actCardList.indexOf("unloadtime") > -1' class='card-active card card-red card-unloadtime'>
                 <span class='card-title'>卸货时长</span>
-                <p class='con'><animate-number from="1" to="9796" duration="11000" :formatter="formattime" style="margin-left:0"></animate-number></p>
+                <p class='con'><animate-number from="1" :to="numList[roundIndex].time" duration="11000" :formatter="formattime" style="margin-left:0"></animate-number></p>
                 <cardborder border-color='red'></cardborder>
             </div>
             <div :class='{"card-active": actCardList.indexOf("temp") > -1 }' class='card card-blue card-temp'>
@@ -333,6 +333,29 @@ export default {
         timerCount:0,
         leftWarns:[],
         picList: [],
+        numList: [
+            {
+                volume: 48,
+                weight: 15,
+                time: 11304,
+            }, {
+                volume: 53,
+                weight: 17,
+                time: 12304,
+            }, {
+                volume: 60,
+                weight: 20,
+                time: 15000,
+            }, {
+                volume: 45,
+                weight: 14,
+                time: 11000,
+            }, {
+                volume: 50,
+                weight: 16,
+                time: 12000,
+            }
+        ],
         leftList: [
             {
                 icon: 'static/img/icon1.png',
