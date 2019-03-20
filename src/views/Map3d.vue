@@ -7,13 +7,13 @@
 <script>
 import axios from 'axios';
 import Geohash from 'latlon-geohash';
-import TWEEN from 'tween.js';
 import { GUI } from 'dat.gui';
-import mixin from '../mixins/threeMixin';
-import math from '../mixins/math';
-import boundaryJSON from '../../static/boundary';
+import mixin from '@/mixins/threeMixin';
+import math from '@/mixins/math';
+import boundaryJSON from '@/assets/js/boundary';
 
 const THREE = window.THREE;
+const TWEEN = window.TWEEN;
 const PI = Math.PI;
 const radius = 100;
 let globalDirec = true;
@@ -43,7 +43,7 @@ export default {
             const fetch = axios.create();
             fetch({
                 method: 'get',
-                url: 'static/geohash.json',
+                url: '/js/car.json',
                 data: {},
             }).then(async (res) => {
                 let run = [];
@@ -117,7 +117,7 @@ export default {
                 const fetch = axios.create();
                 fetch({
                     method: 'get',
-                    url: 'static/graphql.json',
+                    url: '/js/path.json',
                     data: {},
                 }).then((result) => {
                     // console.log(result);
@@ -228,9 +228,10 @@ export default {
             });
             return control;
         },
-        addSphere() { // 球
+        async addSphere() { // 球
             const geom = this.initGeometry('Sphere', radius, 40, 40);
-            const map = this.loadTexture('static/img/world2.png');
+            const { default: url } = await import('@/assets/imgs/world.png');
+            const map = this.loadTexture(url);
             const mat = this.initMaterial('MeshPhong', { color: 0x192452 });
             mat.map = map;
             // mat.normalMap = normal;
@@ -426,8 +427,8 @@ export default {
 
             const _this = this;
             const initData = { index: 0 };
-            function onUpdate() {
-                const I = Math.floor(this.index);
+            function onUpdate(obj) {
+                const I = Math.floor(obj.index);
                 const vertices = [];
                 for (let i = I; i > I - frag; i--) {
                     if (list[i]) {
@@ -449,8 +450,8 @@ export default {
                 .to({ index: length + frag }, duration)
                 .delay(delay)
                 .onUpdate(onUpdate)
-                .onComplete(onComplete);
-            tween.chain(tween);
+                .onComplete(onComplete)
+                .repeat(Infinity);
             pathGroup.add(points);
             tween.start();
         },
@@ -506,6 +507,7 @@ export default {
 <style lang='less' scoped>
 .container {
     position: relative;
+    width: 100%;
     height: 100%;
 
     #WebGL-output {

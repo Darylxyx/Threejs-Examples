@@ -231,8 +231,8 @@ export default {
             };
             params = Object.assign({}, defaults, params);
 
-            function onUpdate() {
-                if (target.material) target.material.opacity = this.opacity;
+            function onUpdate(obj) {
+                if (target.material) target.material.opacity = obj.opacity;
             }
 
             const tween = new TWEEN.Tween(opaSrc)
