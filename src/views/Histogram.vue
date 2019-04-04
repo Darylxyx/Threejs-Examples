@@ -2,7 +2,6 @@
     <div class='container'>
         <div ref='stats'></div>
         <div ref='canvas' id='WebGL-output'></div>
-        <canvas id='canvas'></canvas>
     </div>
 </template>
 <script>
@@ -36,7 +35,7 @@ export default {
                 scene,
                 camera,
                 renderer,
-            } = this.initBasics(this.$refs.canvas, {position: {x: 30, y: 10, z: 35}}, {clearColor: 0xf1f1f1, shadowEnabled: true});
+            } = this.initBasics(this.$refs.canvas, {position: {x: 30, y: 10, z: 35}, antialias: true }, {clearColor: 0xf1f1f1, shadowEnabled: true});
             this.scene = scene;
             this.camera = camera;
             this.renderer = renderer;

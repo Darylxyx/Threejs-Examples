@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Earth from './views/Earth.vue'
+import Index from './views/Index.vue'
 
 Vue.use(Router)
 
@@ -11,8 +11,13 @@ export default new Router({
     // 点阵地球
     {
       path: '/',
+      name: 'index',
+      component: Index,
+    },
+    {
+      path: '/earth',
       name: 'earth',
-      component: Earth,
+      component: () => import('./views/Earth'),
     },
     // 3D地球
     {
@@ -24,10 +29,7 @@ export default new Router({
     {
       path: '/histogram',
       name: 'histogram',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/Histogram'),
+      component: () => import('./views/Histogram'),
     },
     // 饼图
     {
