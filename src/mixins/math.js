@@ -10,6 +10,24 @@ export default {
             radian = Number(radian);
             return radian * 180 / PI;
         },
+        distance(p1, p2) { // 计算两点间距离
+            const dx = Math.pow(p2.x - p1.x, 2);
+            const dy = Math.pow(p2.y - p1.y, 2);
+            const dz = Math.pow(p2.z - p2.z, 2);
+            const d = Math.sqrt(dx + dy + dz);
+            return d;
+        },
+        vacuate(dataArr, distance = 0) { // 基于距离的数据抽稀
+            let index = dataArr[0]; // 数组索引指针
+            const arr = [index];
+            dataArr.forEach((item) => {
+                if (this.distance(item, index) > distance && arr.indexOf(item) < 0) {
+                    index = item;
+                    arr.push(index);
+                }
+            });
+            return arr;
+        },
         lglt2xyx(lng, lat, r) { // 经纬度转三维坐标
             lng = this.deg2rad(lng);
             lat = this.deg2rad(lat);

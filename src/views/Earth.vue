@@ -7,11 +7,14 @@
 <script>
 import math from '../mixins/math.js';
 import mixin from '../mixins/threeMixin.js';
+import boundaryJSON from '@/assets/js/boundary';
 
 const { THREE } = window;
 const mainGroup = new THREE.Group();
 const sphereGroup = new THREE.Group();
+const boundaryGroup = new THREE.Group();
 const radius = 20;
+const chinaBoundary = boundaryJSON.pop();
 export default {
     mixins: [mixin, math],
     methods: {
@@ -44,8 +47,6 @@ export default {
             renderScene();
         },
         addSphere() {
-            // const geom = this.initGeometry('Sphere', radius, 300, 300);
-            // this.addPoints(geom);
             // 根据经纬度间隔绘制出点
             const pointsMatrix = []; // 二维数组，用于按同一纬度保存数据
             const points = new THREE.Geometry();
@@ -62,7 +63,6 @@ export default {
             }
             for (let lat = 0; lat <= 90; lat++) {
                 const rowVector = [];
-                // const dLng = lat > 75 ? lat * 0.04 : 1;
                 // 设置多级经度间隔，以解决高纬度下点重叠的问题
                 let dLng;
                 if (lat < 74) {
@@ -82,11 +82,40 @@ export default {
                 }
                 pointsMatrix.push(rowVector);
             }
-            console.log(pointsMatrix);
-            this.addPoints(points);
+            const cloud = this.createPointsCloud(points);
+            sphereGroup.add(cloud);
+            mainGroup.add(sphereGroup);
+
+            this.addBoundary();
         },
-        addPoints(geom) {
-            const mapParam = [{
+        addBoundary() {
+            const totalData = chinaBoundary.data.map((item) => {
+                const point = item.split(', ');
+                const lng = Math.round(point[0]);
+                const lat = Math.round(point[1]);
+                const { x, y, z } = this.lglt2xyx(lng, lat, radius + 3);
+                const v = this.v3(x, y, z);
+                return v;
+            });
+            const vacuateData = this.vacuate(totalData, 0.2);
+            const points = new THREE.Geometry();
+            points.vertices = vacuateData;
+            const map = [{
+                pro: 0,
+                color: 'rgba(220,20,60,1)',
+            }, {
+                pro: 0.8,
+                color: 'rgba(220,20,60,1)',
+            }, {
+                pro: 1,
+                color: 'rgba(220,20,60,0)',
+            }];
+            const cloud = this.createPointsCloud(points, { size: 0.3, depthTest: true }, map);
+            boundaryGroup.add(cloud);
+            mainGroup.add(boundaryGroup);
+        },
+        createPointsCloud(geom, style, map) {
+            const defaltMap = [{
                 pro: 0,
                 color: 'rgba(255,255,255,1)',
             }, {
@@ -96,12 +125,11 @@ export default {
                 pro: 1,
                 color: 'rgba(255,255,255,0)',
             }];
-            const points = this.createPoints(geom, {
+            const points = this.createPoints(geom, style || {
                 size: 0.2,
                 depthTest: true,
-            }, mapParam);
-            sphereGroup.add(points);
-            mainGroup.add(sphereGroup);
+            }, map || defaltMap);
+            return points;
         },
         addAxes(len) { // 默认辅助坐标系
             const axes = this.initAxes(len);
