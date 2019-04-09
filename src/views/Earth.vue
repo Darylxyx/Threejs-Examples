@@ -35,7 +35,8 @@ export default {
             const control = this.addControl();
             const clock = new THREE.Clock();
 
-            this.addSphere();
+            // this.addSphere();
+            this.handleData();
 
             const renderScene = () => {
                 stats.update();
@@ -46,60 +47,82 @@ export default {
             };
             renderScene();
         },
-        addSphere() {
-            // 根据经纬度间隔绘制出点
-            const pointsMatrix = []; // 二维数组，用于按同一纬度保存数据
-            const points = new THREE.Geometry();
-            const arr = [4, 5, 5.5, 6.1, 10, 20, 91]; // 用来单独设置后15层的经度间隔
+        handleData() { // 数据预处理，确定地球与大陆边界的点阵
+            //【1】生成全量点阵数据
+            const pointsMatrix = {}; // 矩阵，用于按同一纬度保存数据
             const _this = this;
-            function createHemisphere(isNorth, lng, lat, rowVector) { // isNorth 为 true 时生成北半球的点，反之南半球
-                    if (isNorth && lat === 0) {
-                        return;
-                    }
-                    const { x, y, z } = _this.lglt2xyx(lng, isNorth ? lat : -lat, radius);
-                    const v = _this.v3(x, y, z);
-                    points.vertices.push(v);
-                    rowVector.push(v);
+            function fillVector(lng, lat, rowVector) {
+                const { x, y, z } = _this.lglt2xyx(lng, lat, radius);
+                const v = _this.v3(x, y, z);
+                const infoData = {
+                    lnglat: { lng, lat },
+                    isFill: false,
+                    v,
+                };
+                rowVector[Math.floor(lng)] = infoData;
             }
-            for (let lat = 0; lat <= 90; lat++) {
-                const rowVector = [];
-                // 设置多级经度间隔，以解决高纬度下点重叠的问题
+            function dLngCorrect(lat) { // 设置多级经度间隔，以解决高纬度下点重叠的问题
+                const arr = [4, 5, 5.5, 6.1, 10, 20, 91]; // 用来单独设置后15层的经度间隔
                 let dLng;
-                if (lat < 74) {
+                const absLat = Math.abs(lat);
+                if (absLat < 74) {
                     dLng = 1;
-                } else if (lat >= 74 && lat < 84) {
-                    const d = lat - 74;
+                } else if (absLat >= 74 && absLat < 84) {
+                    const d = absLat - 74;
                     dLng = 1.35 + d * 0.15;
+                } else if (absLat === 90) {
+                    dLng = 360;
                 } else {
-                    const d = lat - 84
+                    const d = absLat - 84
                     dLng = arr[d];
                 }
-                for (let lng = -180; lng < 180; lng += dLng) {
-                    // 北半球的点
-                    createHemisphere(true, lng, lat, rowVector);
-                    // 南半球的点
-                    createHemisphere(false, lng, lat, rowVector);
-                }
-                pointsMatrix.push(rowVector);
+                return dLng;
             }
+            for (let lat = -90; lat <= 90; lat++) {
+                const rowVector = {};
+                const dLng = dLngCorrect(lat);
+                for (let lng = -180; lng < 180; lng += dLng) {
+                    fillVector(lng, lat, rowVector);
+                }
+                pointsMatrix[lat] = rowVector;
+            }
+            //【2】将地图边界坐标映射到点阵数据上
+            const drawBoundaryData = [];
+            chinaBoundary.data.forEach((item) => {
+                const lnglat = item.split(', ');
+                const lng = Math.floor(lnglat[0]);
+                const lat = Math.round(lnglat[1]);
+                // console.log(pointsMatrix[lat][lng]);
+                const point = pointsMatrix[lat][lng];
+                if (!point.isFill) {
+                    drawBoundaryData.push(point.v);
+                    point.isFill = true;
+                }
+            });
+            this.addBoundary(drawBoundaryData);
+            //【3】剩余点阵部分填充
+            const fillData = [];
+            for (const lat in pointsMatrix) {
+                const vLat = pointsMatrix[lat];
+                for (const lng in vLat) {
+                    const point = vLat[lng];
+                    if (!point.isFill) {
+                        fillData.push(point.v);
+                    }
+                }
+            }
+            this.addSphere(fillData);
+        },
+        addSphere(dataArr) {
+            const points = new THREE.Geometry();
+            points.vertices = dataArr;
             const cloud = this.createPointsCloud(points);
             sphereGroup.add(cloud);
             mainGroup.add(sphereGroup);
-
-            this.addBoundary();
         },
-        addBoundary() {
-            const totalData = chinaBoundary.data.map((item) => {
-                const point = item.split(', ');
-                const lng = Math.round(point[0]);
-                const lat = Math.round(point[1]);
-                const { x, y, z } = this.lglt2xyx(lng, lat, radius + 3);
-                const v = this.v3(x, y, z);
-                return v;
-            });
-            const vacuateData = this.vacuate(totalData, 0.2);
+        addBoundary(dataArr) {
             const points = new THREE.Geometry();
-            points.vertices = vacuateData;
+            points.vertices = dataArr;
             const map = [{
                 pro: 0,
                 color: 'rgba(220,20,60,1)',
