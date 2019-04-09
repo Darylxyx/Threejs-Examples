@@ -30,7 +30,7 @@ export default {
             this.scene.add(mainGroup);
 
             const stats = this.initStats(this.$refs.stats);
-            this.addAxes(50);
+            // this.addAxes(50);
 
             const control = this.addControl();
             const clock = new THREE.Clock();
@@ -87,18 +87,53 @@ export default {
                 pointsMatrix[lat] = rowVector;
             }
             //【2】将地图边界坐标映射到点阵数据上
+            let minLng, maxLng, minLat, maxLat;
             const drawBoundaryData = [];
             chinaBoundary.data.forEach((item) => {
                 const lnglat = item.split(', ');
                 const lng = Math.floor(lnglat[0]);
                 const lat = Math.round(lnglat[1]);
-                // console.log(pointsMatrix[lat][lng]);
+                if (minLng > lng || minLng === undefined) minLng = lng;
+                if (maxLng < lng || maxLng === undefined) maxLng = lng;
+                if (minLat > lat || minLat === undefined) minLat = lat;
+                if (maxLat < lat || maxLat === undefined) maxLat = lat;
                 const point = pointsMatrix[lat][lng];
                 if (!point.isFill) {
                     drawBoundaryData.push(point.v);
                     point.isFill = true;
                 }
             });
+            // 填充算法，对极限边界内的点进行检查，若四个方向上均有已填充的点，则证明该点在边界区域内。
+            function checkLimit(direct, lat, lng, limit) { // direct：up, down, left, right
+                let hasLimit = false;
+                // 数值是否增长
+                let isGrow = (direct === 'up' || direct === 'right') ? true : false;
+                // 是否水平
+                let isLng = (direct === 'left' || direct === 'right') ? true : false;
+                for (let i = isLng ? lng : lat; isGrow ? (i <= limit) : (i >= limit); isGrow ? i++ : i--) {
+                    const point = isLng ? pointsMatrix[lat][i] : pointsMatrix[i][lng];
+                    if (point.isFill) {
+                        hasLimit = true;
+                        break;
+                    }
+                }
+                return hasLimit;
+            }
+            for (let i = minLat; i < maxLat; i++) {
+                for (let j = minLng; j < maxLng; j++) {
+                    const point = pointsMatrix[i][j];
+                    if (!point.isFill) {
+                        const hasTopLimit = checkLimit('up', i, j, maxLat);
+                        const hasBottomLimit = checkLimit('down', i, j, minLat);
+                        const hasLeftLimit = checkLimit('left', i, j, minLng);
+                        const hasRightLimit = checkLimit('right', i, j, maxLng);
+                        if (hasTopLimit && hasBottomLimit && hasLeftLimit && hasRightLimit) {
+                            drawBoundaryData.push(point.v);
+                            point.isFill = true;
+                        }
+                    }
+                }
+            }
             this.addBoundary(drawBoundaryData);
             //【3】剩余点阵部分填充
             const fillData = [];
