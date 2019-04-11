@@ -8,6 +8,7 @@
 import math from '../mixins/math.js';
 import mixin from '../mixins/threeMixin.js';
 import boundaryJSON from '@/assets/js/boundary';
+import country from '@/assets/js/country';
 
 const { THREE } = window;
 const mainGroup = new THREE.Group();
@@ -17,6 +18,11 @@ const radius = 20;
 const chinaBoundary = boundaryJSON.pop();
 export default {
     mixins: [mixin, math],
+    data() {
+        return {
+            pointsMatrix: {},
+        }
+    },
     methods: {
         initWebGL() {
             const { scene, camera, renderer } = this.initBasics(this.$refs.canvas, {
@@ -28,6 +34,7 @@ export default {
             this.camera = camera;
             this.renderer = renderer;
             this.scene.add(mainGroup);
+            mainGroup.add(boundaryGroup);
 
             const stats = this.initStats(this.$refs.stats);
             // this.addAxes(50);
@@ -49,7 +56,6 @@ export default {
         },
         handleData() { // 数据预处理，确定地球与大陆边界的点阵
             //【1】生成全量点阵数据
-            const pointsMatrix = {}; // 矩阵，用于按同一纬度保存数据
             const _this = this;
             function fillVector(lng, lat, rowVector) {
                 const { x, y, z } = _this.lglt2xyx(lng, lat, radius);
@@ -84,20 +90,39 @@ export default {
                 for (let lng = -180; lng < 180; lng += dLng) {
                     fillVector(lng, lat, rowVector);
                 }
-                pointsMatrix[lat] = rowVector;
+                this.pointsMatrix[lat] = rowVector;
             }
-            //【2】将地图边界坐标映射到点阵数据上
+            //【2】将国家边界坐标映射到点阵数据上，并完成内部填充
+            country.forEach((item) => {
+                this.fillCountry(item.data);
+            });
+            //【3】剩余点阵部分填充
+            const fillData = [];
+            for (const lat in this.pointsMatrix) {
+                const vLat = this.pointsMatrix[lat];
+                for (const lng in vLat) {
+                    const point = vLat[lng];
+                    if (!point.isFill) {
+                        fillData.push(point.v);
+                    }
+                }
+            }
+            this.addSphere(fillData);
+        },
+        fillCountry(data) {
             let minLng, maxLng, minLat, maxLat;
             const drawBoundaryData = [];
-            chinaBoundary.data.forEach((item) => {
-                const lnglat = item.split(', ');
+            const _this = this;
+            data = data.split(';');
+            data.forEach((item) => {
+                const lnglat = item.split(',');
                 const lng = Math.floor(lnglat[0]);
                 const lat = Math.round(lnglat[1]);
                 if (minLng > lng || minLng === undefined) minLng = lng;
                 if (maxLng < lng || maxLng === undefined) maxLng = lng;
                 if (minLat > lat || minLat === undefined) minLat = lat;
                 if (maxLat < lat || maxLat === undefined) maxLat = lat;
-                const point = pointsMatrix[lat][lng];
+                const point = this.pointsMatrix[lat][lng];
                 if (!point.isFill) {
                     drawBoundaryData.push(point.v);
                     point.isFill = true;
@@ -111,7 +136,7 @@ export default {
                 // 是否水平
                 let isLng = (direct === 'left' || direct === 'right') ? true : false;
                 for (let i = isLng ? lng : lat; isGrow ? (i <= limit) : (i >= limit); isGrow ? i++ : i--) {
-                    const point = isLng ? pointsMatrix[lat][i] : pointsMatrix[i][lng];
+                    const point = isLng ? _this.pointsMatrix[lat][i] : _this.pointsMatrix[i][lng];
                     if (point.isFill) {
                         hasLimit = true;
                         break;
@@ -121,7 +146,7 @@ export default {
             }
             for (let i = minLat; i < maxLat; i++) {
                 for (let j = minLng; j < maxLng; j++) {
-                    const point = pointsMatrix[i][j];
+                    const point = this.pointsMatrix[i][j];
                     if (!point.isFill) {
                         const hasTopLimit = checkLimit('up', i, j, maxLat);
                         const hasBottomLimit = checkLimit('down', i, j, minLat);
@@ -135,18 +160,6 @@ export default {
                 }
             }
             this.addBoundary(drawBoundaryData);
-            //【3】剩余点阵部分填充
-            const fillData = [];
-            for (const lat in pointsMatrix) {
-                const vLat = pointsMatrix[lat];
-                for (const lng in vLat) {
-                    const point = vLat[lng];
-                    if (!point.isFill) {
-                        fillData.push(point.v);
-                    }
-                }
-            }
-            this.addSphere(fillData);
         },
         addSphere(dataArr) {
             const points = new THREE.Geometry();
@@ -168,9 +181,8 @@ export default {
                 pro: 1,
                 color: 'rgba(220,20,60,0)',
             }];
-            const cloud = this.createPointsCloud(points, { size: 0.3, depthTest: true }, map);
+            const cloud = this.createPointsCloud(points, { size: 0.25, depthTest: true }, map);
             boundaryGroup.add(cloud);
-            mainGroup.add(boundaryGroup);
         },
         createPointsCloud(geom, style, map) {
             const defaltMap = [{
@@ -184,7 +196,7 @@ export default {
                 color: 'rgba(255,255,255,0)',
             }];
             const points = this.createPoints(geom, style || {
-                size: 0.2,
+                size: 0.05,
                 depthTest: true,
             }, map || defaltMap);
             return points;
