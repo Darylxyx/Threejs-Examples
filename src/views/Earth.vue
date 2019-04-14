@@ -11,7 +11,9 @@ import mixin from '../mixins/threeMixin.js';
 import boundaryJSON from '@/assets/js/boundary';
 import country from '@/assets/js/country';
 
+const { PI } = Math;
 const { THREE } = window;
+const TWEEN = window.TWEEN;
 const mainGroup = new THREE.Group();
 const sphereGroup = new THREE.Group();
 const boundaryGroup = new THREE.Group();
@@ -35,7 +37,8 @@ export default {
             this.camera = camera;
             this.renderer = renderer;
             this.scene.add(mainGroup);
-            mainGroup.add(boundaryGroup);
+            mainGroup.add(sphereGroup);
+            sphereGroup.add(boundaryGroup);
 
             const stats = this.initStats(this.$refs.stats);
             // this.addAxes(50);
@@ -46,7 +49,10 @@ export default {
             // this.addSphere();
             this.handleData();
 
+            // this.animateStart();
+
             const renderScene = () => {
+                TWEEN.update();
                 stats.update();
                 const delta = clock.getDelta();
                 control.update(delta);
@@ -56,14 +62,6 @@ export default {
             renderScene();
         },
         async handleData() { // 数据预处理，确定地球与大陆边界的点阵
-            // const fetch = axios.create();
-            // let country = await fetch({
-            //     method: 'get',
-            //     url: '/js/country.json',
-            //     data: {},
-            // });
-            // country = country.data;
-            // console.log(country);
             //【1】生成全量点阵数据
             const _this = this;
             function fillVector(lng, lat, rowVector) {
@@ -102,13 +100,15 @@ export default {
                 this.pointsMatrix[lat] = rowVector;
             }
             //【2】将国家边界坐标映射到点阵数据上，并完成内部填充
-            country.forEach((item) => {
-                // if (item.name === 'Russia') {
+            country.forEach((item, index) => {
+                console.log(index);
+                // if (item.name === 'China') {
                     // console.log(item.data);
                     this.fillCountry(item.data);
                 // }
             });
-            //【3】剩余点阵部分填充
+            //【3】区分绘制实际点与空白点
+            const drawData = [];
             const fillData = [];
             for (const lat in this.pointsMatrix) {
                 const vLat = this.pointsMatrix[lat];
@@ -116,30 +116,51 @@ export default {
                     const point = vLat[lng];
                     if (!point.isFill) {
                         fillData.push(point.v);
+                    } else {
+                        drawData.push(point.v);
                     }
                 }
             }
+            this.addBoundary(drawData);
             this.addSphere(fillData);
+        },
+        animateStart() {
+            const obj = { r: 0 };
+            const tween = new TWEEN.Tween(obj)
+                .to({ r: PI * 2 }, 50000)
+                .onUpdate((p) => {
+                    sphereGroup.rotation.y = p.r;
+                })
+                .onComplete(() => {
+                    obj.r = 0;
+                })
+                .repeat(Infinity);
+            tween.start();
         },
         fillCountry(data) {
             let minLng, maxLng, minLat, maxLat;
-            const drawBoundaryData = [];
             const _this = this;
             data = data.split(';');
-            data.forEach((item) => {
+            const map = data.map((item) => {
                 const lnglat = item.split(',');
                 const lng = Math.floor(lnglat[0]);
                 const lat = Math.round(lnglat[1]);
-                if (minLng > lng || minLng === undefined) minLng = lng;
-                if (maxLng < lng || maxLng === undefined) maxLng = lng;
-                if (minLat > lat || minLat === undefined) minLat = lat;
-                if (maxLat < lat || maxLat === undefined) maxLat = lat;
+                // if (minLng > lng || minLng === undefined) minLng = lng;
+                // if (maxLng < lng || maxLng === undefined) maxLng = lng;
+                // if (minLat > lat || minLat === undefined) minLat = lat;
+                // if (maxLat < lat || maxLat === undefined) maxLat = lat;
                 const point = this.pointsMatrix[lat][lng];
                 if (point && !point.isFill) {
-                    drawBoundaryData.push(point.v);
                     point.isFill = true;
                 }
+                return {
+                    lng,
+                    lat,
+                };
             });
+            // console.log(minLng);
+            // 对间断边界进行补全
+            // this.compensation(map);
             // 填充算法，对极限边界内的点进行检查，若四个方向上均有已填充的点，则证明该点在边界区域内。
             // function checkLimit(direct, lat, lng, limit) { // direct：up, down, left, right
             //     let hasLimit = false;
@@ -171,8 +192,56 @@ export default {
             //         }
             //     }
             // }
-            this.addBoundary(drawBoundaryData);
+            // this.addBoundary(drawBoundaryData);
         },
+        // compensation(data) { // 边界补偿
+        //     data.forEach((item, index) => {
+        //         const prev = data[index - 1];
+        //         if (!prev) return;
+        //         const dLng = Math.pow(item.lng - prev.lng, 2);
+        //         const dLat = Math.pow(item.lat - prev.lat, 2);
+        //         const distance = Math.sqrt(dLat + dLat);
+        //         if (distance >= 2) { // 绝对距离大于2的点，通过图形学画线算法进行补间
+        //             this.lineAlgorithm(prev, item);
+        //         }
+        //     });
+        // },
+        // lineAlgorithm(start, end) { // 画线算法
+        //     // console.log(start, end);
+        //     const { lng: x1, lat: y1 } = start;
+        //     const { lng: x2, lat: y2 } = end;
+        //     const minX = x1 < x2 ? x1 : x2;
+        //     const maxX = x1 > x2 ? x1 : x2;
+        //     const minY = y1 < y2 ? y1 : y2;
+        //     const maxY = y1 > y2 ? y1 : y2;
+        //     // console.log(minY, maxY);
+        //     if (x1 === x2) { // 垂直直线，方程 x = b;
+        //         for (let i = minY + 1; i < maxY; i++) {
+        //             console.log(this.pointsMatrix);
+        //             console.log(i, x1);
+        //             const point = this.pointsMatrix[i][x1];
+        //             console.log(point);
+        //             if (!point.isFill) point.isFill = true;
+        //         }
+        //     } else { // 非垂直直线，斜截式方程 y = k * x + b
+        //         // 系数行列式
+        //         const D = this.SOD([[x1, 1], [x2, 1]]);
+        //         // 斜率行列式
+        //         const K = this.SOD([[y1, 1], [y2, 1]]);
+        //         // 截距行列式
+        //         const B = this.SOD([[x1, y1], [x2, y2]]);
+        //         // 斜率
+        //         const k = K / D;
+        //         // 截距
+        //         const b = B / D;
+        //         console.log(start, end);
+        //         for (let i = minX + 1; i < maxX; i++) {
+        //             const y = Math.round(k * i + b);
+        //             const point = this.pointsMatrix[y][i];
+        //             if (!point.isFill) point.isFill = true;
+        //         }
+        //     }
+        // },
         addSphere(dataArr) {
             const points = new THREE.Geometry();
             points.vertices = dataArr;
@@ -185,13 +254,13 @@ export default {
             points.vertices = dataArr;
             const map = [{
                 pro: 0,
-                color: 'rgba(220,20,60,1)',
+                color: 'rgba(255,20,147,1)',
             }, {
                 pro: 0.8,
-                color: 'rgba(220,20,60,1)',
+                color: 'rgba(255,20,147,1)',
             }, {
                 pro: 1,
-                color: 'rgba(220,20,60,0)',
+                color: 'rgba(255,20,147,0)',
             }];
             const cloud = this.createPointsCloud(points, { size: 0.2, depthTest: true }, map);
             boundaryGroup.add(cloud);
@@ -222,7 +291,6 @@ export default {
                 rotateSpeed: 1.0,
                 zoomSpeed: 1.0,
                 panSpeed: 1.0,
-                target: {x: 20, y: 5, z: 0},
             });
             return control;
         },

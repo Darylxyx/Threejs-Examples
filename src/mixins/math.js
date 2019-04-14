@@ -28,6 +28,16 @@ export default {
             });
             return arr;
         },
+        SOD(data) { // secondOrderDeterminant, 解二阶行列式
+            const a11 = data[0][0];
+            const a12 = data[0][1];
+            const a21 = data[1][0];
+            const a22 = data[1][1];
+            return a11 * a22 - a21 * a12;
+        },
+        TOD(data) { // thirdOrderDeterminant,解三阶行列式
+
+        },
         lglt2xyx(lng, lat, r) { // 经纬度转三维坐标
             lng = this.deg2rad(lng);
             lat = this.deg2rad(lat);
