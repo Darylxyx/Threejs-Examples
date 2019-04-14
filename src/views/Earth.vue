@@ -5,6 +5,7 @@
     </div>
 </template>
 <script>
+import axios from 'axios';
 import math from '../mixins/math.js';
 import mixin from '../mixins/threeMixin.js';
 import boundaryJSON from '@/assets/js/boundary';
@@ -54,7 +55,15 @@ export default {
             };
             renderScene();
         },
-        handleData() { // 数据预处理，确定地球与大陆边界的点阵
+        async handleData() { // 数据预处理，确定地球与大陆边界的点阵
+            // const fetch = axios.create();
+            // let country = await fetch({
+            //     method: 'get',
+            //     url: '/js/country.json',
+            //     data: {},
+            // });
+            // country = country.data;
+            // console.log(country);
             //【1】生成全量点阵数据
             const _this = this;
             function fillVector(lng, lat, rowVector) {
@@ -87,14 +96,17 @@ export default {
             for (let lat = -90; lat <= 90; lat++) {
                 const rowVector = {};
                 const dLng = dLngCorrect(lat);
-                for (let lng = -180; lng < 180; lng += dLng) {
+                for (let lng = -180; lng < 180; lng += 1) {
                     fillVector(lng, lat, rowVector);
                 }
                 this.pointsMatrix[lat] = rowVector;
             }
             //【2】将国家边界坐标映射到点阵数据上，并完成内部填充
             country.forEach((item) => {
-                this.fillCountry(item.data);
+                // if (item.name === 'Russia') {
+                    // console.log(item.data);
+                    this.fillCountry(item.data);
+                // }
             });
             //【3】剩余点阵部分填充
             const fillData = [];
@@ -123,42 +135,42 @@ export default {
                 if (minLat > lat || minLat === undefined) minLat = lat;
                 if (maxLat < lat || maxLat === undefined) maxLat = lat;
                 const point = this.pointsMatrix[lat][lng];
-                if (!point.isFill) {
+                if (point && !point.isFill) {
                     drawBoundaryData.push(point.v);
                     point.isFill = true;
                 }
             });
             // 填充算法，对极限边界内的点进行检查，若四个方向上均有已填充的点，则证明该点在边界区域内。
-            function checkLimit(direct, lat, lng, limit) { // direct：up, down, left, right
-                let hasLimit = false;
-                // 数值是否增长
-                let isGrow = (direct === 'up' || direct === 'right') ? true : false;
-                // 是否水平
-                let isLng = (direct === 'left' || direct === 'right') ? true : false;
-                for (let i = isLng ? lng : lat; isGrow ? (i <= limit) : (i >= limit); isGrow ? i++ : i--) {
-                    const point = isLng ? _this.pointsMatrix[lat][i] : _this.pointsMatrix[i][lng];
-                    if (point.isFill) {
-                        hasLimit = true;
-                        break;
-                    }
-                }
-                return hasLimit;
-            }
-            for (let i = minLat; i < maxLat; i++) {
-                for (let j = minLng; j < maxLng; j++) {
-                    const point = this.pointsMatrix[i][j];
-                    if (!point.isFill) {
-                        const hasTopLimit = checkLimit('up', i, j, maxLat);
-                        const hasBottomLimit = checkLimit('down', i, j, minLat);
-                        const hasLeftLimit = checkLimit('left', i, j, minLng);
-                        const hasRightLimit = checkLimit('right', i, j, maxLng);
-                        if (hasTopLimit && hasBottomLimit && hasLeftLimit && hasRightLimit) {
-                            drawBoundaryData.push(point.v);
-                            point.isFill = true;
-                        }
-                    }
-                }
-            }
+            // function checkLimit(direct, lat, lng, limit) { // direct：up, down, left, right
+            //     let hasLimit = false;
+            //     // 数值是否增长
+            //     let isGrow = (direct === 'up' || direct === 'right') ? true : false;
+            //     // 是否水平
+            //     let isLng = (direct === 'left' || direct === 'right') ? true : false;
+            //     for (let i = isLng ? lng : lat; isGrow ? (i <= limit) : (i >= limit); isGrow ? i++ : i--) {
+            //         const point = isLng ? _this.pointsMatrix[lat][i] : _this.pointsMatrix[i][lng];
+            //         if (point && point.isFill) {
+            //             hasLimit = true;
+            //             break;
+            //         }
+            //     }
+            //     return hasLimit;
+            // }
+            // for (let i = minLat; i < maxLat; i++) {
+            //     for (let j = minLng; j < maxLng; j++) {
+            //         const point = this.pointsMatrix[i][j];
+            //         if (!point.isFill) {
+            //             const hasTopLimit = checkLimit('up', i, j, maxLat);
+            //             const hasBottomLimit = checkLimit('down', i, j, minLat);
+            //             const hasLeftLimit = checkLimit('left', i, j, minLng);
+            //             const hasRightLimit = checkLimit('right', i, j, maxLng);
+            //             if (hasTopLimit && hasBottomLimit && hasLeftLimit && hasRightLimit) {
+            //                 drawBoundaryData.push(point.v);
+            //                 point.isFill = true;
+            //             }
+            //         }
+            //     }
+            // }
             this.addBoundary(drawBoundaryData);
         },
         addSphere(dataArr) {
@@ -181,7 +193,7 @@ export default {
                 pro: 1,
                 color: 'rgba(220,20,60,0)',
             }];
-            const cloud = this.createPointsCloud(points, { size: 0.25, depthTest: true }, map);
+            const cloud = this.createPointsCloud(points, { size: 0.2, depthTest: true }, map);
             boundaryGroup.add(cloud);
         },
         createPointsCloud(geom, style, map) {
