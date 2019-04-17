@@ -49,9 +49,9 @@ export default {
             // this.addSphere();
             this.handleData();
 
-            // this.test(lng, lat);
+            // this.test(51, 41);
 
-            // this.animateStart();
+            this.animateStart();
 
             const renderScene = () => {
                 TWEEN.update();
@@ -112,40 +112,8 @@ export default {
                 this.pointsMatrix[lat] = rowVector;
             }
             //【2】将国家边界坐标映射到点阵数据上，并完成内部填充
-            const alertList = ['kazakhstan', 'Yemen', 'Guatemala', 'Peru', 'Bolivia'];
             country.forEach((item, index) => {
-                // if (index === 41) console.log(item);
-                // if (index < 7) {
-                    if (item.name === 'kazakhstan') {
-                    // console.log(item.data);
-                    const { minLng, maxLng, minLat, maxLat } = this.fillCountry(item.data, item.dLimit);
-                    if (item.disPatch) this.patchBoundary(item.disPatch);
-                    if (item.name === 'Antarctica') {
-                        this.fillAntarctica();
-                    } else {
-                        // if (item.name === 'kazakhstan') return;
-                        return;
-                        let data;
-                        if (item.center) {
-                            data = item.center.split(';');
-                            data.forEach((item) => {
-                                const lnglat = item.split(',');
-                                const lng = lnglat[0];
-                                const lat = lnglat[1];
-                                // this.test(lng, lat);
-                                this.fillContent({lng, lat});
-                            });
-                        } else {
-                            data = {
-                                lng: Math.round((minLng + maxLng) / 2),
-                                lat: Math.round((minLat + maxLat) / 2),
-                            };
-                            // console.log(data);
-                            // this.test(data.lng, data.lat);
-                            this.fillContent(data);
-                        }
-                    }
-                }
+                this.drawCountry(item, index);
             });
             //【3】区分绘制实际点与空白点
             const drawData = [];
@@ -164,6 +132,35 @@ export default {
             this.addBoundary(drawData);
             this.addSphere(fillData);
         },
+        drawCountry(item, index) {
+            // if (index < 101) {
+                const { minLng, maxLng, minLat, maxLat } = this.fillCountry(item.data, item.dLimit);
+                if (item.disPatch) this.patchBoundary(item.disPatch);
+                if (item.name === 'Antarctica') {
+                    this.fillAntarctica();
+                } else {
+                    let data;
+                    if (item.center) {
+                        data = item.center.split(';');
+                        data.forEach((item) => {
+                            const lnglat = item.split(',');
+                            const lng = lnglat[0];
+                            const lat = lnglat[1];
+                            // this.test(lng, lat);
+                            this.fillContent({lng, lat});
+                        });
+                    } else {
+                        data = {
+                            lng: Math.round((minLng + maxLng) / 2),
+                            lat: Math.round((minLat + maxLat) / 2),
+                        };
+                        // console.log(data);
+                        // this.test(data.lng, data.lat);
+                        this.fillContent(data);
+                    }
+                }
+            // }
+        },
         animateStart() {
             const obj = { r: 0 };
             const tween = new TWEEN.Tween(obj)
@@ -181,13 +178,15 @@ export default {
             let minLng, maxLng, minLat, maxLat;
             data = data.split(';');
             const map = [];
+            const countryOnly = [];
             data.forEach((item) => {
                 const lnglat = item.split(',');
                 const lng = Math.round(lnglat[0]) === 180 ? 0 : Math.round(lnglat[0]);
                 const lat = Math.round(lnglat[1]);
                 const point = this.pointsMatrix[lat][lng];
-                if (point && !point.isFill) {
+                if (point && countryOnly.indexOf(point) < 0) {
                     map.push({lng, lat});
+                    countryOnly.push(point);
                     point.isFill = true;
                 }
                 if (minLng > lng || minLng === undefined) minLng = lng;
@@ -327,60 +326,65 @@ export default {
             return control;
         },
         compensation(data, limit = 10) { // 边界补偿
-            data.forEach((item, index) => {
-                const I = index === 0 ? data.length - 1 : index - 1;
-                const prev = data[I];
-                if (!prev) {
-                    return;
-                };
-                const dLng = Math.pow(item.lng - prev.lng, 2);
-                const dLat = Math.pow(item.lat - prev.lat, 2);
-                const distance = Math.sqrt(dLng + dLat);
-                if (distance >= 2 && distance < limit) { // 绝对距离大于2的点，通过图形学画线算法进行补间
-                    this.lineAlgorithm(prev, item);
-                }
+            return new Promise((resolve) => {
+                data.forEach(async (item, index) => {
+                    const I = index === 0 ? data.length - 1 : index - 1;
+                    const prev = data[I];
+                    if (!prev) {
+                        return;
+                    };
+                    const dLng = Math.pow(item.lng - prev.lng, 2);
+                    const dLat = Math.pow(item.lat - prev.lat, 2);
+                    const distance = Math.sqrt(dLng + dLat);
+                    if (distance >= 2 && distance < limit) { // 绝对距离大于2的点，通过图形学画线算法进行补间
+                        await this.lineAlgorithm(prev, item);
+                    }
+                });
+                resolve();
             });
         },
         lineAlgorithm(start, end) { // 画线算法
-            // console.log(start, end);
-            const { lng: x1, lat: y1 } = start;
-            const { lng: x2, lat: y2 } = end;
-            const minX = x1 < x2 ? x1 : x2;
-            const maxX = x1 > x2 ? x1 : x2;
-            const minY = y1 < y2 ? y1 : y2;
-            const maxY = y1 > y2 ? y1 : y2;
-            // console.log(minY, maxY);
-            if (x1 === x2) { // 垂直直线，方程 x = b;
-                for (let i = minY + 1; i < maxY; i++) {
-                    const point = this.pointsMatrix[i][x1];
-                    if (!point.isFill) point.isFill = true;
-                }
-            } else { // 非垂直直线，斜截式方程 y = k * x + b
-                // 系数行列式
-                const D = this.SOD([[x1, 1], [x2, 1]]);
-                // 斜率行列式
-                const K = this.SOD([[y1, 1], [y2, 1]]);
-                // 截距行列式
-                const B = this.SOD([[x1, y1], [x2, y2]]);
-                // 斜率
-                const k = K / D;
-                // 截距
-                const b = B / D;
-                // console.log(start, end);
-                if (Math.abs(k) > 1) {
+            return new Promise((resolve) => {
+                const { lng: x1, lat: y1 } = start;
+                const { lng: x2, lat: y2 } = end;
+                const minX = x1 < x2 ? x1 : x2;
+                const maxX = x1 > x2 ? x1 : x2;
+                const minY = y1 < y2 ? y1 : y2;
+                const maxY = y1 > y2 ? y1 : y2;
+                // console.log(minY, maxY);
+                if (x1 === x2) { // 垂直直线，方程 x = b;
                     for (let i = minY + 1; i < maxY; i++) {
-                        const x = Math.round((i - b) / k);
-                        const point = this.pointsMatrix[i][x];
+                        const point = this.pointsMatrix[i][x1];
                         if (!point.isFill) point.isFill = true;
                     }
-                } else {
-                    for (let i = minX + 1; i < maxX; i++) {
-                        const y = Math.round(k * i + b);
-                        const point = this.pointsMatrix[y][i];
-                        if (!point.isFill) point.isFill = true;
+                } else { // 非垂直直线，斜截式方程 y = k * x + b
+                    // 系数行列式
+                    const D = this.SOD([[x1, 1], [x2, 1]]);
+                    // 斜率行列式
+                    const K = this.SOD([[y1, 1], [y2, 1]]);
+                    // 截距行列式
+                    const B = this.SOD([[x1, y1], [x2, y2]]);
+                    // 斜率
+                    const k = K / D;
+                    // 截距
+                    const b = B / D;
+                    // console.log(start, end);
+                    if (Math.abs(k) > 1) {
+                        for (let i = minY + 1; i < maxY; i++) {
+                            const x = Math.round((i - b) / k);
+                            const point = this.pointsMatrix[i][x];
+                            if (!point.isFill) point.isFill = true;
+                        }
+                    } else {
+                        for (let i = minX + 1; i < maxX; i++) {
+                            const y = Math.round(k * i + b);
+                            const point = this.pointsMatrix[y][i];
+                            if (!point.isFill) point.isFill = true;
+                        }
                     }
                 }
-            }
+                resolve();
+            });
         },
     },
     mounted() {
