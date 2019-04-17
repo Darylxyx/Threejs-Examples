@@ -31,7 +31,7 @@ export default {
             const { scene, camera, renderer } = this.initBasics(this.$refs.canvas, {
                 position: { x: 30, y: 10, z: 35 }, antialias: true
             }, {
-                clearColor: 0x000000,
+                clearColor: 0x0B0318,
             });
             this.scene = scene;
             this.camera = camera;
@@ -49,7 +49,7 @@ export default {
             // this.addSphere();
             this.handleData();
 
-            // this.test();
+            // this.test(lng, lat);
 
             // this.animateStart();
 
@@ -63,11 +63,11 @@ export default {
             };
             renderScene();
         },
-        test() {
+        test(lng, lat) {
             const geom = this.initGeometry('Sphere', 0.1, 20, 20);
             const mat = this.initMaterial('MeshBasic', { color: 0x0000FF });
             const mesh = new THREE.Mesh(geom, mat);
-            const v = this.lglt2xyx(18, -32, radius + 0.1);
+            const v = this.lglt2xyx(lng, lat, radius + 0.1);
             mesh.position.x = v.x;
             mesh.position.y = v.y;
             mesh.position.z = v.z;
@@ -112,12 +112,39 @@ export default {
                 this.pointsMatrix[lat] = rowVector;
             }
             //【2】将国家边界坐标映射到点阵数据上，并完成内部填充
+            const alertList = ['kazakhstan', 'Yemen', 'Guatemala', 'Peru', 'Bolivia'];
             country.forEach((item, index) => {
-                if (true) {
+                // if (index === 41) console.log(item);
+                // if (index < 7) {
+                    if (item.name === 'kazakhstan') {
                     // console.log(item.data);
-                    const {minLng,maxLng,minLat,maxLat} = this.fillCountry(item.data);
-                    // if (item.patch) this.patchBoundary(item.patch);
-                    // this.fillContent(minLng,maxLng,minLat,maxLat);
+                    const { minLng, maxLng, minLat, maxLat } = this.fillCountry(item.data, item.dLimit);
+                    if (item.disPatch) this.patchBoundary(item.disPatch);
+                    if (item.name === 'Antarctica') {
+                        this.fillAntarctica();
+                    } else {
+                        // if (item.name === 'kazakhstan') return;
+                        return;
+                        let data;
+                        if (item.center) {
+                            data = item.center.split(';');
+                            data.forEach((item) => {
+                                const lnglat = item.split(',');
+                                const lng = lnglat[0];
+                                const lat = lnglat[1];
+                                // this.test(lng, lat);
+                                this.fillContent({lng, lat});
+                            });
+                        } else {
+                            data = {
+                                lng: Math.round((minLng + maxLng) / 2),
+                                lat: Math.round((minLat + maxLat) / 2),
+                            };
+                            // console.log(data);
+                            // this.test(data.lng, data.lat);
+                            this.fillContent(data);
+                        }
+                    }
                 }
             });
             //【3】区分绘制实际点与空白点
@@ -150,7 +177,7 @@ export default {
                 .repeat(Infinity);
             tween.start();
         },
-        fillCountry(data) {
+        fillCountry(data, dLimit) {
             let minLng, maxLng, minLat, maxLat;
             data = data.split(';');
             const map = [];
@@ -168,9 +195,7 @@ export default {
                 if (minLat > lat || minLat === undefined) minLat = lat;
                 if (maxLat < lat || maxLat === undefined) maxLat = lat;
             });
-            this.compensation(map);
-            // console.log(minLng, maxLng);
-            // console.log(minLat, maxLat);
+            this.compensation(map, dLimit);
             return {
                 minLng,
                 maxLng,
@@ -190,37 +215,63 @@ export default {
                 }
             });
         },
-        fillContent(minLng,maxLng,minLat,maxLat) {
+        fillContent(data) { // 四连通填充算法
             const _this = this;
-            //填充算法，对极限边界内的点进行检查，若四个方向上均有已填充的点，则证明该点在边界区域内。
-            function checkLimit(direct, lat, lng, limit) { // direct：up, down, left, right
-                let hasLimit = false;
-                // 数值是否增长
-                let isGrow = (direct === 'up' || direct === 'right') ? true : false;
-                // 是否水平
-                let isLng = (direct === 'left' || direct === 'right') ? true : false;
-                for (let i = isLng ? lng : lat; isGrow ? (i <= limit) : (i >= limit); isGrow ? i++ : i--) {
-                    const point = isLng ? _this.pointsMatrix[lat][i] : _this.pointsMatrix[i][lng];
-                    if (point && point.isFill) {
-                        hasLimit = true;
-                        break;
+            const centerPoint = this.pointsMatrix[data.lat][data.lng];
+            centerPoint.isFill = true;
+            function nearBy(type = 'lng', trend = 'add', num) { // type: lng|lat trend: add|minus
+                if (type === 'lng') {
+                    if (trend === 'add') {
+                        num++;
+                        if (num === 180) {
+                            num = -180;
+                        }
+                    } else if (trend === 'minus') {
+                        num--;
+                        if (num === -181) {
+                            num = 179;
+                        }
                     }
-                }
-                return hasLimit;
-            }
-            for (let i = minLat; i < maxLat; i++) {
-                for (let j = minLng; j < maxLng; j++) {
-                    const point = this.pointsMatrix[i][j];
-                    if (!point.isFill) {
-                        const hasTopLimit = checkLimit('up', i, j, maxLat);
-                        const hasBottomLimit = checkLimit('down', i, j, minLat);
-                        const hasLeftLimit = checkLimit('left', i, j, minLng);
-                        const hasRightLimit = checkLimit('right', i, j, maxLng);
-                        if (hasTopLimit && hasBottomLimit && hasLeftLimit && hasRightLimit) {
-                            point.isFill = true;
+                } else if (type === 'lat') {
+                    if (trend === 'add') {
+                        num++;
+                        if (num >= 90) {
+                            num = 90;
+                        }
+                    } else if (trend === 'minus') {
+                        num--;
+                        if (num <= -90) {
+                            num = -90;
                         }
                     }
                 }
+                return num;
+            }
+            function fourConnected(lng, lat) {
+                const top = _this.pointsMatrix[nearBy('lat','add',lat)][lng];
+                const bottom = _this.pointsMatrix[nearBy('lat','minus',lat)][lng];
+                const left = _this.pointsMatrix[lat][nearBy('lng','minus',lng)];
+                const right = _this.pointsMatrix[lat][nearBy('lng','add',lng)];
+                [top, bottom, left, right].forEach((point) => {
+                    if (point && !point.isFill) {
+                        point.isFill = true;
+                        fourConnected(point.lnglat.lng, point.lnglat.lat);
+                    }
+                });
+            }
+            fourConnected(data.lng, data.lat);
+        },
+        fillAntarctica() {
+            const _this = this;
+            function checkNorth(lng, lat) {
+                const point = _this.pointsMatrix[lat][lng];
+                if (point && !point.isFill) {
+                    point.isFill = true;
+                    checkNorth(lng, lat+1);
+                }
+            }
+            for (let lng = -180; lng < 180; lng++) {
+                checkNorth(lng, -90);
             }
         },
         addSphere(dataArr) {
@@ -235,15 +286,15 @@ export default {
             points.vertices = dataArr;
             const map = [{
                 pro: 0,
-                color: 'rgba(255,20,147,1)',
+                color: 'rgba(65,105,225,1)',
             }, {
                 pro: 0.8,
-                color: 'rgba(255,20,147,1)',
+                color: 'rgba(65,105,225,1)',
             }, {
                 pro: 1,
-                color: 'rgba(255,20,147,0)',
+                color: 'rgba(65,105,225,0)',
             }];
-            const cloud = this.createPointsCloud(points, { size: 0.15, depthTest: true }, map);
+            const cloud = this.createPointsCloud(points, { size: 0.2, depthTest: true }, map);
             boundaryGroup.add(cloud);
         },
         createPointsCloud(geom, style, map) {
@@ -275,7 +326,7 @@ export default {
             });
             return control;
         },
-        compensation(data) { // 边界补偿
+        compensation(data, limit = 10) { // 边界补偿
             data.forEach((item, index) => {
                 const I = index === 0 ? data.length - 1 : index - 1;
                 const prev = data[I];
@@ -285,7 +336,7 @@ export default {
                 const dLng = Math.pow(item.lng - prev.lng, 2);
                 const dLat = Math.pow(item.lat - prev.lat, 2);
                 const distance = Math.sqrt(dLng + dLat);
-                if (distance >= 2 && distance < 10) { // 绝对距离大于2的点，通过图形学画线算法进行补间\
+                if (distance >= 2 && distance < limit) { // 绝对距离大于2的点，通过图形学画线算法进行补间
                     this.lineAlgorithm(prev, item);
                 }
             });

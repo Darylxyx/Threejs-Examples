@@ -35,7 +35,7 @@ export default {
             const a22 = data[1][1];
             return a11 * a22 - a21 * a12;
         },
-        TOD(data) { // thirdOrderDeterminant,解三阶行列式
+        TOD(data) { // thirdOrderDeterminant, 解三阶行列式
 
         },
         lglt2xyx(lng, lat, r) { // 经纬度转三维坐标
