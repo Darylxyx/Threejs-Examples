@@ -49,6 +49,8 @@ export default {
             // this.addSphere();
             this.handleData();
 
+            // this.test();
+
             // this.animateStart();
 
             const renderScene = () => {
@@ -60,6 +62,16 @@ export default {
                 renderer.render(scene, camera);
             };
             renderScene();
+        },
+        test() {
+            const geom = this.initGeometry('Sphere', 0.1, 20, 20);
+            const mat = this.initMaterial('MeshBasic', { color: 0x0000FF });
+            const mesh = new THREE.Mesh(geom, mat);
+            const v = this.lglt2xyx(18, -32, radius + 0.1);
+            mesh.position.x = v.x;
+            mesh.position.y = v.y;
+            mesh.position.z = v.z;
+            mainGroup.add(mesh);
         },
         async handleData() { // 数据预处理，确定地球与大陆边界的点阵
             //【1】生成全量点阵数据
@@ -101,11 +113,12 @@ export default {
             }
             //【2】将国家边界坐标映射到点阵数据上，并完成内部填充
             country.forEach((item, index) => {
-                console.log(index);
-                // if (item.name === 'China') {
+                if (true) {
                     // console.log(item.data);
-                    this.fillCountry(item.data);
-                // }
+                    const {minLng,maxLng,minLat,maxLat} = this.fillCountry(item.data);
+                    // if (item.patch) this.patchBoundary(item.patch);
+                    // this.fillContent(minLng,maxLng,minLat,maxLat);
+                }
             });
             //【3】区分绘制实际点与空白点
             const drawData = [];
@@ -139,109 +152,77 @@ export default {
         },
         fillCountry(data) {
             let minLng, maxLng, minLat, maxLat;
-            const _this = this;
             data = data.split(';');
-            const map = data.map((item) => {
+            const map = [];
+            data.forEach((item) => {
+                const lnglat = item.split(',');
+                const lng = Math.round(lnglat[0]) === 180 ? 0 : Math.round(lnglat[0]);
+                const lat = Math.round(lnglat[1]);
+                const point = this.pointsMatrix[lat][lng];
+                if (point && !point.isFill) {
+                    map.push({lng, lat});
+                    point.isFill = true;
+                }
+                if (minLng > lng || minLng === undefined) minLng = lng;
+                if (maxLng < lng || maxLng === undefined) maxLng = lng;
+                if (minLat > lat || minLat === undefined) minLat = lat;
+                if (maxLat < lat || maxLat === undefined) maxLat = lat;
+            });
+            this.compensation(map);
+            // console.log(minLng, maxLng);
+            // console.log(minLat, maxLat);
+            return {
+                minLng,
+                maxLng,
+                minLat,
+                maxLat,
+            };
+        },
+        patchBoundary(data) {
+            data = data.split(';');
+            data.forEach((item) => {
                 const lnglat = item.split(',');
                 const lng = Math.floor(lnglat[0]);
                 const lat = Math.round(lnglat[1]);
-                // if (minLng > lng || minLng === undefined) minLng = lng;
-                // if (maxLng < lng || maxLng === undefined) maxLng = lng;
-                // if (minLat > lat || minLat === undefined) minLat = lat;
-                // if (maxLat < lat || maxLat === undefined) maxLat = lat;
                 const point = this.pointsMatrix[lat][lng];
                 if (point && !point.isFill) {
                     point.isFill = true;
                 }
-                return {
-                    lng,
-                    lat,
-                };
             });
-            // console.log(minLng);
-            // 对间断边界进行补全
-            // this.compensation(map);
-            // 填充算法，对极限边界内的点进行检查，若四个方向上均有已填充的点，则证明该点在边界区域内。
-            // function checkLimit(direct, lat, lng, limit) { // direct：up, down, left, right
-            //     let hasLimit = false;
-            //     // 数值是否增长
-            //     let isGrow = (direct === 'up' || direct === 'right') ? true : false;
-            //     // 是否水平
-            //     let isLng = (direct === 'left' || direct === 'right') ? true : false;
-            //     for (let i = isLng ? lng : lat; isGrow ? (i <= limit) : (i >= limit); isGrow ? i++ : i--) {
-            //         const point = isLng ? _this.pointsMatrix[lat][i] : _this.pointsMatrix[i][lng];
-            //         if (point && point.isFill) {
-            //             hasLimit = true;
-            //             break;
-            //         }
-            //     }
-            //     return hasLimit;
-            // }
-            // for (let i = minLat; i < maxLat; i++) {
-            //     for (let j = minLng; j < maxLng; j++) {
-            //         const point = this.pointsMatrix[i][j];
-            //         if (!point.isFill) {
-            //             const hasTopLimit = checkLimit('up', i, j, maxLat);
-            //             const hasBottomLimit = checkLimit('down', i, j, minLat);
-            //             const hasLeftLimit = checkLimit('left', i, j, minLng);
-            //             const hasRightLimit = checkLimit('right', i, j, maxLng);
-            //             if (hasTopLimit && hasBottomLimit && hasLeftLimit && hasRightLimit) {
-            //                 drawBoundaryData.push(point.v);
-            //                 point.isFill = true;
-            //             }
-            //         }
-            //     }
-            // }
-            // this.addBoundary(drawBoundaryData);
         },
-        // compensation(data) { // 边界补偿
-        //     data.forEach((item, index) => {
-        //         const prev = data[index - 1];
-        //         if (!prev) return;
-        //         const dLng = Math.pow(item.lng - prev.lng, 2);
-        //         const dLat = Math.pow(item.lat - prev.lat, 2);
-        //         const distance = Math.sqrt(dLat + dLat);
-        //         if (distance >= 2) { // 绝对距离大于2的点，通过图形学画线算法进行补间
-        //             this.lineAlgorithm(prev, item);
-        //         }
-        //     });
-        // },
-        // lineAlgorithm(start, end) { // 画线算法
-        //     // console.log(start, end);
-        //     const { lng: x1, lat: y1 } = start;
-        //     const { lng: x2, lat: y2 } = end;
-        //     const minX = x1 < x2 ? x1 : x2;
-        //     const maxX = x1 > x2 ? x1 : x2;
-        //     const minY = y1 < y2 ? y1 : y2;
-        //     const maxY = y1 > y2 ? y1 : y2;
-        //     // console.log(minY, maxY);
-        //     if (x1 === x2) { // 垂直直线，方程 x = b;
-        //         for (let i = minY + 1; i < maxY; i++) {
-        //             console.log(this.pointsMatrix);
-        //             console.log(i, x1);
-        //             const point = this.pointsMatrix[i][x1];
-        //             console.log(point);
-        //             if (!point.isFill) point.isFill = true;
-        //         }
-        //     } else { // 非垂直直线，斜截式方程 y = k * x + b
-        //         // 系数行列式
-        //         const D = this.SOD([[x1, 1], [x2, 1]]);
-        //         // 斜率行列式
-        //         const K = this.SOD([[y1, 1], [y2, 1]]);
-        //         // 截距行列式
-        //         const B = this.SOD([[x1, y1], [x2, y2]]);
-        //         // 斜率
-        //         const k = K / D;
-        //         // 截距
-        //         const b = B / D;
-        //         console.log(start, end);
-        //         for (let i = minX + 1; i < maxX; i++) {
-        //             const y = Math.round(k * i + b);
-        //             const point = this.pointsMatrix[y][i];
-        //             if (!point.isFill) point.isFill = true;
-        //         }
-        //     }
-        // },
+        fillContent(minLng,maxLng,minLat,maxLat) {
+            const _this = this;
+            //填充算法，对极限边界内的点进行检查，若四个方向上均有已填充的点，则证明该点在边界区域内。
+            function checkLimit(direct, lat, lng, limit) { // direct：up, down, left, right
+                let hasLimit = false;
+                // 数值是否增长
+                let isGrow = (direct === 'up' || direct === 'right') ? true : false;
+                // 是否水平
+                let isLng = (direct === 'left' || direct === 'right') ? true : false;
+                for (let i = isLng ? lng : lat; isGrow ? (i <= limit) : (i >= limit); isGrow ? i++ : i--) {
+                    const point = isLng ? _this.pointsMatrix[lat][i] : _this.pointsMatrix[i][lng];
+                    if (point && point.isFill) {
+                        hasLimit = true;
+                        break;
+                    }
+                }
+                return hasLimit;
+            }
+            for (let i = minLat; i < maxLat; i++) {
+                for (let j = minLng; j < maxLng; j++) {
+                    const point = this.pointsMatrix[i][j];
+                    if (!point.isFill) {
+                        const hasTopLimit = checkLimit('up', i, j, maxLat);
+                        const hasBottomLimit = checkLimit('down', i, j, minLat);
+                        const hasLeftLimit = checkLimit('left', i, j, minLng);
+                        const hasRightLimit = checkLimit('right', i, j, maxLng);
+                        if (hasTopLimit && hasBottomLimit && hasLeftLimit && hasRightLimit) {
+                            point.isFill = true;
+                        }
+                    }
+                }
+            }
+        },
         addSphere(dataArr) {
             const points = new THREE.Geometry();
             points.vertices = dataArr;
@@ -262,7 +243,7 @@ export default {
                 pro: 1,
                 color: 'rgba(255,20,147,0)',
             }];
-            const cloud = this.createPointsCloud(points, { size: 0.2, depthTest: true }, map);
+            const cloud = this.createPointsCloud(points, { size: 0.15, depthTest: true }, map);
             boundaryGroup.add(cloud);
         },
         createPointsCloud(geom, style, map) {
@@ -293,6 +274,62 @@ export default {
                 panSpeed: 1.0,
             });
             return control;
+        },
+        compensation(data) { // 边界补偿
+            data.forEach((item, index) => {
+                const I = index === 0 ? data.length - 1 : index - 1;
+                const prev = data[I];
+                if (!prev) {
+                    return;
+                };
+                const dLng = Math.pow(item.lng - prev.lng, 2);
+                const dLat = Math.pow(item.lat - prev.lat, 2);
+                const distance = Math.sqrt(dLng + dLat);
+                if (distance >= 2 && distance < 10) { // 绝对距离大于2的点，通过图形学画线算法进行补间\
+                    this.lineAlgorithm(prev, item);
+                }
+            });
+        },
+        lineAlgorithm(start, end) { // 画线算法
+            // console.log(start, end);
+            const { lng: x1, lat: y1 } = start;
+            const { lng: x2, lat: y2 } = end;
+            const minX = x1 < x2 ? x1 : x2;
+            const maxX = x1 > x2 ? x1 : x2;
+            const minY = y1 < y2 ? y1 : y2;
+            const maxY = y1 > y2 ? y1 : y2;
+            // console.log(minY, maxY);
+            if (x1 === x2) { // 垂直直线，方程 x = b;
+                for (let i = minY + 1; i < maxY; i++) {
+                    const point = this.pointsMatrix[i][x1];
+                    if (!point.isFill) point.isFill = true;
+                }
+            } else { // 非垂直直线，斜截式方程 y = k * x + b
+                // 系数行列式
+                const D = this.SOD([[x1, 1], [x2, 1]]);
+                // 斜率行列式
+                const K = this.SOD([[y1, 1], [y2, 1]]);
+                // 截距行列式
+                const B = this.SOD([[x1, y1], [x2, y2]]);
+                // 斜率
+                const k = K / D;
+                // 截距
+                const b = B / D;
+                // console.log(start, end);
+                if (Math.abs(k) > 1) {
+                    for (let i = minY + 1; i < maxY; i++) {
+                        const x = Math.round((i - b) / k);
+                        const point = this.pointsMatrix[i][x];
+                        if (!point.isFill) point.isFill = true;
+                    }
+                } else {
+                    for (let i = minX + 1; i < maxX; i++) {
+                        const y = Math.round(k * i + b);
+                        const point = this.pointsMatrix[y][i];
+                        if (!point.isFill) point.isFill = true;
+                    }
+                }
+            }
         },
     },
     mounted() {
