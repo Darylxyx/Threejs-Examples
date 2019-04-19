@@ -17,6 +17,7 @@ const TWEEN = window.TWEEN;
 const mainGroup = new THREE.Group();
 const sphereGroup = new THREE.Group();
 const boundaryGroup = new THREE.Group();
+const starsGroup = new THREE.Group();
 const radius = 20;
 const chinaBoundary = boundaryJSON.pop();
 export default {
@@ -39,8 +40,8 @@ export default {
             this.scene.add(mainGroup);
             mainGroup.add(sphereGroup);
             sphereGroup.add(boundaryGroup);
-
-            const stats = this.initStats(this.$refs.stats);
+            sphereGroup.add(starsGroup);
+            // const stats = this.initStats(this.$refs.stats);
             // this.addAxes(50);
 
             const control = this.addControl();
@@ -49,13 +50,15 @@ export default {
             // this.addSphere();
             this.handleData();
 
+            this.addStar();
+
             // this.test(23, -32);
 
-            // this.animateStart();
+            this.animateStart();
 
             const renderScene = () => {
                 TWEEN.update();
-                stats.update();
+                // stats.update();
                 const delta = clock.getDelta();
                 control.update(delta);
                 requestAnimationFrame(renderScene);
@@ -130,7 +133,7 @@ export default {
             this.addSphere(fillData);
         },
         drawCountry(item, index) {
-            // if (item.name === 'South Africa') {
+            // if (item.name === 'United States') {
             const { minLng, maxLng, minLat, maxLat } = this.fillCountry(item.data, item.dLimit);
             if (item.disPatch) this.patchBoundary(item.disPatch);
             if (item.name === 'Antarctica') {
@@ -161,7 +164,7 @@ export default {
         animateStart() {
             const obj = { r: 0 };
             const tween = new TWEEN.Tween(obj)
-                .to({ r: PI * 2 }, 50000)
+                .to({ r: PI * 2 }, 100000)
                 .onUpdate((p) => {
                     sphereGroup.rotation.y = p.r;
                 })
@@ -292,6 +295,57 @@ export default {
             }];
             const cloud = this.createPointsCloud(points, { size: 0.2, depthTest: true }, map);
             boundaryGroup.add(cloud);
+        },
+        addStar() {
+            const stars = new THREE.Geometry();
+            function initStarTween(target) {
+                const tween = new TWEEN.Tween(target);
+                return tween;
+            }
+            for (let i = 0; i < 20000; i++) {
+                const randomLng = Math.random() * 360 - 180;
+                const randomLat = Math.random() * 180 - 90;
+                const point = this.lglt2xyx(randomLng, randomLat, radius + 1.5);
+                stars.vertices.push(point);
+                stars.vertices[i].tween = initStarTween(point);
+            }
+            const map = [{
+                pro: 0,
+                color: 'rgba(0,191,255,1)',
+            }, {
+                pro: 0.8,
+                color: 'rgba(0,191,255,1)',
+            }, {
+                pro: 1,
+                color: 'rgba(0,191,255,0)',
+            }];
+            const cloud = this.createPointsCloud(stars, { size: 0.1, depthTest: true }, map);
+            starsGroup.add(cloud);
+            // this.starAnimate();
+        },
+        starAnimate() {
+            const stars = starsGroup.children[0];
+            const _this = this;
+            function starsMove(star) {
+                const x = Math.random() * 5;
+                const y = Math.random() * 5;
+                const z = Math.random() * 5;
+                const v = _this.v3(x, y, z);
+                star.tween.to(v, 1000);
+            }
+            function onUpdate(obj) {
+                console.log(obj);
+                stars.geometry.verticesNeedUpdate = true;
+            }
+            stars.geometry.vertices.forEach((star) => {
+                star.tween.onComplete(() => {
+                    console.log(star);
+                    starsMove(star);
+                });
+                star.tween.onUpdate(onUpdate);
+                starsMove(star);
+                star.tween.start();
+            });
         },
         createPointsCloud(geom, style, map) {
             const defaltMap = [{
