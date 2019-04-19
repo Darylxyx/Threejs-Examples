@@ -49,9 +49,9 @@ export default {
             // this.addSphere();
             this.handleData();
 
-            // this.test(51, 41);
+            // this.test(23, -32);
 
-            this.animateStart();
+            // this.animateStart();
 
             const renderScene = () => {
                 TWEEN.update();
@@ -86,26 +86,8 @@ export default {
                 };
                 rowVector[Math.floor(lng)] = infoData;
             }
-            function dLngCorrect(lat) { // 设置多级经度间隔，以解决高纬度下点重叠的问题
-                const arr = [4, 5, 5.5, 6.1, 10, 20, 91]; // 用来单独设置后15层的经度间隔
-                let dLng;
-                const absLat = Math.abs(lat);
-                if (absLat < 74) {
-                    dLng = 1;
-                } else if (absLat >= 74 && absLat < 84) {
-                    const d = absLat - 74;
-                    dLng = 1.35 + d * 0.15;
-                } else if (absLat === 90) {
-                    dLng = 360;
-                } else {
-                    const d = absLat - 84
-                    dLng = arr[d];
-                }
-                return dLng;
-            }
             for (let lat = -90; lat <= 90; lat++) {
                 const rowVector = {};
-                const dLng = dLngCorrect(lat);
                 for (let lng = -180; lng < 180; lng += 1) {
                     fillVector(lng, lat, rowVector);
                 }
@@ -118,9 +100,24 @@ export default {
             //【3】区分绘制实际点与空白点
             const drawData = [];
             const fillData = [];
+            const arr = [360, 18, 8, 6, 5, 4, 3]; // 用来单独设置后15层的经度间隔
             for (const lat in this.pointsMatrix) {
+                let interval = 0;
+                let d = 1;
                 const vLat = this.pointsMatrix[lat];
+                const absLat = Math.abs(Number(lat));
+                if (absLat > 74 && absLat < 84) {
+                    d = 2;
+                } else if (absLat >= 84) {
+                    d = arr[90 - absLat];
+                }
                 for (const lng in vLat) {
+                    interval++;
+                    if (interval === d) {
+                        interval = 0;
+                    } else {
+                        continue;
+                    }
                     const point = vLat[lng];
                     if (!point.isFill) {
                         fillData.push(point.v);
@@ -133,32 +130,32 @@ export default {
             this.addSphere(fillData);
         },
         drawCountry(item, index) {
-            // if (index < 101) {
-                const { minLng, maxLng, minLat, maxLat } = this.fillCountry(item.data, item.dLimit);
-                if (item.disPatch) this.patchBoundary(item.disPatch);
-                if (item.name === 'Antarctica') {
-                    this.fillAntarctica();
+            // if (item.name === 'South Africa') {
+            const { minLng, maxLng, minLat, maxLat } = this.fillCountry(item.data, item.dLimit);
+            if (item.disPatch) this.patchBoundary(item.disPatch);
+            if (item.name === 'Antarctica') {
+                this.fillAntarctica();
+            } else {
+                let data;
+                if (item.center) {
+                    data = item.center.split(';');
+                    data.forEach((item) => {
+                        const lnglat = item.split(',');
+                        const lng = lnglat[0];
+                        const lat = lnglat[1];
+                        // this.test(lng, lat);
+                        this.fillContent({lng, lat});
+                    });
                 } else {
-                    let data;
-                    if (item.center) {
-                        data = item.center.split(';');
-                        data.forEach((item) => {
-                            const lnglat = item.split(',');
-                            const lng = lnglat[0];
-                            const lat = lnglat[1];
-                            // this.test(lng, lat);
-                            this.fillContent({lng, lat});
-                        });
-                    } else {
-                        data = {
-                            lng: Math.round((minLng + maxLng) / 2),
-                            lat: Math.round((minLat + maxLat) / 2),
-                        };
-                        // console.log(data);
-                        // this.test(data.lng, data.lat);
-                        this.fillContent(data);
-                    }
+                    data = {
+                        lng: Math.round((minLng + maxLng) / 2),
+                        lat: Math.round((minLat + maxLat) / 2),
+                    };
+                    // console.log(data);
+                    // this.test(data.lng, data.lat);
+                    this.fillContent(data);
                 }
+            }
             // }
         },
         animateStart() {
