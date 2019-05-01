@@ -122,7 +122,7 @@ export default {
                         continue;
                     }
                     const point = vLat[lng];
-                    if (!point.isFill) {
+                    if (!point.isFill) { //!point.isFill
                         fillData.push(point.v);
                     } else {
                         drawData.push(point.v);

@@ -8,12 +8,12 @@ export default new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
-    // 点阵地球
     {
       path: '/',
       name: 'index',
       component: Index,
     },
+    // 点阵地球
     {
       path: '/earth',
       name: 'earth',
@@ -24,6 +24,11 @@ export default new Router({
       path: '/3DMap',
       name: '3DMap',
       component: () => import('./views/Map3d'),
+    },
+    {
+      path: '/trailer',
+      name: 'trailer',
+      component: () => import('./views/Trailer'),
     },
     // 柱状图
     {
@@ -48,6 +53,6 @@ export default new Router({
       path: '/shader',
       name: 'shader',
       component: () => import('./views/Shader'),
-    },
+    }
   ]
 })

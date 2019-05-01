@@ -166,7 +166,7 @@ export default {
 };
 </script>
 
-<style lang='LESS' scoped>
+<style lang='less' scoped>
 .container {
     height: 100%;
     #WebGL-output {

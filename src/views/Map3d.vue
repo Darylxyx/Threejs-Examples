@@ -165,7 +165,6 @@ export default {
             this.addSphere(); // 地球
 
             // this.addScanLine(); // 扫描线
-
             this.addBackground(); // 星空背景
 
             this.initMap(); // 绘制地图
@@ -175,7 +174,6 @@ export default {
                 // stats.update();
                 // const delta = clock.getDelta();
                 // control.update(delta);
-                this.globalAnimate();
                 // this.scanAnimate();
                 TWEEN.update();
                 requestAnimationFrame(renderScene);
@@ -232,22 +230,28 @@ export default {
             const geom = this.initGeometry('Sphere', radius, 40, 40);
             const { default: url } = await import('@/assets/imgs/world.png');
             const map = this.loadTexture(url);
-            const mat = this.initMaterial('MeshPhong', { color: 0x192452 });
+            const mat = this.initMaterial('MeshPhong', { color: 0x192452 }); //0x192452
             mat.map = map;
-            // mat.normalMap = normal;
-            // mat.normalScale.set(1, -2);
             const sphere = new THREE.Mesh(geom, mat);
+            sphere.scale.set(-1, -1, -1);
+            sphere.rotation.y = PI;
             sphereGroup.add(sphere);
             globalGroup.add(sphereGroup);
         },
         globalAnimate() {
-            if (globalDirec) {
-                globalGroup.rotation.y += 0.0001;
-                if (globalGroup.rotation.y >= 0.1) globalDirec = false;
-            } else {
-                globalGroup.rotation.y -= 0.0001;
-                if (globalGroup.rotation.y <= -0.1) globalDirec = true;
+            const obj = { y: 0 };
+            function onUpdate(obj) {
+                globalGroup.rotation.y = obj.y;
             }
+            const tween1 = new TWEEN.Tween(obj)
+                .to({ y: 0.1 }, 20000)
+                .onUpdate(onUpdate);
+            const tween2 = new TWEEN.Tween(obj)
+                .to({ y: -0.1 }, 20000)
+                .onUpdate(onUpdate);
+            tween1.chain(tween2);
+            tween2.chain(tween1);
+            tween1.start();
         },
         addScanLine() {
             for (let i = 0; i < 8; i++) {
@@ -299,9 +303,9 @@ export default {
                 } else {
                     point = point.split(',');
                 }
-                const lng = point[0];
+                const lng = Number(point[0]);
                 const lat = point[1];
-                const { x, y, z } = this.lglt2xyx(lng, lat, radius);
+                const { x, y, z } = this.lglt2xyx(lng + 90, lat, radius);
                 const particle = this.v3(x, y, z);
                 pList.push(particle);
             });
@@ -347,7 +351,7 @@ export default {
                 splitArr.forEach((arr) => {
                     const points = new THREE.Geometry();
                     arr.forEach((p) => {
-                        const { x, y, z } = this.lglt2xyx(p[0], p[1], radius);
+                        const { x, y, z } = this.lglt2xyx(p[0] + 90, p[1], radius);
                         const particle = this.v3(x, y, z);
                         points.vertices.push(particle);
                     });
@@ -358,7 +362,7 @@ export default {
             } else {
                 const points = new THREE.Geometry();
                 pData.data.forEach((p) => {
-                    const { x, y, z } = this.lglt2xyx(p[0], p[1], radius);
+                    const { x, y, z } = this.lglt2xyx(p[0] + 90, p[1], radius);
                     const particle = this.v3(x, y, z);
                     points.vertices.push(particle);
                 });
@@ -372,9 +376,9 @@ export default {
                 const points = path.points.split(';');
                 const list = points.map((p) => {
                     p = p.split(',');
-                    const lng = p[0];
+                    const lng = Number(p[0]);
                     const lat = p[1];
-                    const result = this.lglt2xyx(lng, lat, radius + 0.1);
+                    const result = this.lglt2xyx(lng + 90, lat, radius + 0.1);
                     return result;
                 });
                 this.drawPath(list, rank);
@@ -393,7 +397,6 @@ export default {
             const line = new THREE.Line(lineGeom, lineMat);
             pathGroup.add(line);
             this.drawPathFlow(list, rank);
-            // this.drawPathFlow2(list);
             globalGroup.add(pathGroup);
         },
         drawPathFlow(list, rank) { // 线路流动效果
@@ -454,6 +457,8 @@ export default {
                 .repeat(Infinity);
             pathGroup.add(points);
             tween.start();
+
+            this.globalAnimate();
         },
         initGUI() {
             const gui = new GUI();
