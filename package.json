@@ -14,12 +14,13 @@
     "stats.js": "^0.17.0",
     "three": "^0.102.1",
     "vue": "^2.6.6",
+    "vue-animate-number": "^0.4.2",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.5.0",
-    "@vue/cli-service": "^3.5.0",
+    "@vue/cli-service": "^3.7.0",
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
     "vue-template-compiler": "^2.5.21"

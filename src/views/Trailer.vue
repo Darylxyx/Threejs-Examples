@@ -84,18 +84,18 @@ export default {
             loadPark.rotation.y = this.PI;
             this.loadParkGroup = loadPark;
             this.mainGroup.add(this.loadParkGroup);
-            // // 卸货点
+            // 卸货点
             const unloadPark = await this.createPark(1);
             unloadPark.position.set(0, 0, -90);
             this.unloadParkGroup = unloadPark;
             this.mainGroup.add(this.unloadParkGroup);
-            // // 创建弯道
+            // 创建弯道
             const curve = this.createCurve();
             this.mainGroup.add(curve);
-            // // 创建建筑群
+            // 创建建筑群
             const building = this.createBuilding();
             this.mainGroup.add(building);
-            // 起点
+            // // 起点
             const start = this.createStart();
             this.mainGroup.add(start);
         },

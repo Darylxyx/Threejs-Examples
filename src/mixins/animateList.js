@@ -98,8 +98,8 @@ export default {
                     _this.signal2.tween.start();
                     _this.signal3.tween.start();
                 })
-                .onUpdate(function() { // 倒车接挂
-                    truck.position.x = this.x;
+                .onUpdate(function(o) { // 倒车接挂
+                    truck.position.x = o.x;
                     let progress =  Math.abs(truck.position.x + 75) / 10 * 100;
                     _this.$store.commit('setTitle', {
                         title: '接挂',
@@ -151,8 +151,8 @@ export default {
                 .onStart(function() {
                     _this.currentAnimate = tweenIn;
                 })
-                .onUpdate(function() {
-                    truck.position.x = this.x;
+                .onUpdate(function(o) {
+                    truck.position.x = o.x;
                     _this.moveCamera();
                 })
                 .onComplete(function() {
@@ -165,8 +165,8 @@ export default {
                 .onStart(function() {
                     _this.currentAnimate = ct;
                 })
-                .onUpdate(function() {
-                    co.y = this.y;
+                .onUpdate(function(o) {
+                    co.y = o.y;
                     _this.moveCamera();
                 })
                 .onComplete(function() {
@@ -181,8 +181,8 @@ export default {
                     _this.currentAnimate = tweenMid;
                     _this.backRotateTween.rightIn.start();
                 })
-                .onUpdate(function() {
-                    _this.drift(10, this.rad, -80, 10, true);
+                .onUpdate(function(o) {
+                    _this.drift(10, o.rad, -80, 10, true);
                     _this.moveCamera();
                 })
                 .onComplete(function() {
@@ -197,8 +197,8 @@ export default {
                 .onStart(function() {
                     _this.currentAnimate = tweenOut;
                 })
-                .onUpdate(function() {
-                    truck.position.z = this.z;
+                .onUpdate(function(o) {
+                    truck.position.z = o.z;
                     _this.moveCamera();
                 })
                 .onComplete(function() {
@@ -224,8 +224,8 @@ export default {
                     _this.backRotateTween.leftIn.start();
                     _this.guideGroup.tweenIn.start();
                 })
-                .onUpdate(function() {
-                    _this.drift(15, this.rad, -55, 42);
+                .onUpdate(function(o) {
+                    _this.drift(15, o.rad, -55, 42);
                     _this.moveCamera();
                 })
                 .onComplete(function() {
@@ -242,8 +242,8 @@ export default {
                     _this.currentAnimate = tweenOut;
                     _this.$store.commit('setActCardList', ['guide']);
                 })
-                .onUpdate(function() {
-                    truck.position.x = this.x;
+                .onUpdate(function(o) {
+                    truck.position.x = o.x;
                     _this.moveCamera();
                 })
                 .onComplete(function() {
@@ -269,8 +269,8 @@ export default {
                     _this.signal2.tween.start();
                     _this.backRotateTween.revers.start();
                 })
-                .onUpdate(function() {
-                    _this.drift(11, this.rad, 11, 68, true);
+                .onUpdate(function(o) {
+                    _this.drift(11, o.rad, 11, 68, true);
                     _this.moveCamera();
                 })
                 .onComplete(function() {
@@ -282,8 +282,8 @@ export default {
                 .onStart(function() {
                     _this.currentAnimate = tweenOut;
                 })
-                .onUpdate(function() {
-                    truck.position.z = this.z;
+                .onUpdate(function(o) {
+                    truck.position.z = o.z;
                     _this.moveCamera();
                 })
                 .onComplete(function() {
@@ -326,8 +326,8 @@ export default {
                 .onStart(function() {
                     _this.currentAnimate = ct1;
                 })
-                .onUpdate(function() {
-                    _this.moveCamera(this.x, this.y, this.z);
+                .onUpdate(function(o) {
+                    _this.moveCamera(o.x, o.y, o.z);
                 })
                 .onComplete(function() {
                     co1.x = 0;
@@ -341,8 +341,8 @@ export default {
                 .onStart(function() {
                     _this.currentAnimate = ct2;
                 })
-                .onUpdate(function() {
-                    _this.moveCamera(this.x, this.y, this.z);
+                .onUpdate(function(o) {
+                    _this.moveCamera(o.x, o.y, o.z);
                 })
                 .onComplete(function() {
                     co2.x = 4;
@@ -363,12 +363,12 @@ export default {
                         good.inTween.start();
                     });
                 })
-                .onUpdate(function() {
-                    if (this.index >= 10) {
+                .onUpdate(function(o) {
+                    if (o.index >= 10) {
                         _this.$store.commit('showPic', 3);
-                    } else if (this.index >= 5) {
+                    } else if (o.index >= 5) {
                         _this.$store.commit('showPic', 2);
-                    } else if (this.index >= 1) {
+                    } else if (o.index >= 1) {
                         _this.$store.commit('showPic', 1);
                     }
                 })
@@ -392,8 +392,8 @@ export default {
                     _this.$store.commit('setTitle', {});
                     _this.$store.commit('setActCardList', []);
                 })
-                .onUpdate(function() {
-                    truck.position.z = this.z;
+                .onUpdate(function(o) {
+                    truck.position.z = o.z;
                     _this.moveCamera();
                 })
                 .onComplete(function() {
@@ -405,8 +405,8 @@ export default {
                 .onStart(function() {
                     _this.currentAnimate = ct;
                 })
-                .onUpdate(function() {
-                    _this.moveCamera(this.x, this.y, this.z);
+                .onUpdate(function(o) {
+                    _this.moveCamera(o.x, o.y, o.z);
                 })
                 .onComplete(function() {
                     co1.x = 4;
@@ -421,8 +421,8 @@ export default {
                     _this.currentAnimate = tweenMid;
                     _this.backRotateTween.rightIn.start();
                 })
-                .onUpdate(function() {
-                    _this.drift(11, this.rad, 11, 68, true);
+                .onUpdate(function(o) {
+                    _this.drift(11, o.rad, 11, 68, true);
                     _this.moveCamera();
                 })
                 .onComplete(function() {
@@ -449,8 +449,8 @@ export default {
                     _this.currentAnimate = tweenOut;
                     titleTween.start();
                 })
-                .onUpdate(function() {
-                    truck.position.x = this.x;
+                .onUpdate(function(o) {
+                    truck.position.x = o.x;
                     _this.moveCamera();
                 })
                 .onComplete(function() {
@@ -494,14 +494,14 @@ export default {
                     _this.signal2.position.set(1, -1.4, 1);
                     _this.$store.commit('setActCardList', ['rollalert']);
                 })
-                .onUpdate(function() {
-                    truck.rotation.z = this.r;
+                .onUpdate(function(o) {
+                    truck.rotation.z = o.r;
                 })
                 .easing(easing.Out);
             const rollDown = new TWEEN.Tween(ro)
                 .to({r: 0}, 1000)
-                .onUpdate(function() {
-                    truck.rotation.z = this.r;
+                .onUpdate(function(o) {
+                    truck.rotation.z = o.r;
                 })
                 .onComplete(function() {
                     _this.signal2.tween.stop();
@@ -523,11 +523,11 @@ export default {
                     _this.currentAnimate = tweenIn;
                     et1.start();
                 })
-                .onUpdate(function() {
-                    _this.drift(57, this.rad, 80, 0);
-                    const cx = 64 * cos(this.rad - 0.1) + 80;
+                .onUpdate(function(o) {
+                    _this.drift(57, o.rad, 80, 0);
+                    const cx = 64 * cos(o.rad - 0.1) + 80;
                     const cy = 4;
-                    const cz = - 64 * sin(this.rad - 0.1);
+                    const cz = - 64 * sin(o.rad - 0.1);
                     _this.moveCamera(cx, cy, cz);
                 })
                 .onComplete(function() {
@@ -542,8 +542,8 @@ export default {
                 .onStart(function() {
                     _this.currentAnimate = tweenOut;
                 })
-                .onUpdate(function() {
-                    truck.position.x = this.x;
+                .onUpdate(function(o) {
+                    truck.position.x = o.x;
                     _this.moveCamera();
                 })
                 .onComplete(function() {
@@ -567,8 +567,8 @@ export default {
                     _this.signal2.tween.start();
                     _this.backRotateTween.revers.start();
                 })
-                .onUpdate(function() {
-                    _this.drift(11, this.rad, -11, -68, true);
+                .onUpdate(function(o) {
+                    _this.drift(11, o.rad, -11, -68, true);
                     _this.moveCamera();
                 })
                 .onComplete(function() {
@@ -580,8 +580,8 @@ export default {
                 .onStart(function() {
                     _this.currentAnimate = tweenOut;
                 })
-                .onUpdate(function() {
-                    truck.position.z = this.z;
+                .onUpdate(function(o) {
+                    truck.position.z = o.z;
                     _this.moveCamera();
                 })
                 .onComplete(function() {
@@ -623,8 +623,8 @@ export default {
                 .onStart(function() {
                     _this.currentAnimate = ct1;
                 })
-                .onUpdate(function() {
-                    _this.moveCamera(this.x, this.y, this.z);
+                .onUpdate(function(o) {
+                    _this.moveCamera(o.x, o.y, o.z);
                 })
                 .onComplete(function() {
                     co1.x = 0;
@@ -638,8 +638,8 @@ export default {
                 .onStart(function() {
                     _this.currentAnimate = ct2;
                 })
-                .onUpdate(function() {
-                    _this.moveCamera(this.x, this.y, this.z);
+                .onUpdate(function(o) {
+                    _this.moveCamera(o.x, o.y, o.z);
                 })
                 .onComplete(function() {
                     co2.x = -4;
@@ -660,14 +660,14 @@ export default {
                         goods[i].outTween.start();
                     }
                 })
-                .onUpdate(function() {
-                    if (this.index >= 12) {
+                .onUpdate(function(o) {
+                    if (o.index >= 12) {
                         _this.$store.commit('showPic', 0);
-                    } else if (this.index >= 9) {
+                    } else if (o.index >= 9) {
                         _this.$store.commit('showPic', 6);
-                    } else if (this.index >= 5) {
+                    } else if (o.index >= 5) {
                         _this.$store.commit('showPic', 5);
-                    } else if (this.index >= 1) {
+                    } else if (o.index >= 1) {
                         _this.$store.commit('showPic', 4);
                     }
                 })
@@ -697,8 +697,8 @@ export default {
                     _this.mainGroup.add(_this.backGroup);
                     _this.backGroup.position.set(0, 2.3, -77.4);
                 })
-                .onUpdate(function() {
-                    truck.position.z = this.z;
+                .onUpdate(function(o) {
+                    truck.position.z = o.z;
                     let progress =  Math.abs(truck.position.z + 68) / 9.4 * 100;
                     _this.$store.commit('setTitle', {
                         title: '摘挂',
@@ -735,8 +735,8 @@ export default {
                 .onStart(function() {
                     _this.currentAnimate = ct;
                 })
-                .onUpdate(function() {
-                    _this.moveCamera(this.x, this.y, this.z);
+                .onUpdate(function(o) {
+                    _this.moveCamera(o.x, o.y, o.z);
                 })
                 .onComplete(function() {
                     co1.x = -4;
@@ -750,8 +750,8 @@ export default {
                 .onStart(function() {
                     _this.currentAnimate = tweenMid;
                 })
-                .onUpdate(function() {
-                    _this.drift(11, this.rad, -11, -68, true);
+                .onUpdate(function(o) {
+                    _this.drift(11, o.rad, -11, -68, true);
                     _this.moveCamera();
                 })
                 .onComplete(function() {
@@ -764,8 +764,8 @@ export default {
                 .onStart(function() {
                     _this.currentAnimate = tweenOut;
                 })
-                .onUpdate(function() {
-                    truck.position.x = this.x;
+                .onUpdate(function(o) {
+                    truck.position.x = o.x;
                     _this.moveCamera();
                 })
                 .onComplete(function() {
@@ -785,8 +785,8 @@ export default {
                 .onStart(function() {
                     _this.currentAnimate = tweenIn;
                 })
-                .onUpdate(function() {
-                    _this.drift(15, this.rad, -50, -42);
+                .onUpdate(function(o) {
+                    _this.drift(15, o.rad, -50, -42);
                     _this.moveCamera();
                 })
                 .onComplete(function() {
@@ -801,8 +801,8 @@ export default {
                     _this.backGroup.position.set(-85, 2.3, 0);
                     _this.backGroup.rotation.y = - PI / 2;
                 })
-                .onUpdate(function() {
-                    truck.position.z = this.z;
+                .onUpdate(function(o) {
+                    truck.position.z = o.z;
                     _this.moveCamera();
                 })
                 .onComplete(function() {
@@ -824,8 +824,8 @@ export default {
                     _this.currentAnimate = tween;
                     window.$$vue.round++;
                 })
-                .onUpdate(function() {
-                    _this.drift(10, this.rad, -75, 10, true);
+                .onUpdate(function(o) {
+                    _this.drift(10, o.rad, -75, 10, true);
                     _this.moveCamera();
                 })
                 .onComplete(function() {
@@ -837,8 +837,8 @@ export default {
                 .onStart(function() {
                     _this.currentAnimate = ct;
                 })
-                .onUpdate(function() {
-                    _this.moveCamera(this.x, this.y, this.z);
+                .onUpdate(function(o) {
+                    _this.moveCamera(o.x, o.y, o.z);
                     _this.camera.lookAt(_this.v3(-80, 0, 0));
                 });
             tween.chain(ct);
@@ -858,8 +858,8 @@ export default {
             const _this = this;
             const br = {r: 0};
             const duration = 1000;
-            function onUpdate() {
-                _this.backRotateGroup.rotation.y = this.r;
+            function onUpdate(o) {
+                _this.backRotateGroup.rotation.y = o.r;
             }
             const rightIn = new TWEEN.Tween(br)
                 .to({r: 0.2}, duration)

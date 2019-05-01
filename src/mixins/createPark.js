@@ -97,7 +97,7 @@ export default {
             stationGroup.add(station);
             const spaces = this.createSpace(index, type);
             stationGroup.add(spaces);
-            const spaces1 = spaces.clone();
+            const spaces1 = this.createSpace(index, type);
             spaces1.position.z = 53;
             stationGroup.add(spaces1);
             return stationGroup;
@@ -203,7 +203,7 @@ export default {
                 const points = [this.v3(-54, 0, 30), this.v3(54, 0, 30)];
                 const line = this.initLine(points, lineMat);
                 roadGroup.add(line);
-                const line2 = line.clone();
+                const line2 = this.initLine(points, lineMat);
                 line2.position.z = 6;
                 roadGroup.add(line2);
             }
@@ -217,7 +217,7 @@ export default {
                 this.v3(35, 0, 41),
             ];
             const line = this.initLine(points, lineMat);
-            const line2 = line.clone();
+            const line2 = this.initLine(points, lineMat);
             line2.position.z = 6;
             roadGroup.add(line);
             roadGroup.add(line2);
@@ -269,9 +269,8 @@ export default {
             guideGroup.add(guide2);
 
             const arrowGroup = new THREE.Group();
-            const arrow = this.createParkGuideArrow();
             for (let i = 0; i < 20; i++) {
-                const arr = arrow.clone();
+                const arr = this.createParkGuideArrow();
                 arr.position.x = i * 2;
                 arrowGroup.add(arr);
             }
@@ -424,11 +423,11 @@ export default {
         createForklift() {
             return new Promise((resolve) => {
                 const mtlLoader = new THREE.MTLLoader();
-                mtlLoader.load('public/forklift.mtl', (mat) => {
+                mtlLoader.load('/forklift.mtl', (mat) => {
                     mat.preload();
                     const objLoader = new THREE.OBJLoader();
                     objLoader.setMaterials(mat);
-                    objLoader.load('public/forklift.obj', (obj) => {
+                    objLoader.load('/forklift.obj', (obj) => {
                         obj.position.set(-7.5, 3.3, 0);
                         obj.rotation.y = -this.PI / 1.5;
                         obj.scale.set(0.04, 0.04, 0.04);
@@ -440,11 +439,11 @@ export default {
         createCargo() {
             return new Promise((resolve) => {
                 const mtlLoader = new THREE.MTLLoader();
-                mtlLoader.load('public/Cargo.mtl', (mat) => {
+                mtlLoader.load('/Cargo.mtl', (mat) => {
                     mat.preload();
                     const objLoader = new THREE.OBJLoader();
                     objLoader.setMaterials(mat);
-                    objLoader.load('public/Cargo.obj', (obj) => {
+                    objLoader.load('/Cargo.obj', (obj) => {
                         obj.position.set(-7.5, 3.3, 5);
                         obj.rotation.y = - this.PI / 2;
                         obj.scale.set(0.04, 0.04, 0.04);

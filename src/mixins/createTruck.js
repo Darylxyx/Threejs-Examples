@@ -43,11 +43,11 @@ export default {
             const headPromise = new Promise((resolve, reject) => {
                 const headGroup = new THREE.Group();
                 const mtlLoader = new THREE.MTLLoader();
-                mtlLoader.load('public/G7Trailer-head.mtl', (mat) => {
+                mtlLoader.load('/G7Trailer-head.mtl', (mat) => {
                     mat.preload();
                     const objLoader = new THREE.OBJLoader();
                     objLoader.setMaterials(mat);
-                    objLoader.load('public/G7Trailer-head.obj', (obj) => {
+                    objLoader.load('/G7Trailer-head.obj', (obj) => {
                         obj.scale.set(p.modelScale, p.modelScale, p.modelScale);
                         obj.position.z = 3.5;
                         headGroup.add(obj);
@@ -59,11 +59,11 @@ export default {
             const backPromise = new Promise((resolve, reject) => {
                 const backGroup = new THREE.Group();
                 const mtlLoader = new THREE.MTLLoader();
-                mtlLoader.load('public/G7Trailer-back.mtl', (mat) => {
+                mtlLoader.load('/G7Trailer-back.mtl', (mat) => {
                     mat.preload();
                     const objLoader = new THREE.OBJLoader();
                     objLoader.setMaterials(mat);
-                    objLoader.load('public/G7Trailer-back.obj', (obj) => {
+                    objLoader.load('/G7Trailer-back.obj', (obj) => {
                         obj.scale.set(p.modelScale, p.modelScale, p.modelScale);
                         obj.position.z = 3.5;
                         backGroup.add(obj);
@@ -212,8 +212,8 @@ export default {
                     _this.goodsGroup.add(obj);
                 }
             }
-            function onUpdate() {
-                obj.scale.set(this.scale, this.scale, this.scale);
+            function onUpdate(o) {
+                obj.scale.set(o.scale, o.scale, o.scale);
             }
             function onComplete() {
                 data.scale = now;
@@ -254,9 +254,9 @@ export default {
             function onStart() {
                 group.scale.set(1, 1, 1);
             }
-            function onUpdate() {
-                group.children[0].scale.set(this.index, this.index, this.index);
-                group.children[1].scale.set(this.index, this.index, this.index);
+            function onUpdate(o) {
+                group.children[0].scale.set(o.index, o.index, o.index);
+                group.children[1].scale.set(o.index, o.index, o.index);
             }
             function onStop() {
                 group.scale.set(0.001, 0.001, 0.001);
