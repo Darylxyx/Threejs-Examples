@@ -11,7 +11,7 @@ import mixin from '../mixins/threeMixin.js';
 import boundaryJSON from '@/assets/js/boundary';
 import country from '@/assets/js/country';
 
-const { PI } = Math;
+const { PI, abs, round } = Math;
 const { THREE } = window;
 const TWEEN = window.TWEEN;
 const mainGroup = new THREE.Group();
@@ -52,8 +52,6 @@ export default {
 
             this.addStar();
 
-            // this.test(23, -32);
-
             this.animateStart();
 
             const renderScene = () => {
@@ -65,16 +63,6 @@ export default {
                 renderer.render(scene, camera);
             };
             renderScene();
-        },
-        test(lng, lat) {
-            const geom = this.initGeometry('Sphere', 0.1, 20, 20);
-            const mat = this.initMaterial('MeshBasic', { color: 0x0000FF });
-            const mesh = new THREE.Mesh(geom, mat);
-            const v = this.lglt2xyx(lng, lat, radius + 0.1);
-            mesh.position.x = v.x;
-            mesh.position.y = v.y;
-            mesh.position.z = v.z;
-            mainGroup.add(mesh);
         },
         async handleData() { // 数据预处理，确定地球与大陆边界的点阵
             //【1】生成全量点阵数据
@@ -133,7 +121,7 @@ export default {
             this.addSphere(fillData);
         },
         drawCountry(item, index) {
-            // if (item.name === 'United States') {
+            // if (item.name === 'China') {
             const { minLng, maxLng, minLat, maxLat } = this.fillCountry(item.data, item.dLimit);
             if (item.disPatch) this.patchBoundary(item.disPatch);
             if (item.name === 'Antarctica') {
@@ -396,43 +384,23 @@ export default {
         },
         lineAlgorithm(start, end) { // 画线算法
             return new Promise((resolve) => {
-                const { lng: x1, lat: y1 } = start;
-                const { lng: x2, lat: y2 } = end;
-                const minX = x1 < x2 ? x1 : x2;
-                const maxX = x1 > x2 ? x1 : x2;
-                const minY = y1 < y2 ? y1 : y2;
-                const maxY = y1 > y2 ? y1 : y2;
-                // console.log(minY, maxY);
-                if (x1 === x2) { // 垂直直线，方程 x = b;
-                    for (let i = minY + 1; i < maxY; i++) {
-                        const point = this.pointsMatrix[i][x1];
-                        if (!point.isFill) point.isFill = true;
-                    }
-                } else { // 非垂直直线，斜截式方程 y = k * x + b
-                    // 系数行列式
-                    const D = this.SOD([[x1, 1], [x2, 1]]);
-                    // 斜率行列式
-                    const K = this.SOD([[y1, 1], [y2, 1]]);
-                    // 截距行列式
-                    const B = this.SOD([[x1, y1], [x2, y2]]);
-                    // 斜率
-                    const k = K / D;
-                    // 截距
-                    const b = B / D;
-                    // console.log(start, end);
-                    if (Math.abs(k) > 1) {
-                        for (let i = minY + 1; i < maxY; i++) {
-                            const x = Math.round((i - b) / k);
-                            const point = this.pointsMatrix[i][x];
-                            if (!point.isFill) point.isFill = true;
-                        }
-                    } else {
-                        for (let i = minX + 1; i < maxX; i++) {
-                            const y = Math.round(k * i + b);
-                            const point = this.pointsMatrix[y][i];
-                            if (!point.isFill) point.isFill = true;
-                        }
-                    }
+                const { lng: xa, lat: ya } = start;
+                const { lng: xb, lat: yb } = end;
+                const dx = xb - xa;
+                const dy = yb - ya;
+                const abs_dx = abs(dx);
+                const abs_dy = abs(dy);
+                const steps = abs_dx > abs_dy ? abs_dx : abs_dy;
+                const delta_x = dx / steps;
+                const delta_y = dy / steps;
+                let x = xa;
+                let y = ya;
+                for (let i = 1; i <= steps; i++) {
+                    x += delta_x;
+                    y += delta_y;
+                    console.log(x, y);
+                    const point = this.pointsMatrix[round(y)][round(x)];
+                    if (!point.isFill) point.isFill = true;
                 }
                 resolve();
             });

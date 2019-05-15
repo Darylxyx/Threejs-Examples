@@ -15,12 +15,12 @@ import truck from '../mixins/createTruck.js';
 import park from '../mixins/createPark.js';
 import curve from '../mixins/createCurve.js';
 import building from '../mixins/createBuilding.js';
-import roads from '../mixins/createRoad.js';
+// import roads from '../mixins/createRoad.js';
 
 const { TWEEN } = window;
 const clock = new THREE.Clock();
 export default {
-    mixins: [mixin, animate, truck, park, curve, building, roads],
+    mixins: [mixin, animate, truck, park, curve, building],
     data: () => ({
         PI: Math.PI,
         sin: Math.sin,
