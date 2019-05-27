@@ -156,7 +156,7 @@
             <div :class='{"card-active": actCardList.indexOf("temp") > -1 }' class='card card-blue card-temp'>
                 <span class='card-title'>车厢温度</span>
                 <div class='con'>
-                    <img src='/img/icon10.png' />
+                    <img :src='require("@/assets/imgs/icon10.png")' />
                     <hr class='split' />
                     <div>
                         <p>压缩机<span>打开</span></p>
@@ -168,7 +168,7 @@
             <div v-if='actCardList.indexOf("weight") > -1' class='card-active card card-blue card-weight animated zoomInLeft'>
                 <span class='card-title'>挂车装载</span>
                 <div class='con'>
-                    <img src='/img/icon11.png' />
+                    <img :src='require("@/assets/imgs/icon11.png")' />
                     <hr class='split' />
                     <div>
                         <p>体积<span>48 m³</span></p>
@@ -180,7 +180,7 @@
             <div v-if='actCardList.indexOf("wheel") > -1' class='card-active card card-red card-wheel  animated zoomInLeft'>
                 <span class='card-title'>胎温胎压</span>
                 <div class='con'>
-                    <img src='/img/icon12.png' />
+                    <img :src='require("@/assets/imgs/icon12.png")' />
                     <hr class='split' />
                     <div>
                         <p>胎温<span>正常</span></p>
@@ -192,7 +192,7 @@
             <div v-if='actCardList.indexOf("wheelalert") > -1' class='card-active card card-red card-wheelalert  animated zoomInLeft'>
                 <span class='card-title'>事件报警</span>
                 <div class='con'>
-                    <img src='/img/icon12.png' />
+                    <img :src='require("@/assets/imgs/icon12.png")' />
                     <hr class='split' />
                     <div>
                         <p>12:15:32</p>
@@ -213,7 +213,7 @@
             <div v-if='actCardList.indexOf("rollalert") > -1' class='card-active card card-red card-rollalert  animated zoomInLeft'>
                 <span class='card-title'>事件报警</span>
                 <div class='con'>
-                    <img src='/img/icon9.png' />
+                    <img :src='require("@/assets/imgs/icon9.png")' />
                     <hr class='split' />
                     <div>
                         <p>15:49:04</p>
@@ -226,7 +226,7 @@
                 <img :src="item">
             </div>
             <div :class='{"card-active": actCardList.indexOf("guide") > -1}' class='card-gif'>
-                <img id='guideGif' src='/img/guide.gif' />
+                <img id='guideGif'/>
             </div>
         </div>
     </div>
@@ -322,8 +322,8 @@ export default {
                 const loadArr = [];
                 const unloadArr = [];
                 for (let j = 0; j < 3; j ++) {
-                    loadArr.push(`/img/load-${i+1}-${j+1}.png`);
-                    unloadArr.push(`/img/unload-${i+1}-${j+1}.png`);
+                    loadArr.push(require(`@/assets/imgs/load-${i+1}-${j+1}.png`));
+                    unloadArr.push(require(`@/assets/imgs/unload-${i+1}-${j+1}.png`));
                 }
                 this.picList.push(loadArr.concat(unloadArr));
             }
@@ -358,39 +358,39 @@ export default {
         ],
         leftList: [
             {
-                icon: '/img/icon1.png',
+                icon: require('@/assets/imgs/icon1.png'),
                 num: 309,
                 desc: '头挂匹配',
             }, {
-                icon: '/img/icon2.png',
+                icon: require('@/assets/imgs/icon2.png'),
                 num: 206,
                 desc: '头挂分离',
             }, {
-                icon: '/img/icon4.png',
+                icon: require('@/assets/imgs/icon4.png'),
                 num: 784,
                 desc: '进入场站',
             },{
-                icon: '/img/icon13.png',
+                icon: require('@/assets/imgs/icon13.png'),
                 num: 813,
                 desc: '离开场站',
             },{
-                icon: '/img/icon3.png',
+                icon: require('@/assets/imgs/icon3.png'),
                 num: 776,
                 desc: '停靠月台',
             }, {
-                icon: '/img/icon5.png',
+                icon: require('@/assets/imgs/icon5.png'),
                 num: 21,
                 desc: '防侧翻保护',
             }, {
-                icon: '/img/icon6.png',
+                icon: require('@/assets/imgs/icon6.png'),
                 num: 163,
                 desc: '胎压异常',
             }, {
-                icon: '/img/icon8.png',
+                icon: require('@/assets/imgs/icon8.png'),
                 num: 0,
                 desc: '胎温异常',
             }, {
-                icon: '/img/icon7.png',
+                icon: require('@/assets/imgs/icon7.png'),
                 num: 2,
                 desc: '轮胎漏气',
             }
@@ -681,7 +681,7 @@ export default {
         width: 2.8rem !important;
         height: 2.11rem !important;
         padding: 0 !important;
-        background: url(../../public/img/photobg.png);
+        background: url(../assets/imgs/photobg.png);
         background-size: cover;
         img{
             display: block;
@@ -721,7 +721,7 @@ export default {
             overflow: visible;
             padding: 20px 0 20px 28px;
             margin: -20px 0 0 0;
-            background-image: url(../../public/img/volume.png);
+            background-image: url(../assets/imgs/volume.png);
             background-repeat: no-repeat;
         }
         .con {

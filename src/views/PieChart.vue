@@ -30,7 +30,7 @@ export default {
                 scene,
                 camera,
                 renderer,
-            } = this.initBasics(this.$refs.canvas, { position: { x: 0, y: 25, z: 20 } }, { clearColor: 0xf1f1f1, shadowEnabled: true });
+            } = this.initBasics(this.$refs.canvas, { position: { x: 0, y: 25, z: 20 }, antialias: true }, { clearColor: 0xf1f1f1, shadowEnabled: true });
             this.scene = scene;
             this.camera = camera;
             this.renderer = renderer;

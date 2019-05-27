@@ -5,7 +5,6 @@
     </div>
 </template>
 <script>
-import axios from 'axios';
 import math from '../mixins/math.js';
 import mixin from '../mixins/threeMixin.js';
 import boundaryJSON from '@/assets/js/boundary';
@@ -322,12 +321,12 @@ export default {
                 star.tween.to(v, 1000);
             }
             function onUpdate(obj) {
-                console.log(obj);
+                // console.log(obj);
                 stars.geometry.verticesNeedUpdate = true;
             }
             stars.geometry.vertices.forEach((star) => {
                 star.tween.onComplete(() => {
-                    console.log(star);
+                    // console.log(star);
                     starsMove(star);
                 });
                 star.tween.onUpdate(onUpdate);
@@ -398,7 +397,7 @@ export default {
                 for (let i = 1; i <= steps; i++) {
                     x += delta_x;
                     y += delta_y;
-                    console.log(x, y);
+                    // console.log(x, y);
                     const point = this.pointsMatrix[round(y)][round(x)];
                     if (!point.isFill) point.isFill = true;
                 }

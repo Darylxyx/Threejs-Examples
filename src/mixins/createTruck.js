@@ -43,11 +43,11 @@ export default {
             const headPromise = new Promise((resolve, reject) => {
                 const headGroup = new THREE.Group();
                 const mtlLoader = new THREE.MTLLoader();
-                mtlLoader.load('/G7Trailer-head.mtl', (mat) => {
+                mtlLoader.load('./model/G7Trailer-head.mtl', (mat) => {
                     mat.preload();
                     const objLoader = new THREE.OBJLoader();
                     objLoader.setMaterials(mat);
-                    objLoader.load('/G7Trailer-head.obj', (obj) => {
+                    objLoader.load('./model/G7Trailer-head.obj', (obj) => {
                         obj.scale.set(p.modelScale, p.modelScale, p.modelScale);
                         obj.position.z = 3.5;
                         headGroup.add(obj);
@@ -59,11 +59,11 @@ export default {
             const backPromise = new Promise((resolve, reject) => {
                 const backGroup = new THREE.Group();
                 const mtlLoader = new THREE.MTLLoader();
-                mtlLoader.load('/G7Trailer-back.mtl', (mat) => {
+                mtlLoader.load('./model/G7Trailer-back.mtl', (mat) => {
                     mat.preload();
                     const objLoader = new THREE.OBJLoader();
                     objLoader.setMaterials(mat);
-                    objLoader.load('/G7Trailer-back.obj', (obj) => {
+                    objLoader.load('./model/G7Trailer-back.obj', (obj) => {
                         obj.scale.set(p.modelScale, p.modelScale, p.modelScale);
                         obj.position.z = 3.5;
                         backGroup.add(obj);

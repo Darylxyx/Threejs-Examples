@@ -423,11 +423,11 @@ export default {
         createForklift() {
             return new Promise((resolve) => {
                 const mtlLoader = new THREE.MTLLoader();
-                mtlLoader.load('/forklift.mtl', (mat) => {
+                mtlLoader.load('./model/forklift.mtl', (mat) => {
                     mat.preload();
                     const objLoader = new THREE.OBJLoader();
                     objLoader.setMaterials(mat);
-                    objLoader.load('/forklift.obj', (obj) => {
+                    objLoader.load('./model/forklift.obj', (obj) => {
                         obj.position.set(-7.5, 3.3, 0);
                         obj.rotation.y = -this.PI / 1.5;
                         obj.scale.set(0.04, 0.04, 0.04);
@@ -439,11 +439,11 @@ export default {
         createCargo() {
             return new Promise((resolve) => {
                 const mtlLoader = new THREE.MTLLoader();
-                mtlLoader.load('/Cargo.mtl', (mat) => {
+                mtlLoader.load('./model/Cargo.mtl', (mat) => {
                     mat.preload();
                     const objLoader = new THREE.OBJLoader();
                     objLoader.setMaterials(mat);
-                    objLoader.load('/Cargo.obj', (obj) => {
+                    objLoader.load('./model/Cargo.obj', (obj) => {
                         obj.position.set(-7.5, 3.3, 5);
                         obj.rotation.y = - this.PI / 2;
                         obj.scale.set(0.04, 0.04, 0.04);

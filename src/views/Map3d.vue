@@ -5,12 +5,13 @@
     </div>
 </template>
 <script>
-import axios from 'axios';
 import Geohash from 'latlon-geohash';
 import { GUI } from 'dat.gui';
 import mixin from '@/mixins/threeMixin';
 import math from '@/mixins/math';
 import boundaryJSON from '@/assets/js/boundary';
+import carJSON from '@/assets/js/car.json';
+import pathJSON from '@/assets/js/path.json';
 
 const THREE = window.THREE;
 const TWEEN = window.TWEEN;
@@ -37,94 +38,78 @@ export default {
         };
     },
     methods: {
-        queryData() {
+        async queryData() {
             this.isLoading = true;
             // 查询车辆信息
-            const fetch = axios.create();
-            fetch({
-                method: 'get',
-                url: '/js/car.json',
-                data: {},
-            }).then(async (res) => {
-                let run = [];
-                let silence = [];
-                let offline = [];
-                res = res.data;
-                for (const obj of res) {
-                    if (obj.geoHashKey) {
-                        const coord = Geohash.decode(obj.geoHashKey);
-                        const lglt = [coord.lon, coord.lat];
-                        switch (obj.value) {
-                            case 2:
-                                run.push(lglt);
-                                break;
-                            case 1:
-                                silence.push(lglt);
-                                break;
-                            // case 0:
-                            //     offline.push(lglt);
-                            //     break;
-                            default:
-                                offline.push(lglt);
-                                break;
-                        }
+            let run = [];
+            let silence = [];
+            let offline = [];
+            for (const obj of carJSON) {
+                if (obj.geoHashKey) {
+                    const coord = Geohash.decode(obj.geoHashKey);
+                    const lglt = [coord.lon, coord.lat];
+                    switch (obj.value) {
+                        case 2:
+                            run.push(lglt);
+                            break;
+                        case 1:
+                            silence.push(lglt);
+                            break;
+                        // case 0:
+                        //     offline.push(lglt);
+                        //     break;
+                        default:
+                            offline.push(lglt);
+                            break;
                     }
                 }
-                this.runCount = run.length;
-                this.stopCount = silence.length;
-                function randomSort() {
-                    const diff = Math.random() - Math.random();
-                    return diff;
-                }
-                function dataSlice(target) {
-                    return target.slice(0, Math.floor(target.length / 7));
-                }
-                run.sort(randomSort);
-                silence.sort(randomSort);
-                offline.sort(randomSort);
-                run = dataSlice(run);
-                silence = dataSlice(silence);
-                offline = dataSlice(offline);
-                const dataMap = [{
-                    type: 'run',
-                    data: run,
-                    color: 0x19D190,
-                    rgbcolor: 'rgba(25,209,144,1)',
-                    twinkle: true,
-                }, {
-                    type: 'silence',
-                    data: silence,
-                    color: 0x2934CE,
-                    rgbcolor: 'rgba(41,52,206,1)',
-                }, {
-                    type: 'offline',
-                    data: offline,
-                    color: 0x303A61,
-                    rgbcolor: 'rgba(48,58,97,1)',
-                }];
+            }
+            this.runCount = run.length;
+            this.stopCount = silence.length;
+            function randomSort() {
+                const diff = Math.random() - Math.random();
+                return diff;
+            }
+            function dataSlice(target) {
+                return target.slice(0, Math.floor(target.length / 7));
+            }
+            run.sort(randomSort);
+            silence.sort(randomSort);
+            offline.sort(randomSort);
+            run = dataSlice(run);
+            silence = dataSlice(silence);
+            offline = dataSlice(offline);
+            const dataMap = [{
+                type: 'run',
+                data: run,
+                color: 0x19D190,
+                rgbcolor: 'rgba(25,209,144,1)',
+                twinkle: true,
+            }, {
+                type: 'silence',
+                data: silence,
+                color: 0x2934CE,
+                rgbcolor: 'rgba(41,52,206,1)',
+            }, {
+                type: 'offline',
+                data: offline,
+                color: 0x303A61,
+                rgbcolor: 'rgba(48,58,97,1)',
+            }];
 
-                await this.drawTruck(dataMap);
-                function pointsAnimateStart() {
-                    pointsGroup.children.forEach((cloudGroup) => {
-                        cloudGroup.children.forEach((cloud) => {
-                            if (cloud.tween) cloud.tween.start();
-                        });
+            await this.drawTruck(dataMap);
+            function pointsAnimateStart() {
+                pointsGroup.children.forEach((cloudGroup) => {
+                    cloudGroup.children.forEach((cloud) => {
+                        if (cloud.tween) cloud.tween.start();
                     });
-                }
-                pointsAnimateStart();
-
-                // 查询线路信息
-                const fetch = axios.create();
-                fetch({
-                    method: 'get',
-                    url: '/js/path.json',
-                    data: {},
-                }).then((result) => {
-                    // console.log(result);
-                    result = result.data.data.topLine100.slice(0, 300);
-                    this.addPath(result);
                 });
-            });
+            }
+            pointsAnimateStart();
+
+            // 查询线路信息
+            const pathData = pathJSON.data.topLine100.slice(0, 300);
+            this.addPath(pathData);
         },
         drawTruck(dataMap) {
             return new Promise((resolve) => {

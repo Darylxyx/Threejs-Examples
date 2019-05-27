@@ -30,7 +30,9 @@ export default new Vuex.Store({
         setActCardList(state, list) {
             state.actCardList = list;
             if (list.indexOf('guide') > -1) {
-                document.querySelector('#guideGif').src = `/img/guide.gif?${Math.round(Math.random() * 100)}`;
+                // const url = require(`@/assets/imgs/guide.gif?${Math.round(Math.random() * 100)}`);
+                const url = require('@/assets/imgs/guide.gif');
+                document.querySelector('#guideGif').src = url;
             }
         },
         showPic(state, index) {
