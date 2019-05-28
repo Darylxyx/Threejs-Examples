@@ -21,7 +21,7 @@ export default new Router({
     },
     // 3D地球
     {
-      path: '/3DMap',
+      path: '/map',
       name: '3DMap',
       component: () => import('./views/Map3d'),
     },
@@ -38,7 +38,7 @@ export default new Router({
     },
     // 饼图
     {
-      path: '/pieChart',
+      path: '/pie',
       name: 'pieChart',
       component: () => import('./views/PieChart'),
     },
