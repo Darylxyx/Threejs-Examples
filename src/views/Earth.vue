@@ -67,7 +67,7 @@ export default {
             //【1】生成全量点阵数据
             const _this = this;
             function fillVector(lng, lat, rowVector) {
-                const { x, y, z } = _this.lglt2xyx(lng, lat, radius);
+                const { x, y, z } = _this.lglt2xyz(lng, lat, radius);
                 const v = _this.v3(x, y, z);
                 const infoData = {
                     lnglat: { lng, lat },
@@ -292,7 +292,7 @@ export default {
             for (let i = 0; i < 20000; i++) {
                 const randomLng = Math.random() * 360 - 180;
                 const randomLat = Math.random() * 180 - 90;
-                const point = this.lglt2xyx(randomLng, randomLat, radius + 1.5);
+                const point = this.lglt2xyz(randomLng, randomLat, radius + 1.5);
                 stars.vertices.push(point);
                 stars.vertices[i].tween = initStarTween(point);
             }

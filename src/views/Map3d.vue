@@ -290,7 +290,7 @@ export default {
                 }
                 const lng = Number(point[0]);
                 const lat = point[1];
-                const { x, y, z } = this.lglt2xyx(lng + 90, lat, radius);
+                const { x, y, z } = this.lglt2xyz(lng + 90, lat, radius);
                 const particle = this.v3(x, y, z);
                 pList.push(particle);
             });
@@ -336,7 +336,7 @@ export default {
                 splitArr.forEach((arr) => {
                     const points = new THREE.Geometry();
                     arr.forEach((p) => {
-                        const { x, y, z } = this.lglt2xyx(p[0] + 90, p[1], radius);
+                        const { x, y, z } = this.lglt2xyz(p[0] + 90, p[1], radius);
                         const particle = this.v3(x, y, z);
                         points.vertices.push(particle);
                     });
@@ -347,7 +347,7 @@ export default {
             } else {
                 const points = new THREE.Geometry();
                 pData.data.forEach((p) => {
-                    const { x, y, z } = this.lglt2xyx(p[0] + 90, p[1], radius);
+                    const { x, y, z } = this.lglt2xyz(p[0] + 90, p[1], radius);
                     const particle = this.v3(x, y, z);
                     points.vertices.push(particle);
                 });
@@ -363,7 +363,7 @@ export default {
                     p = p.split(',');
                     const lng = Number(p[0]);
                     const lat = p[1];
-                    const result = this.lglt2xyx(lng + 90, lat, radius + 0.1);
+                    const result = this.lglt2xyz(lng + 90, lat, radius + 0.1);
                     return result;
                 });
                 this.drawPath(list, rank);

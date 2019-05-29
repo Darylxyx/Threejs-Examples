@@ -48,7 +48,7 @@ export default {
             const res = (a11 * a22 * a33) + (a13 * a21 * a22) + (a12 * a23 * a31) - (a13 * a22 * a31) - (a12 * a21 * a33) - (a11 * a23 * a32);
             return res;
         },
-        lglt2xyx(lng, lat, r) { // 经纬度转三维坐标
+        lglt2xyz(lng, lat, r) { // 经纬度转三维坐标
             lng = this.deg2rad(lng);
             lat = this.deg2rad(lat);
             const x = r * cos(lat) * sin(lng);
