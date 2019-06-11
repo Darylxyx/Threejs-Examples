@@ -1,5 +1,6 @@
 import Stats from 'stats.js';
 import 'three/examples/js/controls/TrackballControls';
+import 'three/examples/js/controls/FirstPersonControls';
 
 const THREE = window.THREE;
 const TWEEN = window.TWEEN;
@@ -42,7 +43,7 @@ export default {
             const cpDefault = { // fov: 视场角度；near: 近边距离；far: 远边距离
                 fov: 50,
                 near: 0.1,
-                far: 1000000,
+                far: 100000,
                 aspect: W / H,
                 position: { x: -30, y: 40, z: 30 },
                 antialias: false,
@@ -205,7 +206,6 @@ export default {
                 } else {
                     findTop(obj.parent);
                 }
-
             }
             findTop(object);
             return res;
