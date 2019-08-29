@@ -397,7 +397,6 @@ export default {
                 for (let i = 1; i <= steps; i++) {
                     x += delta_x;
                     y += delta_y;
-                    // console.log(x, y);
                     const point = this.pointsMatrix[round(y)][round(x)];
                     if (!point.isFill) point.isFill = true;
                 }

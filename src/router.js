@@ -53,6 +53,12 @@ export default new Router({
       path: '/shader',
       name: 'shader',
       component: () => import('./views/Shader'),
+    },
+    // 反射
+    {
+      path: '/reflection',
+      name: 'reflection',
+      component: () => import('./views/Reflection'),
     }
   ]
 })

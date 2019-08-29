@@ -1,9 +1,13 @@
 import Stats from 'stats.js';
 import 'three/examples/js/controls/TrackballControls';
 import 'three/examples/js/controls/FirstPersonControls';
+import 'three/examples/js/controls/OrbitControls';
+import 'three/examples/js/loaders/OBJLoader.js';
+import 'three/examples/js/loaders/MTLLoader.js';
+import 'three/examples/js/loaders/GLTFLoader.js';
+import 'three/examples/js/loaders/DRACOLoader.js';
 
-const THREE = window.THREE;
-const TWEEN = window.TWEEN;
+const { THREE, TWEEN } = window;
 const setList = ['position', 'rotation', 'scale']; // 需要通过 set 方法来设置的属性列表
 function assignment(target, params = {}, prevKey) {
     const keys = Object.keys(params);
@@ -104,11 +108,7 @@ export default {
             const geometry = new THREE[constructor](...params);
             return geometry;
         },
-        initLine(pointsList, params = {}, isDashed) { // 创建线
-            const lines = new THREE.Geometry();
-            pointsList.forEach((p) => {
-                lines.vertices.push(p);
-            });
+        initLine(lines, params = {}, isDashed) { // 创建线
             let mat;
             if (isDashed) {
                 mat = new THREE.LineDashedMaterial(params);
@@ -119,10 +119,40 @@ export default {
             if (isDashed) line.computeLineDistances();
             return line;
         },
+        initSpline(arr, params = {},  pointsNum = 50) { // 创建样条曲线
+            const curve = new THREE.SplineCurve(arr);
+            const points = curve.getPoints(pointsNum);
+            const geom = new THREE.BufferGeometry().setFromPoints(points);
+            const mat = new THREE.LineBasicMaterial(params);
+            const spline = new THREE.Line(geom, mat);
+            return spline;
+        },
+        initBezier(arr, params = {}, pointsNum = 20) { // 创建贝赛尔曲线
+            const curve = new THREE.CubicBezierCurve3(...arr);
+            const points = curve.getPoints(pointsNum);
+            const geom = new THREE.BufferGeometry().setFromPoints(points);
+            const mat = new THREE.LineBasicMaterial(params);
+            const Bezier = new THREE.Line(geom, mat);
+            return Bezier;
+        },
         initTarget(x, y, z) { // 创建目标点
             const target = new THREE.Object3D();
             target.position.set(x, y, z);
             return target;
+        },
+        initExtrudeGeometry(dataArr, opts = {}, mat) {
+            const shape = new THREE.Shape(dataArr);
+            const defaultOpts = {
+                depth: 0.1,
+                bevelEnabled: false,
+                curveSegments: 1,
+                steps: 1,
+            };
+            const options = Object.assign(defaultOpts, opts);
+            const geom = new THREE.ExtrudeGeometry(shape, options);
+            const defaultMat = this.initMaterial('MeshPhong', { color: 0xDC143C });
+            const mesh = new THREE.Mesh(geom, mat || defaultMat);
+            return mesh;
         },
         v2(x, y) { // 创建 Vector2 对象
             return new THREE.Vector2(x, y);
@@ -137,12 +167,14 @@ export default {
             return new THREE.Color(color);
         },
         listenResize(canvasDom, camera, renderer) { // 窗口自适应
+            const _this = this;;
             function onResize() {
                 const W = canvasDom.offsetWidth;
                 const H = canvasDom.offsetHeight;
                 camera.aspect = W / H;
                 camera.updateProjectionMatrix();
                 renderer.setSize(W, H);
+                _this.resetCameraPosition();
             }
             window.addEventListener('resize', onResize, false);
         },
@@ -181,7 +213,7 @@ export default {
         loadTexture(path) { // 材质loader
             return new THREE.TextureLoader().load(path);
         },
-        createPoints(geom, matParam = {}, mapParam = []) { // 创建粒子云
+        initPoints(geom, matParam = {}, mapParam = []) { // 创建粒子云
             const defaults = {
                 color: 0xffffff,
                 size: 1,
@@ -224,7 +256,7 @@ export default {
             findMesh(group);
             return meshList;
         },
-        generateSprite(params) { // 粒子云材质 map 函数
+        generateSprite(params = []) { // 粒子云材质 map 函数
             const canvas = document.createElement('canvas');
             canvas.width = 32;
             canvas.height = 32;
@@ -286,7 +318,7 @@ export default {
                 canvasWidth: 128,
                 canvasHeight: 128,
                 fontFace: 'Arial',
-                fontSize: 20,
+                fontSize: 12,
                 scale: 5,
                 borderThickness: 4,
                 textColor: '#000000',
@@ -311,6 +343,36 @@ export default {
             const sprite = new THREE.Sprite(spriteMaterial);
             sprite.scale.set(params.scale, params.scale, params.scale);
             return sprite;
+        },
+        loadModel(modelName) { // 模型加载方法，需保证文件名与modelName一致
+            return new Promise((resolve) => {
+                const mtlLoader = new THREE.MTLLoader();
+                const objLoader = new THREE.OBJLoader();
+                mtlLoader.load(`./model/${modelName}.mtl`, (mat) => {
+                    mat.preload();
+                    objLoader.setMaterials(mat);
+                    objLoader.load(`./model/${modelName}.obj`, (obj) => {
+                        resolve(obj);
+                    });
+                });
+            });
+        },
+        initTween(params) {
+            const { start, end, duration, delay, easing, repeat, yoyo, onStart, onUpdate, onStop, onComplete } = params;
+            const tween = new TWEEN.Tween(start)
+                .to(end, duration);
+
+            if (easing) tween.easing(TWEEN.Easing.Sinusoidal[easing]);
+            if (delay) tween.delay(delay);
+            if (repeat) tween.repeat(repeat);
+            if (yoyo) tween.yoyo(true);
+
+            if (onStart) tween.onStart(onStart);
+            if (onUpdate) tween.onUpdate(onUpdate);
+            if (onStop) tween.onStop(onStop);
+            if (onComplete) tween.onComplete(onComplete);
+
+            return tween;
         },
     },
 };

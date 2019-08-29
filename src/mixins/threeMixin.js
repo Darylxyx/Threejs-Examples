@@ -1,5 +1,6 @@
 import Stats from 'stats.js';
 import 'three/examples/js/controls/TrackballControls';
+import 'three/examples/js/controls/OrbitControls';
 
 const THREE = window.THREE;
 const TWEEN = window.TWEEN;
@@ -282,5 +283,30 @@ export default {
             sprite.scale.set(params.scale, params.scale, params.scale);
             return sprite;
         },
+        initTween(params) {
+            const { start, end, duration, delay, easing, repeat, yoyo, onStart, onUpdate, onStop, onComplete } = params;
+            const tween = new TWEEN.Tween(start)
+                .to(end, duration);
+
+            if (easing) tween.easing(TWEEN.Easing.Sinusoidal[easing]);
+            if (delay) tween.delay(delay);
+            if (repeat) tween.repeat(repeat);
+            if (yoyo) tween.yoyo(true);
+
+            if (onStart) tween.onStart(onStart);
+            if (onUpdate) tween.onUpdate(onUpdate);
+            if (onStop) tween.onStop(onStop);
+            if (onComplete) tween.onComplete(onComplete);
+
+            return tween;
+        },
+    },
+    beforeDestroy() {
+        if (!this.renderer) return;
+        this.renderer.dispose();
+        this.renderer.forceContextLoss();
+        this.renderer.context = null;
+        this.renderer.domElement = null;
+        this.renderer = null;
     },
 };

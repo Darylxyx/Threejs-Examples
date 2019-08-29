@@ -140,7 +140,7 @@ export default {
             // scene.fog = new THREE.Fog(0x000000, 0.015, 1000);
 
             // const stats = this.initStats(this.$refs.stats);
-            // const control = this.addControl();
+            const control = this.addControl();
             // console.log(clock);
 
             // this.addAxes();
@@ -157,8 +157,8 @@ export default {
             // this.initGUI();
             const renderScene = () => {
                 // stats.update();
-                // const delta = clock.getDelta();
-                // control.update(delta);
+                const delta = clock.getDelta();
+                control.update(delta);
                 // this.scanAnimate();
                 TWEEN.update();
                 requestAnimationFrame(renderScene);
